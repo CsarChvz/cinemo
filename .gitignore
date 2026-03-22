@@ -1,0 +1,38 @@
+# --- IDEs & OS ---
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.log
+
+# --- ENVIROMENT (CRÍTICO) ---
+# Nunca subir credenciales reales
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- API (Spring Boot / Java) ---
+api/target/
+api/build/
+api/.gradle/
+api/.mvn/
+api/bin/
+api/*.jar
+api/*.war
+
+# --- APP (Next.js / Node) ---
+app/node_modules/
+app/.next/
+app/out/
+app/build/
+app/.vercel
+app/npm-debug.log*
+app/yarn-error.log*
+app/pnpm-debug.log*
+
+# --- DOCKER ---
+.docker/
+# Si guardas los datos de la DB en una carpeta local
+postgres_data/
