@@ -17,7 +17,6 @@
 api/target/
 api/build/
 api/.gradle/
-api/.mvn/
 api/bin/
 api/*.jar
 api/*.war
