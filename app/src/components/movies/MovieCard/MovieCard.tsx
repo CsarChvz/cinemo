@@ -10,8 +10,10 @@ import {
 import { IconHeart, IconClock } from '@tabler/icons-react';
 import classes from './MovieCard.module.css';
 import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
+import Link from 'next/link';
 
 export interface MovieCardProps {
+  id: number;
   title: string;
   posterUrl: string;
   genre: MovieGenre;
@@ -22,6 +24,7 @@ export interface MovieCardProps {
 }
 
 export function MovieCard({
+  id,
   title,
   posterUrl,
   genre,
@@ -74,6 +77,8 @@ export function MovieCard({
       <Group mt="md">
         <Button
           radius="md"
+          component={Link}
+          href={'/movies/' + id}
           style={{ flex: 1 }}
           variant="gradient"
           gradient={{ from: 'blue', to: 'cyan' }}

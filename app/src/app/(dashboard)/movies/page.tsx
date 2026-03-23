@@ -188,6 +188,7 @@ export default function MoviesPage() {
             {filteredMovies.map((movie) => (
               <MovieCard
                 key={movie.id}
+                id={movie.id}
                 title={movie.title}
                 genre={movie.genre}
                 clasification={movie.clasification}
