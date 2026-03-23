@@ -3,7 +3,6 @@ import '@mantine/core/styles.css';
 import React from 'react';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
 import { theme } from '@/theme';
-import { MainLayout } from '@/components/layout/MainLayout/MainLayout';
 
 export const metadata = {
   title: 'Mantine Next.js template',
@@ -21,10 +20,7 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body suppressHydrationWarning>
-        <ColorSchemeScript defaultColorScheme="dark" />
-        <MantineProvider theme={theme} defaultColorScheme="auto">
-          <MainLayout>{children}</MainLayout>
-        </MantineProvider>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
       </body>
     </html>
   );
