@@ -14,7 +14,7 @@ describe('MovieCard Component', () => {
     genre: 'Sci-Fi',
     duration: '169 min',
     description: 'Un viaje a través de un agujero de gusano.',
-    rating: 'B15',
+    clasification: 'B15',
     onViewDetails: jest.fn(), // Usando el estándar de Jest
   };
 
@@ -24,7 +24,7 @@ describe('MovieCard Component', () => {
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByText(mockProps.genre)).toBeInTheDocument();
     expect(screen.getByText(mockProps.duration)).toBeInTheDocument();
-    expect(screen.getByText(mockProps.rating)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.clasification)).toBeInTheDocument();
     expect(screen.getByText(mockProps.description)).toBeInTheDocument();
   });
 

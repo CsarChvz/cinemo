@@ -16,7 +16,7 @@ export interface MovieCardProps {
   genre: string;
   duration: string; // Se agregó tipo y coma
   description: string; // Se agregó tipo y coma
-  rating: string; // Se agregó tipo
+  clasification: string; // Se agregó tipo
   onViewDetails?: () => void;
 }
 
@@ -26,13 +26,12 @@ export function MovieCard({
   genre,
   duration,
   description, // Se agregó coma
-  rating,
+  clasification,
   onViewDetails,
 }: MovieCardProps) {
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
-        {/* Usamos fallbackSrc por si la URL del póster falla */}
         <Image
           src={posterUrl}
           alt={title}
@@ -47,7 +46,7 @@ export function MovieCard({
             {title}
           </Text>
           <Badge size="sm" variant="filled" color="blue">
-            {rating}
+            {clasification}
           </Badge>
         </Group>
 
