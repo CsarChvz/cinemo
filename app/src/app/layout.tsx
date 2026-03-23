@@ -1,15 +1,22 @@
 import '@mantine/core/styles.css';
 
 import React from 'react';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
+import { mantineHtmlProps, MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import { theme } from '@/theme';
+import { Notifications } from '@mantine/notifications';
 
 export const metadata = {
   title: 'Mantine Next.js template',
   description: 'I am using Mantine with Next.js!',
 };
 
-export default function RootLayout({ children }: { children: any }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -20,7 +27,10 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body suppressHydrationWarning>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );

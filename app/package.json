@@ -18,6 +18,7 @@
     "@mantine/core": "9.0.0-alpha.6",
     "@mantine/form": "9.0.0-alpha.6",
     "@mantine/hooks": "9.0.0-alpha.6",
+    "@mantine/notifications": "^8.3.18",
     "@next/bundle-analyzer": "^16.2.1",
     "@storybook/addon-viewport": "^9.0.8",
     "@storybook/nextjs": "^10.3.1",
