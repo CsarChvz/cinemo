@@ -1,6 +1,5 @@
 # --- IDEs & OS ---
 .idea/
-.vscode/
 .DS_Store
 *.swp
 *.log

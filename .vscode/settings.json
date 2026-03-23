@@ -1,0 +1,56 @@
+{
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "editor.formatOnSave": true,
+
+  // ==========================================
+  // 🎨 1. ASIGNACIÓN DE FORMATEADORES
+  // ==========================================
+  // Le decimos que Prettier se encargue de todo lo que sea web/Next.js
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  
+  // Le decimos que la extensión de RedHat/Java se encargue del backend
+  "[java]": { "editor.defaultFormatter": "redhat.java" },
+
+  // ==========================================
+  // ✨ 2. AUTO-CORRECCIÓN MÁGICA (ESLINT)
+  // ==========================================
+  // Cada vez que guardes un archivo, ESLint intentará arreglar los errores automáticamente
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // ==========================================
+  // 🚀 3. RENDIMIENTO Y LIMPIEZA VISUAL
+  // ==========================================
+  // Oculta carpetas gigantes del explorador lateral para que no te estorben
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/api/target": true,
+    "**/app/.next": true
+  },
+  
+  // Evita que el buscador de VS Code (Ctrl+F global) se trabe buscando 
+  // en archivos compilados o dependencias
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/api/target": true,
+    "**/app/.next": true,
+    "**/.mvn": true
+  },
+
+  // ==========================================
+  // ⚛️ 4. ATAJOS PARA NEXT.JS (OPCIONAL PERO ÚTIL)
+  // ==========================================
+  // Permite usar atajos de HTML (Emmet) dentro de tus componentes de React
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  }
+}
