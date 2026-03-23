@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MovieCard, MovieCardProps } from './MovieCard';
 import { MantineProvider } from '@mantine/core';
+import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
 
 // Helper para envolver el componente en el provider de Mantine
 const renderWithProvider = (ui: React.ReactElement) => {
@@ -9,12 +10,13 @@ const renderWithProvider = (ui: React.ReactElement) => {
 
 describe('MovieCard Component', () => {
   const mockProps: MovieCardProps = {
+    id: 2,
     title: 'Interstellar',
     posterUrl: 'https://test-url.com/poster.jpg',
-    genre: 'Sci-Fi',
+    genre: MovieGenre.CIENCIA_FICCION,
     duration: '169 min',
     description: 'Un viaje a través de un agujero de gusano.',
-    clasification: 'B15',
+    clasification: MovieClasification.B15,
     onViewDetails: jest.fn(), // Usando el estándar de Jest
   };
 
@@ -38,7 +40,7 @@ describe('MovieCard Component', () => {
   it('debe llamar a onViewDetails cuando se presiona el botón', () => {
     renderWithProvider(<MovieCard {...mockProps} />);
 
-    const button = screen.getByRole('button', { name: /Ver detalles/i });
+    const button = screen.getByRole('link', { name: /Ver detalles/i });
     fireEvent.click(button);
 
     expect(mockProps.onViewDetails).toHaveBeenCalledTimes(1);
