@@ -15,9 +15,9 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@mantine/core": "^8.3.18",
-    "@mantine/form": "^8.3.18",
-    "@mantine/hooks": "^8.3.18",
+    "@mantine/core": "9.0.0-alpha.6",
+    "@mantine/form": "9.0.0-alpha.6",
+    "@mantine/hooks": "9.0.0-alpha.6",
     "@next/bundle-analyzer": "^16.2.1",
     "@storybook/addon-viewport": "^9.0.8",
     "@storybook/nextjs": "^10.3.1",
@@ -30,14 +30,14 @@
   },
   "devDependencies": {
     "@storybook/addon-themes": "^10.3.1",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.2.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/jest": "^30.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@types/node": "^20.19.37",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
     "eslint-config-next": "16.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -47,8 +47,8 @@
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3"
   },
   "ignoreScripts": [
     "sharp",
