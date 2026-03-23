@@ -8,10 +8,11 @@ import {
   Text,
   Stack,
   Divider,
-  Center,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { PasswordInput } from '../PasswordInput/PasswordInput';
+import classes from '../AuthForms.module.css'; // Importamos el CSS
+import Link from 'next/link';
 
 export function LoginForm() {
   const form = useForm({
@@ -23,21 +24,10 @@ export function LoginForm() {
   });
 
   return (
-    <Paper
-      p={40}
-      radius="xl"
-      withBorder
-      style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(16px)',
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        width: '100%',
-        maxWidth: 420,
-      }}
-    >
+    <Paper p={40} radius="xl" className={classes.glassContainer}>
       <Stack gap="xl">
         <Stack gap={5} ta="center">
-          <Title order={2} c="white" fw={900} lts={1}>
+          <Title order={2} className={classes.title}>
             Bienvenido
           </Title>
           <Text c="dimmed" size="sm">
@@ -48,20 +38,13 @@ export function LoginForm() {
         <form onSubmit={form.onSubmit((v) => console.log(v))}>
           <Stack gap="md">
             <TextInput
-              label={
-                <Text c="gray.3" size="sm" fw={500}>
-                  Correo electrónico
-                </Text>
-              }
+              label="Correo electrónico"
               placeholder="tu@email.com"
               variant="filled"
               {...form.getInputProps('email')}
-              styles={{
-                input: {
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
-                  color: 'white',
-                },
+              classNames={{
+                input: classes.inputField,
+                label: classes.labelCustom,
               }}
             />
 
@@ -86,7 +69,8 @@ export function LoginForm() {
         <Text ta="center" size="sm" c="gray.5">
           ¿No tienes cuenta?{' '}
           <Text
-            component="span"
+            component={Link}
+            href="/register"
             c="blue.4"
             fw={700}
             style={{ cursor: 'pointer' }}
