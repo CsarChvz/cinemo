@@ -25,15 +25,7 @@ export function PasswordInput({
         >
           Contraseña
         </Text>
-        <Anchor
-          href="#"
-          onClick={(e) => e.preventDefault()}
-          fw={500}
-          fz="xs"
-          c="blue.4"
-        >
-          ¿Olvidaste tu contraseña?
-        </Anchor>
+
       </Group>
 
       <MantinePasswordInput

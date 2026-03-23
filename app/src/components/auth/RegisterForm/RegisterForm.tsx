@@ -13,7 +13,7 @@ import {
 import { useForm } from '@mantine/form';
 import { PasswordInput } from '../PasswordInput/PasswordInput';
 import Link from 'next/link';
-import classes from '../AuthForms.module.css'; // Asegúrate de que la ruta sea correcta
+import classes from '../AuthForms.module.css';
 
 export function RegisterForm() {
   const form = useForm({
@@ -33,10 +33,10 @@ export function RegisterForm() {
   });
 
   const handleSubmit = (values: typeof form.values) => {
+    // Aquí conectarás con tu API de Python (FastAPI/Flask)
     console.log('Registrando usuario en Cinemo:', values);
   };
 
-  // Objeto de configuración para reutilizar los estilos de los inputs
   const inputStyles = {
     input: classes.inputField,
     label: classes.labelCustom,
@@ -46,7 +46,7 @@ export function RegisterForm() {
     <Paper
       p={40}
       radius="xl"
-      className={classes.glassContainer} // Aplicamos el efecto cristal
+      className={classes.glassContainer}
       style={{ maxWidth: 500, width: '100%' }}
     >
       <Stack gap="xl">
@@ -86,6 +86,7 @@ export function RegisterForm() {
               {...form.getInputProps('email')}
             />
 
+            {/* Ahora solo pedimos la contraseña una vez */}
             <PasswordInput {...form.getInputProps('password')} />
 
             <Button
@@ -101,9 +102,6 @@ export function RegisterForm() {
             </Button>
           </Stack>
         </form>
-
-        <Divider label="O regístrate con" labelPosition="center" c="gray.7" />
-
         <Text ta="center" size="sm" c="gray.5">
           ¿Ya tienes una cuenta?{' '}
           <Text
