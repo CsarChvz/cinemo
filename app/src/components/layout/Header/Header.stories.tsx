@@ -4,7 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 
 const meta: Meta<typeof Header> = {
-  title: 'Components/Layout/Header',
+  title: 'Components/MainLayout/Header',
   component: Header,
   parameters: {
     layout: 'fullscreen',
