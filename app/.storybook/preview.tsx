@@ -5,15 +5,27 @@ import { useGlobals } from 'storybook/preview-api';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { theme } from '../src/theme';
 
-export const parameters = {
-  layout: 'fullscreen',
-  options: {
-    showPanel: false,
-    // @ts-expect-error – storybook throws build error for (a: any, b: any)
-    storySort: (a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }),
+
+import type { Preview } from '@storybook/nextjs';
+
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
+
+const preview: Preview = {
+  parameters: {
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+    },
+
+    nextjs: {
+      appDirectory: true,
+    },
   },
-  backgrounds: { disable: true },
+  initialGlobals: {
+    viewport: { value: 'desktop', isRotated: false },
+  },
 };
+
+export default preview;
 
 export const globalTypes = {
   theme: {
