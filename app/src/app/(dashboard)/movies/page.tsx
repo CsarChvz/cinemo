@@ -21,6 +21,7 @@ import { MovieCard } from '@/components/movies/MovieCard/MovieCard';
 import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
 import { SortOrder } from '@/interfaces/filter.interface';
 import { ClasificationFilter } from '@/components/movies/ClasificactionFilter/ClasificationFilter';
+import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
 
 // 1. Dummy Data
 const DUMMY_MOVIES = [
@@ -98,21 +99,13 @@ export default function MoviesPage() {
   const [clasifications, setClasifications] = useState<MovieClasification[]>(
     []
   );
-  // Estado para controlar la implementación manual
   const [isManual, setIsManual] = useState(false);
 
-  // 1. Sincronizar con Local Storage al montar el componente
+  // Cargar estado inicial del LocalStorage
   useEffect(() => {
     const saved = localStorage.getItem('manual-implementation');
-    if (saved !== null) {
-      setIsManual(JSON.parse(saved));
-    }
+    if (saved !== null) setIsManual(JSON.parse(saved));
   }, []);
-
-  const toggleManual = (value: boolean) => {
-    setIsManual(value);
-    localStorage.setItem('manual-implementation', JSON.stringify(value));
-  };
 
   // 2. Lógica de filtrado con "Bypass" manual
   const filteredMovies = useMemo(() => {
@@ -156,6 +149,7 @@ export default function MoviesPage() {
   }, [search, sort, genres, clasifications, isManual]);
   return (
     <Container size="xl" py="xl">
+      <ImplementationDevTools isManual={isManual} onChange={setIsManual} />
       <Stack gap="xl">
         <header>
           <Title order={1} mb="xs">
