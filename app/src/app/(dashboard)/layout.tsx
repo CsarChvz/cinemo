@@ -5,11 +5,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    /* Aquí es donde vive el MainLayout. 
-       Cualquier página dentro de la carpeta (dashboard) 
-       tendrá automáticamente el Header y Navbar.
-    */
-    <MainLayout>{children}</MainLayout>
-  );
+  return <MainLayout>{children}</MainLayout>;
 }

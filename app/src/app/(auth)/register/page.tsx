@@ -2,7 +2,7 @@ import { RegisterForm } from '@/components/auth/RegisterForm/RegisterForm';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Iniciar Sesión | Cinemo',
+  title: 'Registrarse | Cinemo',
   description: 'Ingresa a tu cuenta para disfrutar de la mejor cartelera.',
 };
 
