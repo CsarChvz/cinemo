@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body suppressHydrationWarning>
+        <ColorSchemeScript defaultColorScheme="dark" />
         <MantineProvider theme={theme} defaultColorScheme="auto">
           {children}
         </MantineProvider>
