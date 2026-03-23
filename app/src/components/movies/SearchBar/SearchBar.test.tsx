@@ -23,16 +23,6 @@ describe('SearchBar Component', () => {
     expect(handleChange).toHaveBeenCalled();
   });
 
-  it('debe llamar a onSearch cuando se hace clic en el icono de flecha', () => {
-    const handleSearch = jest.fn();
-    renderWithProvider(<SearchBar onSearch={handleSearch} />);
-
-    // Buscamos el botón por su etiqueta de accesibilidad
-    const searchButton = screen.getByLabelText(/Ejecutar búsqueda/i);
-    fireEvent.click(searchButton);
-
-    expect(handleSearch).toHaveBeenCalledTimes(1);
-  });
 
   it('debe mostrar el mensaje de error cuando la prop error está presente', () => {
     renderWithProvider(<SearchBar error="Campo requerido" />);

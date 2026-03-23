@@ -9,14 +9,15 @@ import {
 } from '@mantine/core';
 import { IconHeart, IconClock } from '@tabler/icons-react';
 import classes from './MovieCard.module.css';
+import { MovieGenre } from '@/interfaces/movie.interface';
 
 export interface MovieCardProps {
   title: string;
   posterUrl: string;
-  genre: string;
-  duration: string; // Se agregó tipo y coma
-  description: string; // Se agregó tipo y coma
-  clasification: string; // Se agregó tipo
+  genre: MovieGenre;
+  duration: string;
+  description: string;
+  clasification: string;
   onViewDetails?: () => void;
 }
 
