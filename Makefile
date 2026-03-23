@@ -6,13 +6,36 @@ include .env
 export
 endif
 
-.PHONY: help build-api build-app build-all up up-build down logs clean-db
+# Configuración de rutas para ejecución nativa
+API_DIR := ./api
+APP_DIR := ./app
+
+.PHONY: help build-api build-app build-all up up-build down logs logs-api logs-app clean-db install run-api run-app run-all stop-all
 
 help:
-	@echo "Comandos disponibles: build-api, build-app, build-all, up, up-build, down, logs, clean-db"
+	@echo "Comandos disponibles:"
+	@echo "  -------------------------------------------------------"
+	@echo "  🐳 DOCKER (Contenedores)"
+	@echo "  -------------------------------------------------------"
+	@echo "  build-all    : Construye todas las imágenes de Docker"
+	@echo "  up           : Levanta el entorno en Docker (Background)"
+	@echo "  down         : Detiene y elimina contenedores Docker"
+	@echo "  -------------------------------------------------------"
+	@echo "  💻 NATIVO (Sin Docker - en /api y /app)"
+	@echo "  -------------------------------------------------------"
+	@echo "  install      : Instala dependencias (Maven y NPM)"
+	@echo "  run-api      : Corre Spring Boot (mvn spring-boot:run)"
+	@echo "  run-app      : Corre Next.js (npm run dev)"
+	@echo "  run-all      : Lanza ambos en segundo plano"
+	@echo "  stop-all     : Detiene los procesos nativos de run-all"
+	@echo "  -------------------------------------------------------"
+	@echo "  🛠️  UTILIDADES"
+	@echo "  -------------------------------------------------------"
+	@echo "  logs         : Ver logs de Docker"
+	@echo "  clean-db     : Reset total de la base de datos en Docker"
 
 # ==========================================
-# 🐳 CONSTRUCCIÓN DE IMÁGENES (Por separado)
+# 🐳 SECCIÓN DOCKER
 # ==========================================
 
 build-api:
@@ -23,32 +46,23 @@ build-app:
 	@echo "Construyendo la imagen de la APP (Next.js)..."
 	docker compose build app
 
-# ==========================================
-# 🚀 CONSTRUCCIÓN Y EJECUCIÓN (Todo junto)
-# ==========================================
-
 build-all:
-	@echo "Construyendo todas las imágenes definidas en el compose..."
+	@echo "Construyendo todas las imágenes..."
 	docker compose build
 
 up:
-	@echo "Levantando el entorno local (Background)..."
+	@echo "Levantando el entorno local Docker..."
 	docker compose up -d
 
 up-build:
-	@echo "Forzando construcción y levantando el entorno local..."
+	@echo "Forzando build y levantando Docker..."
 	docker compose up --build
 
-# ==========================================
-# 🛠️ UTILIDADES DE DESARROLLO
-# ==========================================
-
 down:
-	@echo "Deteniendo y eliminando los contenedores y redes..."
+	@echo "Deteniendo contenedores..."
 	docker compose down
 
 logs:
-	@echo "Mostrando logs en tiempo real (Ctrl+C para salir)..."
 	docker compose logs -f
 
 logs-api:
@@ -58,5 +72,40 @@ logs-app:
 	docker compose logs -f app
 
 clean-db:
-	@echo "Eliminando contenedores y destruyendo el volumen de la BD (Reset total)..."
+	@echo "Reseteando base de datos Docker..."
 	docker compose down -v
+
+# ==========================================
+# 💻 SECCIÓN NATIVA (SIN DOCKER)
+# ==========================================
+
+# Archivos temporales para PIDs
+PID_API := .api.pid
+PID_APP := .app.pid
+
+install:
+	@echo "📦 Instalando dependencias nativas..."
+	cd $(API_DIR) && if [ -f "./mvnw" ]; then ./mvnw clean install -DskipTests; else mvn clean install -DskipTests; fi
+	cd $(APP_DIR) && npm install
+
+run-api:
+	@echo "🚀 Iniciando API Spring Boot (Nativo)..."
+	cd $(API_DIR) && if [ -f "./mvnw" ]; then ./mvnw spring-boot:run; else mvn spring-boot:run; fi
+
+run-app:
+	@echo "🚀 Iniciando APP Next.js (Nativo)..."
+	cd $(APP_DIR) && npm run dev
+
+run-all:
+	@echo "🚦 Iniciando servicios nativos en background..."
+	@# API
+	@cd $(API_DIR) && (if [ -f "./mvnw" ]; then ./mvnw spring-boot:run; else mvn spring-boot:run; fi) > /dev/null 2>&1 & echo $$! > $(PID_API)
+	@# APP
+	@cd $(APP_DIR) && npm run dev > /dev/null 2>&1 & echo $$! > $(PID_APP)
+	@echo "✅ API y APP corriendo. Usa 'make stop-all' para apagar."
+
+stop-all:
+	@echo "🛑 Deteniendo procesos nativos..."
+	@if [ -f $(PID_API) ]; then kill $$(cat $(PID_API)) || true; rm $(PID_API); fi
+	@if [ -f $(PID_APP) ]; then kill $$(cat $(PID_APP)) || true; rm $(PID_APP); fi
+	@echo "✅ Procesos terminados."
