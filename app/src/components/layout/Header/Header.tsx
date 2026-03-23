@@ -52,13 +52,13 @@ export function Header({ opened, onToggle }: HeaderProps) {
             {items}
           </Group>
 
-          <Autocomplete
+          {/* <Autocomplete
             className={classes.search}
             placeholder="Buscar película..."
             leftSection={<IconSearch size={16} stroke={1.5} />}
             data={['Batman', 'Inception', 'Avengers', 'Titanic']}
             visibleFrom="xs"
-          />
+          /> */}
 
           <ColorSchemeToggle />
         </Group>
