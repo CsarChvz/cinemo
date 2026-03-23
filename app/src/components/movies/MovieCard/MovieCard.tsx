@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { IconHeart, IconClock } from '@tabler/icons-react';
 import classes from './MovieCard.module.css';
-import { MovieGenre } from '@/interfaces/movie.interface';
+import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
 
 export interface MovieCardProps {
   title: string;
@@ -17,7 +17,7 @@ export interface MovieCardProps {
   genre: MovieGenre;
   duration: string;
   description: string;
-  clasification: string;
+  clasification: MovieClasification;
   onViewDetails?: () => void;
 }
 
