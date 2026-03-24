@@ -1,11 +1,11 @@
 'use client';
 
-import { Autocomplete, Burger, Group, Container } from '@mantine/core';
+import { Autocomplete, Burger, Group, Container, Text } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle/ColorSchemeToggle';
+import Link from 'next/link'; // 1. Importamos Link
 import classes from './HeaderSearch.module.css';
 
-// Definimos qué necesita el Header para funcionar
 interface HeaderProps {
   opened: boolean;
   onToggle: () => void;
@@ -13,22 +13,18 @@ interface HeaderProps {
 
 const links = [
   { link: '/program-guide', label: 'Cartelera' },
-  { link: '/movies', label: 'movies' },
+  { link: '/movies', label: 'Peliculas' },
 ];
 
 export function Header({ opened, onToggle }: HeaderProps) {
   const items = links.map((link) => (
-    <a
+    <Link // 2. Usamos Link en lugar de <a> para los items
       key={link.label}
       href={link.link}
       className={classes.link}
-      onClick={(event) => {
-        // Aquí después pondrás el ruteo de Next.js
-        console.log(`Navegando a ${link.label}`);
-      }}
     >
       {link.label}
-    </a>
+    </Link>
   ));
 
   return (
@@ -42,22 +38,33 @@ export function Header({ opened, onToggle }: HeaderProps) {
             hiddenFrom="sm"
             aria-label="Toggle navigation"
           />
-          {/* Aquí pondrás tu logo de Cinemo */}
-          <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>CINEMO</div>
+
+          {/* 3. Logo de Cinemo con Link a la raíz '/' */}
+          <Link
+            href="/"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              fw={900}
+              fz="xl"
+              style={{ letterSpacing: '1px' }}
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'cyan' }}
+            >
+              CINEMO
+            </Text>
+          </Link>
         </Group>
 
         <Group>
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
-
-          {/* <Autocomplete
-            className={classes.search}
-            placeholder="Buscar película..."
-            leftSection={<IconSearch size={16} stroke={1.5} />}
-            data={['Batman', 'Inception', 'Avengers', 'Titanic']}
-            visibleFrom="xs"
-          /> */}
 
           <ColorSchemeToggle />
         </Group>

@@ -149,6 +149,9 @@ export default function GestionFuncionesPage() {
             withColumnBorders
             striped
             highlightOnHover
+            idAccessor={(record) =>
+              record.movie.id?.toString() || record.movie.title
+            }
             records={records}
             totalRecords={DUMMY_SCREENINGS.length}
             recordsPerPage={PAGE_SIZE}
