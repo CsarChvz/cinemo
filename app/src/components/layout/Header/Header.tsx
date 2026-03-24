@@ -1,9 +1,16 @@
 'use client';
 
-import { Autocomplete, Burger, Group, Container, Text } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import {
+  Burger,
+  Group,
+  Container,
+  Text,
+  Button,
+  Divider,
+  Box,
+} from '@mantine/core';
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle/ColorSchemeToggle';
-import Link from 'next/link'; // 1. Importamos Link
+import Link from 'next/link';
 import classes from './HeaderSearch.module.css';
 
 interface HeaderProps {
@@ -13,23 +20,19 @@ interface HeaderProps {
 
 const links = [
   { link: '/program-guide', label: 'Cartelera' },
-  { link: '/movies', label: 'Peliculas' },
+  { link: '/movies', label: 'Películas' },
 ];
 
 export function Header({ opened, onToggle }: HeaderProps) {
   const items = links.map((link) => (
-    <Link // 2. Usamos Link en lugar de <a> para los items
-      key={link.label}
-      href={link.link}
-      className={classes.link}
-    >
+    <Link key={link.label} href={link.link} className={classes.link}>
       {link.label}
     </Link>
   ));
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
+      <Container size="xl" className={classes.inner}>
         <Group>
           <Burger
             opened={opened}
@@ -39,7 +42,6 @@ export function Header({ opened, onToggle }: HeaderProps) {
             aria-label="Toggle navigation"
           />
 
-          {/* 3. Logo de Cinemo con Link a la raíz '/' */}
           <Link
             href="/"
             style={{
@@ -59,14 +61,43 @@ export function Header({ opened, onToggle }: HeaderProps) {
               CINEMO
             </Text>
           </Link>
+
+          {/* Navegación Principal (Solo Desktop) */}
+          <Group ml={30} gap={5} className={classes.links} visibleFrom="sm">
+            {items}
+          </Group>
         </Group>
 
         <Group>
-          <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-            {items}
-          </Group>
+          {/* Sección de Acceso */}
+          <Group gap="sm">
+            <Button
+              component={Link}
+              href="/login"
+              variant="subtle"
+              color="gray"
+              size="sm"
+              visibleFrom="sm" // Oculto en móviles para ahorrar espacio
+            >
+              Iniciar sesión
+            </Button>
 
-          <ColorSchemeToggle />
+            <Button
+              component={Link}
+              href="/register"
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'cyan' }}
+              size="sm"
+              radius="md"
+              visibleFrom="sm" // Oculto en móviles para ahorrar espacio
+            >
+              Registrarse
+            </Button>
+
+            <Divider orientation="vertical" h={20} visibleFrom="sm" />
+
+            <ColorSchemeToggle />
+          </Group>
         </Group>
       </Container>
     </header>
