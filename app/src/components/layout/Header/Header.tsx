@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 const links = [
-  { link: '/cartelera', label: 'Cartelera' },
+  { link: '/program-guide', label: 'Cartelera' },
   { link: '/estrenos', label: 'Estrenos' },
   { link: '/favoritos', label: 'Mis Favoritos' },
 ];
