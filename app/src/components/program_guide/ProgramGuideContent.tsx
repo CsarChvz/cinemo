@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { Stack, Title, Text, Badge, Group, Paper } from '@mantine/core';
-import { DateStringValue, DayView, ScheduleHeader } from '@mantine/schedule'; // Asegúrate de tener instalado @mantine/schedule
+import { DateStringValue, DayView, ScheduleEventData, ScheduleHeader } from '@mantine/schedule'; // Asegúrate de tener instalado @mantine/schedule
 import dayjs from 'dayjs';
+import { ClockIcon, MapPinIcon } from 'lucide-react';
 
 interface ProgramGuideContentProps {
   cine: string;
@@ -14,22 +15,25 @@ export function ProgramGuideContent({ cine }: ProgramGuideContentProps) {
    dayjs().format('YYYY-MM-DD')
  );
 
-  // Transformamos tus películas en "eventos" de calendario
-  // En un caso real, esto vendría filtrado por el nombre del 'cine'
-  const movieEvents = [
+  const movieEvents: ScheduleEventData[] = [
     {
       id: 1,
-      title: 'Interstellar (Sala 1)',
+      title: 'Interstellar',
       start: `${today} 13:00:00`,
       end: `${today} 15:49:00`,
+      payload: {
+        location: 'Sala 1',
+      },
       color: 'blue',
     },
- 
     {
       id: 3,
-      title: 'Spider-Man (Sala 1)',
+      title: 'Spider-Man',
       start: `${today} 16:30:00`,
       end: `${today} 19:15:00`,
+      payload: {
+        location: 'Sala 1',
+      },
       color: 'red',
     },
   ];
@@ -81,7 +85,6 @@ export function ProgramGuideContent({ cine }: ProgramGuideContentProps) {
               setDate(dayjs().format('YYYY-MM-DD') as DateStringValue)
             }
           />
-
         </ScheduleHeader>
 
         <DayView
@@ -91,6 +94,27 @@ export function ProgramGuideContent({ cine }: ProgramGuideContentProps) {
           startTime="12:00:00"
           endTime="21:00:00"
           withHeader={false}
+          renderEventBody={(event) => (
+            <Group>
+              <Text fz={18} fw={500}>
+                {event.title}
+              </Text>
+              <Group gap={4}>
+                <ClockIcon size={12} />
+                <Text fz={10} lh={1}>
+                  {dayjs(event.start).format('h:mm A')} -{' '}
+                  {dayjs(event.end).format('h:mm A')}
+                </Text>
+              </Group>
+
+              {event.payload?.location && (
+                <Group gap={4}>
+                  <MapPinIcon size={12} />
+                  <Text fz={10}>{event.payload.location}</Text>
+                </Group>
+              )}
+            </Group>
+          )}
         />
       </Paper>
 
