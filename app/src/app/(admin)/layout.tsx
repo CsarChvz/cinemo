@@ -54,14 +54,10 @@ export default function AdminLayout({
             leftSection={<IconMovie size={20} />}
             childrenOffset={28}
           >
+            <NavLink component={Link} href="/admin/movies" label="Ver todas" />
             <NavLink
               component={Link}
-              href="/admin/peliculas"
-              label="Ver todas"
-            />
-            <NavLink
-              component={Link}
-              href="/admin/peliculas/nueva"
+              href="/admin/movies/nueva"
               label="Agregar nueva"
             />
           </NavLink>

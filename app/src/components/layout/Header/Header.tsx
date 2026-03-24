@@ -7,13 +7,13 @@ import classes from './HeaderSearch.module.css';
 
 // Definimos qué necesita el Header para funcionar
 interface HeaderProps {
-  opened: boolean; 
+  opened: boolean;
   onToggle: () => void;
 }
 
 const links = [
   { link: '/program-guide', label: 'Cartelera' },
-  { link: '/movies', label: 'Peliculas' },
+  { link: '/movies', label: 'movies' },
 ];
 
 export function Header({ opened, onToggle }: HeaderProps) {

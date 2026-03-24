@@ -12,7 +12,7 @@ export enum MovieGenre {
 }
 
 export interface Movie {
-  id: number;
+  id?: number;
   title: string;
   posterUrl: string;
   genre: MovieGenre;
