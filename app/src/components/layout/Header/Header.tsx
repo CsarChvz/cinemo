@@ -13,8 +13,7 @@ interface HeaderProps {
 
 const links = [
   { link: '/program-guide', label: 'Cartelera' },
-  { link: '/estrenos', label: 'Estrenos' },
-  { link: '/favoritos', label: 'Mis Favoritos' },
+  { link: '/movies', label: 'Peliculas' },
 ];
 
 export function Header({ opened, onToggle }: HeaderProps) {
