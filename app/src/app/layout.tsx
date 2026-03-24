@@ -6,6 +6,9 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/schedule/styles.css';
+
+import 'mantine-datatable/styles.layer.css';
+
 import { theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 

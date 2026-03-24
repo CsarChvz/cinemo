@@ -1,9 +1,10 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
   Container,
   Grid,
+  GridCol,
   Image,
   Badge,
   Title,
@@ -16,6 +17,7 @@ import {
   Divider,
   rem,
   SimpleGrid,
+  Box,
   Center,
 } from '@mantine/core';
 import {
@@ -25,14 +27,21 @@ import {
   IconCalendar,
   IconUser,
   IconMovie,
+  IconMapPin,
 } from '@tabler/icons-react';
+
+// Componentes de la Guía de Programación
+import { LocationSidebar } from '@/components/program_guide/LocationSidebar';
+import { ProgramGuideContent } from '@/components/program_guide/ProgramGuideContent';
 import {
   MovieGenre,
   MovieClasification,
   Movie,
 } from '@/interfaces/movie.interface';
+import { useEffect, useState } from 'react';
+import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
 
-// 1. Dummy Data actualizado con tu interfaz Movie
+// Dummy Data
 const DUMMY_MOVIES: Movie[] = [
   {
     id: 1,
@@ -48,37 +57,31 @@ const DUMMY_MOVIES: Movie[] = [
     producer: 'Emma Thomas',
     releaseYear: 2014,
   },
-  {
-    id: 2,
-    title: 'The Dark Knight',
-    genre: MovieGenre.ACCION,
-    clasification: MovieClasification.B15,
-    duration: '152 min',
-    posterUrl:
-      'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
-    description:
-      'Batman se enfrenta al Joker, un criminal que busca sumergir a Ciudad Gótica en el caos absoluto.',
-    director: 'Christopher Nolan',
-    producer: 'Charles Roven',
-    releaseYear: 2008,
-  },
 ];
 
 export default function MovieDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const cine = searchParams.get('cine');
   const movie = DUMMY_MOVIES.find((m) => m.id === Number(params.id));
+
+  const [isManual, setIsManual] = useState(false);
+
+  // Cargar estado inicial del LocalStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('manual-implementation');
+    if (saved !== null) setIsManual(JSON.parse(saved));
+  }, []);
 
   if (!movie) {
     return (
       <Container size="sm" py={100}>
         <Center>
-          <Stack align="center">
+          <Stack>
             <Title order={2}>Película no encontrada</Title>
-            <Button variant="light" onClick={() => router.push('/movies')}>
-              Volver al catálogo
-            </Button>
+            <Button onClick={() => router.push('/movies')}>Volver</Button>
           </Stack>
         </Center>
       </Container>
@@ -87,30 +90,30 @@ export default function MovieDetailPage() {
 
   return (
     <Container size="xl" py="xl">
+      <ImplementationDevTools isManual={isManual} onChange={setIsManual} />
+
+      {/* @TODO: Implementar las funciones manuales de ordenamiento */}
+
+      {/* 1. Header de Navegación */}
       <Button
         variant="subtle"
         leftSection={<IconArrowLeft size={16} />}
-        onClick={() => router.back()}
+        onClick={() => router.push('/movies')}
         mb="xl"
         color="gray"
       >
-        Volver
+        Volver al catálogo
       </Button>
 
-      <Grid gap={50}>
-        {/* Poster */}
-        <Grid.Col span={{ base: 12, md: 4 }}>
+      {/* 2. Sección de Información Principal */}
+      <Grid gap={50} mb={60}>
+        <GridCol span={{ base: 12, md: 4 }}>
           <Paper shadow="xl" radius="lg" style={{ overflow: 'hidden' }}>
-            <Image
-              src={movie.posterUrl}
-              alt={movie.title}
-              fallbackSrc="https://placehold.co/600x900?text=No+Poster"
-            />
+            <Image src={movie.posterUrl} alt={movie.title} />
           </Paper>
-        </Grid.Col>
+        </GridCol>
 
-        {/* Info */}
-        <Grid.Col span={{ base: 12, md: 8 }}>
+        <GridCol span={{ base: 12, md: 8 }}>
           <Stack gap="lg">
             <header>
               <Group justify="space-between" align="flex-start">
@@ -128,17 +131,15 @@ export default function MovieDetailPage() {
                     </Badge>
                   </Group>
                 </Stack>
-
                 <ActionIcon variant="outline" color="red" size="xl" radius="md">
                   <IconHeart size={24} />
                 </ActionIcon>
               </Group>
             </header>
 
-            {/* Quick Stats Grid */}
-            <SimpleGrid cols={{ base: 1, sm: 3 }} verticalSpacing="md">
+            <SimpleGrid cols={{ base: 1, sm: 3 }}>
               <Group gap="sm">
-                <IconClock size={20} color="var(--mantine-color-blue-6)" />
+                <IconClock size={20} color="blue.6" />
                 <div>
                   <Text size="xs" c="dimmed" fw={700}>
                     DURACIÓN
@@ -147,7 +148,7 @@ export default function MovieDetailPage() {
                 </div>
               </Group>
               <Group gap="sm">
-                <IconMovie size={20} color="var(--mantine-color-blue-6)" />
+                <IconMovie size={20} color="blue.6" />
                 <div>
                   <Text size="xs" c="dimmed" fw={700}>
                     GÉNERO
@@ -156,7 +157,7 @@ export default function MovieDetailPage() {
                 </div>
               </Group>
               <Group gap="sm">
-                <IconCalendar size={20} color="var(--mantine-color-blue-6)" />
+                <IconCalendar size={20} color="blue.6" />
                 <div>
                   <Text size="xs" c="dimmed" fw={700}>
                     ESTRENO
@@ -167,63 +168,78 @@ export default function MovieDetailPage() {
             </SimpleGrid>
 
             <Divider />
+            <Text size="lg" lh={1.6} c="gray.7">
+              {movie.description}
+            </Text>
 
-            {/* Sinopsis */}
-            <div>
-              <Text
-                fw={800}
-                fz="sm"
-                c="dimmed"
-                mb={8}
-                style={{ letterSpacing: rem(1) }}
-              >
-                SINOPSIS
-              </Text>
-              <Text size="lg" lh={1.6}>
-                {movie.description}
-              </Text>
-            </div>
-
-            {/* Ficha Técnica Relevante */}
-            <SimpleGrid cols={2} spacing="xl">
+            <SimpleGrid cols={2}>
               <Stack gap={0}>
-                <Group gap={6} mb={4}>
-                  <IconUser size={14} color="dimmed" />
-                  <Text size="xs" c="dimmed" fw={700}>
-                    DIRECTOR
-                  </Text>
-                </Group>
+                <Text size="xs" c="dimmed" fw={700}>
+                  DIRECTOR
+                </Text>
                 <Text fw={600}>{movie.director}</Text>
               </Stack>
-
               <Stack gap={0}>
-                <Group gap={6} mb={4}>
-                  <IconUser size={14} color="dimmed" />
-                  <Text size="xs" c="dimmed" fw={700}>
-                    PRODUCTOR
-                  </Text>
-                </Group>
+                <Text size="xs" c="dimmed" fw={700}>
+                  PRODUCTOR
+                </Text>
                 <Text fw={600}>{movie.producer}</Text>
               </Stack>
             </SimpleGrid>
-
-            <Group mt="xl">
-              <Button
-                size="lg"
-                radius="md"
-                flex={1}
-                gradient={{ from: 'blue', to: 'cyan' }}
-                variant="gradient"
-              >
-                Reservar Boletos
-              </Button>
-              <Button size="lg" variant="light" radius="md" flex={1}>
-                Ver Trailer
-              </Button>
-            </Group>
           </Stack>
-        </Grid.Col>
+        </GridCol>
       </Grid>
+
+      {/* 3. Sección de Funciones (Separada) */}
+      <Box mt={80}>
+        <Stack gap="xs" mb="xl" align="center">
+          <Badge color="blue" variant="filled" size="lg" radius="sm">
+            HORARIOS DISPONIBLES
+          </Badge>
+          <Title order={2} fz={rem(32)}>
+            Funciones de esta película
+          </Title>
+          <Text c="dimmed">
+            Selecciona una ubicación para consultar salas y horarios de
+            proyección
+          </Text>
+        </Stack>
+
+        <Paper withBorder p="xl" radius="lg" shadow="xs" bg="gray.0">
+          <Grid gap="xl">
+            {/* Filtros de Ubicación */}
+            <GridCol span={{ base: 12, md: 3 }}>
+              <LocationSidebar />
+            </GridCol>
+
+            {/* Resultado de Horarios */}
+            <GridCol span={{ base: 12, md: 9 }}>
+              {cine ? (
+                <ProgramGuideContent cine={cine} />
+              ) : (
+                <Center
+                  p={60}
+                  style={{
+                    border: '2px dashed #cbd5e1',
+                    borderRadius: 12,
+                    height: '100%',
+                  }}
+                >
+                  <Stack align="center" gap="sm">
+                    <IconMapPin size={48} color="#94a3b8" stroke={1.5} />
+                    <Text c="dimmed" fw={500} ta="center">
+                      Por favor, selecciona un estado, municipio y complejo{' '}
+                      <br />
+                      en el panel izquierdo para ver las funciones de{' '}
+                      <b>{movie.title}</b>.
+                    </Text>
+                  </Stack>
+                </Center>
+              )}
+            </GridCol>
+          </Grid>
+        </Paper>
+      </Box>
     </Container>
   );
 }
