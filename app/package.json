@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "analyze": "ANALYZE=true next build",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "next dev",
     "format": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "lint": "next lint",
+    "start": "next start",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "analyze": "ANALYZE=true next build"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@mantine/charts": "^8.3.18",
@@ -34,7 +34,8 @@
     "next": "16.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "recharts": "^3.8.0"
+    "recharts": "^3.8.0",
+    "sst": "4.5.7"
   },
   "devDependencies": {
     "@storybook/addon-themes": "^10.3.1",
