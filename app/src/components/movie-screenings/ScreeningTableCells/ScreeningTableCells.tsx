@@ -1,4 +1,3 @@
-// components/screenings/ScreeningTableCells.tsx
 import { Group, Stack, Text, ActionIcon } from '@mantine/core';
 import {
   IconCalendar,
