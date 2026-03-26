@@ -7,19 +7,16 @@ import {
   Text,
   Button,
   Divider,
-  Box,
 } from '@mantine/core';
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle/ColorSchemeToggle';
 import Link from 'next/link';
 import classes from './HeaderSearch.module.css';
+import { HeaderProps } from '@/interfaces/components.interface';
 
-interface HeaderProps {
-  opened: boolean;
-  onToggle: () => void;
-}
+
 
 const links = [
-  { link: '/program-guide', label: 'Cartelera' },
+  { link: '/movie-screenings', label: 'Cartelera' },
   { link: '/movies', label: 'Películas' },
 ];
 
