@@ -1,43 +1,9 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import {
-  Container,
-  Grid,
-  GridCol,
-  Image,
-  Badge,
-  Title,
-  Text,
-  Group,
-  Stack,
-  Button,
-  ActionIcon,
-  Paper,
-  Divider,
-  rem,
-  SimpleGrid,
-  Box,
-  Center,
-} from '@mantine/core';
-import {
-  IconClock,
-  IconArrowLeft,
-  IconHeart,
-  IconCalendar,
-  IconUser,
-  IconMovie,
-  IconMapPin,
-} from '@tabler/icons-react';
+import { Container, Button } from '@mantine/core';
+import { IconArrowLeft } from '@tabler/icons-react';
 
-// Componentes de la Guía de Programación
-import { LocationSidebar } from '@/components/program_guide/LocationSidebar';
-import { ProgramGuideContent } from '@/components/program_guide/ProgramGuideContent';
-import {
-  MovieGenre,
-  MovieClasification,
-  Movie,
-} from '@/interfaces/movie.interface';
 import { useEffect, useState } from 'react';
 import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
 import { MovieNotFound } from '@/components/movies/MovieNotFound/MovieNotFound';

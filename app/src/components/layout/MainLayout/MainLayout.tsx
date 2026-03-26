@@ -21,8 +21,8 @@ interface MainLayoutProps {
 // Mismas rutas que definimos en el Header
 const links = [
   { link: '/', label: 'Inicio' },
-  { link: '/program-guide', label: 'Cartelera' },
   { link: '/movies', label: 'Películas' },
+  { link: '/movie-screenings', label: 'Cartelera' },
 ];
 
 export function MainLayout({ children }: MainLayoutProps) {
