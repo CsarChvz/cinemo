@@ -15,6 +15,8 @@ import {
   IconBuildingCommunity,
 } from '@tabler/icons-react';
 
+
+// @TODO: Get Cinemas around the Country with the database
 // Mock de cines por municipio
 const CINES_POR_MUNI: Record<string, string[]> = {
   zapopan: ['Cinemo Plaza Patria', 'Cinemo Andares', 'Cinemo Gran Plaza'],

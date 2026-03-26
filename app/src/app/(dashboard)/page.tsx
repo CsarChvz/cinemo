@@ -117,7 +117,7 @@ export default function HomePage() {
                     variant="gradient"
                     gradient={{ from: 'blue', to: 'cyan' }}
                     component={Link}
-                    href="/program-guide"
+                    href="/movie-screenings"
                   >
                     Ver Cartelera
                   </Button>

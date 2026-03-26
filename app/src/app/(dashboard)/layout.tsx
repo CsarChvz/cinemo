@@ -1,4 +1,4 @@
-import { MainLayout } from '@/components/layout/MainLayout/MainLayout';
+import { MainLayout } from '@/components/layout/user/MainLayout/MainLayout';
 
 export default function DashboardLayout({
   children,

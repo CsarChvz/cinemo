@@ -1,7 +1,7 @@
 // 1. Importa GridCol por separado (Ya no es Grid.Col)
 import { Container, Grid, GridCol, Title, Text, Box } from '@mantine/core';
-import { LocationSidebar } from '@/components/program_guide/LocationSidebar';
-import { ProgramGuideContent } from '@/components/program_guide/ProgramGuideContent';
+import { LocationSidebar } from '@/components/movie-screenings/LocationSidebar';
+import { ProgramGuideContent } from '@/components/movie-screenings/ProgramGuideContent';
 
 export default async function CarteleraPage({
   searchParams,

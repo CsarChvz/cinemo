@@ -26,8 +26,8 @@ interface AdminMovieCardProps {
   title: string;
   posterUrl: string;
   isActive: boolean;
-  onDelete: (id: number) => void;
-  onToggleStatus: (id: number) => void;
+  onDelete?: (id: number) => void;
+  onToggleStatus?: (id: number) => void;
 }
 
 export function AdminMovieCard({
@@ -83,7 +83,7 @@ export function AdminMovieCard({
                 leftSection={
                   isActive ? <IconEyeOff size={14} /> : <IconEye size={14} />
                 }
-                onClick={() => onToggleStatus(id)}
+                onClick={() => onDelete?.(id)}
               >
                 {isActive ? 'Desactivar' : 'Activar'}
               </Menu.Item>
@@ -91,7 +91,7 @@ export function AdminMovieCard({
               <Menu.Item
                 color="red"
                 leftSection={<IconTrash size={14} />}
-                onClick={() => onDelete(id)}
+                onChange={() => onToggleStatus?.(id)}
               >
                 Eliminar película
               </Menu.Item>
