@@ -30,7 +30,7 @@ export default function MoviesPage() {
           onClasificationsChange={actions.setClasifications}
         />
 
-        <MovieGrid movies={filteredMovies} />
+        <MovieGrid movies={filteredMovies} adminView={false} />
       </Stack>
     </Container>
   );

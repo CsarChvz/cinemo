@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
 import { MovieNotFound } from '@/components/movies/MovieNotFound/MovieNotFound';
 import { DetailsOfMovie } from '@/components/movies/DetailsOfMovie/DetailsOfMovie';
-import MovieScreening from '@/components/program_guide/MovieScreenings/MovieScreenings';
+import MovieScreening from '@/components/movie-screenings/MovieScreenings/MovieScreenings';
 import { DUMMY_MOVIES } from '@/data/MoviesDummy';
 
 

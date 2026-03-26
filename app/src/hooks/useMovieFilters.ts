@@ -3,6 +3,7 @@ import { Movie, MovieClasification, MovieGenre } from "@/interfaces/movie.interf
 import { useMemo, useState } from "react";
 
 export function useMovieFilters(initialMovies: Movie[]){
+    const [movies, setMovies] = useState<Movie[]>(initialMovies);
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState<SortOrder>(SortOrder.DEFAULT);
     const [genres, setGenres] = useState<MovieGenre[]>([]);
@@ -11,9 +12,18 @@ export function useMovieFilters(initialMovies: Movie[]){
     );
     const [isManual, setIsManual] = useState(false);
 
+
+    const handleDelete = (id: number) => {
+      setMovies((prev) => prev.filter((m) => m.id !== id));
+    };
+
+    const handleToggleStatus = (id: number) => {
+      console.log('Cambiando estado de:', id);
+      // Aquí podrías actualizar un campo "isActive" si tu interfaz lo tiene
+    };
       const filteredMovies = useMemo(() => {
         let result = [...initialMovies];
-    
+
         // SI LA IMPLEMENTACIÓN MANUAL ESTÁ DESACTIVADA, USAMOS EL FILTRADO AUTO
         if (!isManual) {
           if (search) {
@@ -21,15 +31,17 @@ export function useMovieFilters(initialMovies: Movie[]){
               m.title.toLowerCase().includes(search.toLowerCase())
             );
           }
-    
+
           if (genres.length > 0) {
             result = result.filter((m) => genres.includes(m.genre));
           }
-    
+
           if (clasifications.length > 0) {
-            result = result.filter((m) => clasifications.includes(m.clasification));
+            result = result.filter((m) =>
+              clasifications.includes(m.clasification)
+            );
           }
-    
+
           if (sort === SortOrder.ASCENDING) {
             result.sort((a, b) => a.title.localeCompare(b.title));
           } else if (sort === SortOrder.DESCENDING) {
@@ -41,15 +53,15 @@ export function useMovieFilters(initialMovies: Movie[]){
           console.log(
             'Modo manual activo: Los filtros automáticos están ignorados.'
           );
-    
+
           /** * TODO: César, aquí puedes implementar tus propios algoritmos:
            * 1. Algoritmos de búsqueda (Búsqueda lineal, binaria, etc.)
            * 2. Algoritmos de ordenamiento (QuickSort, BubbleSort, MergeSort, etc.)
            */
         }
-    
+
         return result;
-      }, [search, sort, genres, clasifications, isManual]);
+      }, [movies, search, sort, genres, clasifications, isManual]);
 
       return {
         state: { search, sort, genres, clasifications, isManual },
@@ -59,6 +71,8 @@ export function useMovieFilters(initialMovies: Movie[]){
           setGenres,
           setClasifications,
           setIsManual,
+          handleDelete,
+          handleToggleStatus,
         },
         filteredMovies,
       };
