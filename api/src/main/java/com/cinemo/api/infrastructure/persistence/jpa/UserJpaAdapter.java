@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -31,6 +32,16 @@ public class UserJpaAdapter implements UserRepositoryPort {
     @Override
     public Optional<User> findByName(String name) {
         return jpaRepository.findByName(name).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
 }

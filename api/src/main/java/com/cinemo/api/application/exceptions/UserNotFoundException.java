@@ -1,7 +1,7 @@
 package com.cinemo.api.application.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String id) {
-        super("No se encontró el hábito con el ID: " + id);
+    public UserNotFoundException(Long id) {
+        super("No se encontró el usuario con el ID: " + id);
     }
 }

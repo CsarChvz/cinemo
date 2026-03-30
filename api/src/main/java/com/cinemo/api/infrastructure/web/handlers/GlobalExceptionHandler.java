@@ -20,12 +20,12 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateUserException.class)
-    public ResponseEntity<String> handleDuplicateHabit(DuplicateUserException ex) {
+    public ResponseEntity<String> handleDuplicateUser(DuplicateUserException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleHabitNotFound(UserNotFoundException ex) {
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
