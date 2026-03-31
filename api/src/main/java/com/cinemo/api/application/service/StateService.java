@@ -56,8 +56,15 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
     // @TODO: Implementar algoritmo de Ordenamiento
     @Override
     public List<State> getStates() {
+        List<State> originalStates = stateRepositoryPort.findAll();
 
-        return stateRepositoryPort.findAll();
+        List<State> states = new ArrayList<>(originalStates);
+
+        if (!states.isEmpty()) {
+            quickSort(states, 0, states.size() - 1);
+        }
+
+        return states;
     }
 
     @Override
@@ -79,12 +86,12 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
         return listaRetorno;
     }
 
-    // @TODD: Usar la busqueda binaria
     @Override
     public Optional<State> getByCode(String code) {
         List<State> states = stateRepositoryPort.findAll();
         return searchBinary(states, code, 0, states.size() - 1);    
     }
+    // -- Busqueda Binaria --
 
     private Optional<State> searchBinary(List<State> states, String code, int low, int high) {
         if (low > high)
@@ -104,4 +111,38 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
     }
 
 
+    // -- QuickSort --
+    private void quickSort(List<State> states, int begin, int end) {
+        if (begin < end) {
+            int index = partition(states, begin, end);
+            quickSort(states, begin, index - 1); // Elementos menores a la izquierda
+            quickSort(states, index - 1, end); // Elementos mayores a la derecha
+        }
+    }
+
+    private int partition(List<State> states, int begin, int end) {
+        // Tomamos el último elemento como pivote
+        State pivot = states.get(end);
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            // Comparamos el código del estado actual con el del pivote
+            // .compareTo < 0 significa que es alfabéticamente menor
+            if (states.get(j).getCode().compareTo(pivot.getCode()) <= 0) {
+                i++;
+
+                // Swap: intercambiamos elementos
+                State swapTemp = states.get(i);
+                states.set(i, states.get(j));
+                states.set(j, swapTemp);
+            }
+        }
+
+        // Ponemos el pivote en su posición correcta
+        State swapTemp = states.get(i + 1);
+        states.set(i + 1, states.get(end));
+        states.set(end, swapTemp);
+
+        return i + 1;
+    }
 }
