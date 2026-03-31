@@ -32,6 +32,8 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
 
     @Override
     public List<State> getStates() {
+
+        // @TODO: Implementar algoritmo de Ordenamiento
         return stateRepositoryPort.findAll();
     }
     
