@@ -8,5 +8,8 @@ import com.cinemo.api.domain.State;
 public interface RetrieveStateUseCase {
     List<State> getStates();
 
+    List<State> getMemoryStates();
+
     Optional<State> getByCode(String code);
+
 }

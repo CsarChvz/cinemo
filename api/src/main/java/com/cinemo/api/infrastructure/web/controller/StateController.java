@@ -19,6 +19,7 @@ import com.cinemo.api.infrastructure.web.controller.dto.state.StateDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateRequestDTO;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateResponseDTO;
 
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,7 @@ public class StateController {
     private final CreateStateUseCase createStateUseCase;
     private final RetrieveStateUseCase retrieveStateUseCase;
     private final StateDtoMapper stateDtoMapper;
+
 
 
     @PostMapping
@@ -47,6 +49,17 @@ public class StateController {
         List<StateResponseDTO> responseDTOs = states.stream().map(stateDtoMapper::toResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
+    }
+
+    @GetMapping("/struct")
+    public ResponseEntity<List<StateResponseDTO>> getStatesFromMemory() {
+        List<State> states = retrieveStateUseCase.getMemoryStates();
+
+        List<StateResponseDTO> responseDTOs = states.stream()
+                .map(stateDtoMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(responseDTOs);
     }
 
     @GetMapping("/{code}")

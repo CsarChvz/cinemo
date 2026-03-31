@@ -1,20 +1,41 @@
 package com.cinemo.api.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.cinemo.api.application.exceptions.DuplicateStateExceptioni;
+import com.cinemo.api.application.structures.NodoSimple;
 import com.cinemo.api.domain.State;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
 import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.domain.ports.out.StateRepositoryPort;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
 
     private final StateRepositoryPort stateRepositoryPort;
+    private NodoSimple<State> stateList;
+
+    // @TODO: Checar si esto tiene que ser cambiado en la implementacion de Dynamo
+    @PostConstruct
+    public void loadStates() {
+        List<State> states = stateRepositoryPort.findAll();
+
+        this.stateList = null;
+
+        for (int i = states.size() - 1; i >= 0; i--) {
+            NodoSimple<State> nuevoNodo = new NodoSimple<>();
+            nuevoNodo.setContenido(states.get(i));
+
+            nuevoNodo.setSiguiente(this.stateList);
+
+            this.stateList = nuevoNodo;
+        }
+    }
 
     @Override
     public State createState(State state) {
@@ -31,6 +52,7 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
         return stateRepositoryPort.saveState(state);
     }
 
+
     // @TODO: Implementar algoritmo de Ordenamiento
     @Override
     public List<State> getStates() {
@@ -38,6 +60,24 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
         return stateRepositoryPort.findAll();
     }
 
+    @Override
+    public List<State> getMemoryStates() {
+        List<State> listaRetorno = new ArrayList<>();
+
+        // Empezamos desde la cabeza de la lista en memoria
+        NodoSimple<State> actual = this.stateList;
+
+        // Recorremos la estructura hasta que el puntero sea nulo
+        while (actual != null) {
+            // Añadimos el contenido del nodo actual a la lista de salida
+            listaRetorno.add(actual.getContenido());
+
+            // Saltamos al siguiente nodo para obtenerlo
+            actual = actual.getSiguiente();
+        }
+
+        return listaRetorno;
+    }
 
     // @TODD: Usar la busqueda binaria
     @Override
@@ -62,5 +102,6 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
         return searchBinary(states, code, low, mid - 1); // Recorremos la busqueda a la izquierda <- mid
 
     }
+
 
 }
