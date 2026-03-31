@@ -19,6 +19,6 @@ public class StateEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 5)
+    @Column(nullable = false, unique = true, length = 10)
     private String code;
 }
