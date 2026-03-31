@@ -52,4 +52,11 @@ public class StateJpaAdapter implements StateRepositoryPort{
         return mapper.toDomain(updatedEntity);
     }
 
+    @Override
+    public void deleteState(State state) {
+
+        StateEntity entity = mapper.toEntity(state);
+        jpaRepository.delete(entity);
+    }
+
 }

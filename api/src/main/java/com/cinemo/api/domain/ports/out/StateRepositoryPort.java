@@ -15,4 +15,6 @@ public interface StateRepositoryPort {
     List<State> findAll();
 
     State updateState(State state);
+
+    void deleteState(State state);
 }

@@ -156,4 +156,9 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase, M
         return stateRepositoryPort.updateState(state);
     }
 
+    @Override
+    public void removeState(State state) {
+        stateRepositoryPort.deleteState(state);
+    }
+
 }

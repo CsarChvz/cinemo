@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,5 +86,14 @@ public class StateController {
                     return ResponseEntity.ok(stateDtoMapper.toResponse(updated));
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteState(@PathVariable Long id) {
+
+        return retrieveStateUseCase.getById(id).map(existingState -> {
+            manageStateUseCase.removeState(existingState);
+            return ResponseEntity.noContent().<Void>build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
