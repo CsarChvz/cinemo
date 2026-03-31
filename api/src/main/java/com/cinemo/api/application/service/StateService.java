@@ -1,6 +1,7 @@
 package com.cinemo.api.application.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.cinemo.api.application.exceptions.DuplicateStateExceptioni;
 import com.cinemo.api.domain.State;
@@ -30,12 +31,36 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
         return stateRepositoryPort.saveState(state);
     }
 
+    // @TODO: Implementar algoritmo de Ordenamiento
     @Override
     public List<State> getStates() {
 
-        // @TODO: Implementar algoritmo de Ordenamiento
         return stateRepositoryPort.findAll();
     }
-    
+
+
+    // @TODD: Usar la busqueda binaria
+    @Override
+    public Optional<State> getByCode(String code) {
+        List<State> states = stateRepositoryPort.findAll();
+        return searchBinary(states, code, 0, states.size() - 1);
+    }
+
+    private Optional<State> searchBinary(List<State> states, String code, int low, int high) {
+        if (low > high)
+            return Optional.empty(); // Caso base
+
+        int mid = (low + high) / 2;
+        int compare = states.get(mid).getCode().compareTo(code);
+
+        if (compare == 0)
+            return Optional.of(states.get(mid)); // Encontramos y devolvemos
+
+        if (compare < 0)
+            return searchBinary(states, code, mid + 1, high); // Recorremos la busqueda a la derecha mid ->
+
+        return searchBinary(states, code, low, mid - 1); // Recorremos la busqueda a la izquierda <- mid
+
+    }
 
 }

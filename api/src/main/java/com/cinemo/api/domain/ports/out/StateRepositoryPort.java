@@ -11,4 +11,5 @@ public interface StateRepositoryPort {
     Optional<State> findByName(String name);
 
     List<State> findAll();
+
 }
