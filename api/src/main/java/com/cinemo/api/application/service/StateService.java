@@ -8,6 +8,7 @@ import com.cinemo.api.application.exceptions.DuplicateStateExceptioni;
 import com.cinemo.api.application.structures.NodoSimple;
 import com.cinemo.api.domain.State;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
+import com.cinemo.api.domain.ports.in.ManageStateUseCase;
 import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.domain.ports.out.StateRepositoryPort;
 
@@ -15,7 +16,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
+public class StateService implements CreateStateUseCase, RetrieveStateUseCase, ManageStateUseCase {
 
     private final StateRepositoryPort stateRepositoryPort;
     private NodoSimple<State> stateList;
@@ -144,4 +145,15 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
 
         return i + 1;
     }
+
+    @Override
+    public Optional<State> getById(Long id) {
+        return stateRepositoryPort.findById(id);
+    }
+
+    @Override
+    public State modifiedState(State state) {
+        return stateRepositoryPort.updateState(state);
+    }
+
 }

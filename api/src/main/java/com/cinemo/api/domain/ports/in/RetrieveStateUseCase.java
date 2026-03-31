@@ -12,4 +12,6 @@ public interface RetrieveStateUseCase {
 
     Optional<State> getByCode(String code);
 
+    Optional<State> getById(Long id);
+
 }

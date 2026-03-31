@@ -39,4 +39,17 @@ public class StateJpaAdapter implements StateRepositoryPort{
         return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 
+    @Override
+    public Optional<State> findById(Long id) {
+        return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public State updateState(State state) {
+        StateEntity entity = mapper.toEntity(state);
+        StateEntity updatedEntity = jpaRepository.save(entity);
+
+        return mapper.toDomain(updatedEntity);
+    }
+
 }

@@ -7,6 +7,7 @@ import com.cinemo.api.application.service.StateService;
 import com.cinemo.api.application.service.UserService;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
 import com.cinemo.api.domain.ports.in.CreateUserUseCase;
+import com.cinemo.api.domain.ports.in.ManageStateUseCase;
 import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.domain.ports.in.RetriveUsersUseCase;
 import com.cinemo.api.domain.ports.out.StateRepositoryPort;
@@ -42,6 +43,11 @@ public class ApplicationConfig {
 
     @Bean
     RetrieveStateUseCase retrieveStateUseCase(StateRepositoryPort stateRepositoryPort) {
+        return new StateService(stateRepositoryPort);
+    }
+
+    @Bean
+    ManageStateUseCase manageStateUseCase(StateRepositoryPort stateRepositoryPort) {
         return new StateService(stateRepositoryPort);
     }
 }

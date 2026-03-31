@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.State;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
+import com.cinemo.api.domain.ports.in.ManageStateUseCase;
 import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateRequestDTO;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateResponseDTO;
-
+import com.cinemo.api.infrastructure.web.controller.dto.state.StateUpdateRequestDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class StateController {
 
     private final CreateStateUseCase createStateUseCase;
     private final RetrieveStateUseCase retrieveStateUseCase;
+    private final ManageStateUseCase manageStateUseCase;
     private final StateDtoMapper stateDtoMapper;
 
 
@@ -70,4 +73,17 @@ public class StateController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<StateResponseDTO> updateState(@PathVariable Long id,
+            @Valid @RequestBody StateUpdateRequestDTO requestDTO) {
+
+        // 1. Buscamos el estado por ID
+        return retrieveStateUseCase.getById(id)
+                .map(existingState -> {
+                    stateDtoMapper.updateDomainFromDto(requestDTO, existingState);
+                    State updated = manageStateUseCase.modifiedState(existingState);
+                    return ResponseEntity.ok(stateDtoMapper.toResponse(updated));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

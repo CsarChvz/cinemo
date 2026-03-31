@@ -10,6 +10,9 @@ public interface StateRepositoryPort {
 
     Optional<State> findByName(String name);
 
+    Optional<State> findById(Long id);
+
     List<State> findAll();
 
+    State updateState(State state);
 }
