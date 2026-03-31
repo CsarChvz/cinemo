@@ -1,8 +1,10 @@
 package com.cinemo.api.infrastructure.web.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.State;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
+import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateRequestDTO;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateResponseDTO;
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class StateController {
 
     private final CreateStateUseCase createStateUseCase;
+    private final RetrieveStateUseCase retrieveStateUseCase;
     private final StateDtoMapper stateDtoMapper;
 
 
@@ -34,5 +38,13 @@ public class StateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(stateDtoMapper.toResponse(createState));
     }
 
-    
+    @GetMapping
+    public ResponseEntity<List<StateResponseDTO>> getAllStates() {
+
+        List<State> states = retrieveStateUseCase.getStates();
+        List<StateResponseDTO> responseDTOs = states.stream().map(stateDtoMapper::toResponse).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -31,6 +32,11 @@ public class StateJpaAdapter implements StateRepositoryPort{
     @Override
     public Optional<State> findByName(String name) {
         return jpaRepository.findByName(name).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<State> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 
 }

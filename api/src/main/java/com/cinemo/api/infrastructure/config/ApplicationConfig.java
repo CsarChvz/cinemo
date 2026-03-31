@@ -7,6 +7,7 @@ import com.cinemo.api.application.service.StateService;
 import com.cinemo.api.application.service.UserService;
 import com.cinemo.api.domain.ports.in.CreateStateUseCase;
 import com.cinemo.api.domain.ports.in.CreateUserUseCase;
+import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
 import com.cinemo.api.domain.ports.in.RetriveUsersUseCase;
 import com.cinemo.api.domain.ports.out.StateRepositoryPort;
 import com.cinemo.api.domain.ports.out.UserRepositoryPort;
@@ -38,4 +39,9 @@ public class ApplicationConfig {
         return new StateService(stateRepositoryPort);
     }
     // Inyectamos StateJpaAdapter --> StateRepositoryPort --> StateUseCase
+
+    @Bean
+    RetrieveStateUseCase retrieveStateUseCase(StateRepositoryPort stateRepositoryPort) {
+        return new StateService(stateRepositoryPort);
+    }
 }

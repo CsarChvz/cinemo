@@ -1,5 +1,7 @@
 package com.cinemo.api.infrastructure.persistence.jpa.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -21,4 +23,7 @@ public class StateEntity {
 
     @Column(nullable = false, unique = true, length = 10)
     private String code;
+
+    @OneToMany(mappedBy = "state")
+    private List<MunicipalityEntity> municipalities;
 }
