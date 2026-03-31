@@ -1,4 +1,4 @@
-package com.cinemo.api.infrastructure.persistence.jpa;
+package com.cinemo.api.infrastructure.persistence.jpa.mapper;
 
 import org.mapstruct.Mapper;
 import com.cinemo.api.domain.User;

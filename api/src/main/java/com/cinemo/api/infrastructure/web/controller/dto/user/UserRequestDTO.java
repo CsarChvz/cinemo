@@ -1,4 +1,4 @@
-package com.cinemo.api.infrastructure.web.controller.dto;
+package com.cinemo.api.infrastructure.web.controller.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

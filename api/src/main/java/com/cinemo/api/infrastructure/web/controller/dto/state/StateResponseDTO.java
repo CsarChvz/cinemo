@@ -1,11 +1,12 @@
-package com.cinemo.api.infrastructure.web.controller.dto;
+package com.cinemo.api.infrastructure.web.controller.dto.state;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserResponseDTO {
+public class StateResponseDTO {
     private Long id;
     private String name;
+    private String code;
 }

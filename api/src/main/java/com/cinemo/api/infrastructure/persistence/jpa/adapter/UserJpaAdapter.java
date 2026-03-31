@@ -1,4 +1,4 @@
-package com.cinemo.api.infrastructure.persistence.jpa;
+package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.cinemo.api.domain.User;
 import com.cinemo.api.domain.ports.out.UserRepositoryPort;
 import com.cinemo.api.infrastructure.persistence.jpa.entity.UserEntity;
+import com.cinemo.api.infrastructure.persistence.jpa.mapper.UserMapper;
 import com.cinemo.api.infrastructure.persistence.jpa.repository.UserJpaRepository;
 
 import lombok.RequiredArgsConstructor;

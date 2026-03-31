@@ -3,7 +3,6 @@ package com.cinemo.api.infrastructure.web.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinemo.api.domain.User;
 import com.cinemo.api.domain.ports.in.CreateUserUseCase;
 import com.cinemo.api.domain.ports.in.RetriveUsersUseCase;
-import com.cinemo.api.infrastructure.web.controller.dto.UserDTOMapper;
-import com.cinemo.api.infrastructure.web.controller.dto.UserRequestDTO;
-import com.cinemo.api.infrastructure.web.controller.dto.UserResponseDTO;
+import com.cinemo.api.infrastructure.web.controller.dto.user.UserDTOMapper;
+import com.cinemo.api.infrastructure.web.controller.dto.user.UserRequestDTO;
+import com.cinemo.api.infrastructure.web.controller.dto.user.UserResponseDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

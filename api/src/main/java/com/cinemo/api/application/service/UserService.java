@@ -1,4 +1,4 @@
-package com.cinemo.api.application;
+package com.cinemo.api.application.service;
 
 import java.util.List;
 
