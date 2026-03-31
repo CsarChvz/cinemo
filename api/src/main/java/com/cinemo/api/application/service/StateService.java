@@ -115,33 +115,32 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
     private void quickSort(List<State> states, int begin, int end) {
         if (begin < end) {
             int index = partition(states, begin, end);
-            quickSort(states, begin, index - 1); // Elementos menores a la izquierda
-            quickSort(states, index - 1, end); // Elementos mayores a la derecha
+
+            quickSort(states, begin, index - 1);
+            quickSort(states, index + 1, end);
         }
     }
 
     private int partition(List<State> states, int begin, int end) {
-        // Tomamos el último elemento como pivote
         State pivot = states.get(end);
         int i = (begin - 1);
 
         for (int j = begin; j < end; j++) {
-            // Comparamos el código del estado actual con el del pivote
-            // .compareTo < 0 significa que es alfabéticamente menor
             if (states.get(j).getCode().compareTo(pivot.getCode()) <= 0) {
                 i++;
 
-                // Swap: intercambiamos elementos
-                State swapTemp = states.get(i);
-                states.set(i, states.get(j));
-                states.set(j, swapTemp);
+                // Swap solo si los índices son diferentes
+                if (i != j) {
+                    State temp = states.get(i);
+                    states.set(i, states.get(j));
+                    states.set(j, temp);
+                }
             }
         }
 
-        // Ponemos el pivote en su posición correcta
-        State swapTemp = states.get(i + 1);
+        State temp = states.get(i + 1);
         states.set(i + 1, states.get(end));
-        states.set(end, swapTemp);
+        states.set(end, temp);
 
         return i + 1;
     }
