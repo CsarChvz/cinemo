@@ -1,4 +1,4 @@
-package com.cinemo.api.domain.ports.in;
+package com.cinemo.api.domain.ports.in.state;
 
 import java.util.List;
 import java.util.Optional;

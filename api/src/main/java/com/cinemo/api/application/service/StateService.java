@@ -7,9 +7,9 @@ import java.util.Optional;
 import com.cinemo.api.application.exceptions.DuplicateStateExceptioni;
 import com.cinemo.api.application.structures.NodoSimple;
 import com.cinemo.api.domain.State;
-import com.cinemo.api.domain.ports.in.CreateStateUseCase;
-import com.cinemo.api.domain.ports.in.ManageStateUseCase;
-import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
+import com.cinemo.api.domain.ports.in.state.CreateStateUseCase;
+import com.cinemo.api.domain.ports.in.state.ManageStateUseCase;
+import com.cinemo.api.domain.ports.in.state.RetrieveStateUseCase;
 import com.cinemo.api.domain.ports.out.StateRepositoryPort;
 
 import jakarta.annotation.PostConstruct;

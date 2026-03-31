@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.State;
-import com.cinemo.api.domain.ports.in.CreateStateUseCase;
-import com.cinemo.api.domain.ports.in.ManageStateUseCase;
-import com.cinemo.api.domain.ports.in.RetrieveStateUseCase;
+import com.cinemo.api.domain.ports.in.state.CreateStateUseCase;
+import com.cinemo.api.domain.ports.in.state.ManageStateUseCase;
+import com.cinemo.api.domain.ports.in.state.RetrieveStateUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateRequestDTO;
 import com.cinemo.api.infrastructure.web.controller.dto.state.StateResponseDTO;

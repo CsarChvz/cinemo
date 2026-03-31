@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.User;
-import com.cinemo.api.domain.ports.in.CreateUserUseCase;
-import com.cinemo.api.domain.ports.in.RetriveUsersUseCase;
+import com.cinemo.api.domain.ports.in.user.CreateUserUseCase;
+import com.cinemo.api.domain.ports.in.user.RetriveUsersUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.user.UserDTOMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.user.UserRequestDTO;
 import com.cinemo.api.infrastructure.web.controller.dto.user.UserResponseDTO;
