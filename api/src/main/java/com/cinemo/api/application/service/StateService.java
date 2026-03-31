@@ -43,7 +43,7 @@ public class StateService implements CreateStateUseCase, RetrieveStateUseCase {
     @Override
     public Optional<State> getByCode(String code) {
         List<State> states = stateRepositoryPort.findAll();
-        return searchBinary(states, code, 0, states.size() - 1);
+        return searchBinary(states, code, 0, states.size() - 1);    
     }
 
     private Optional<State> searchBinary(List<State> states, String code, int low, int high) {
