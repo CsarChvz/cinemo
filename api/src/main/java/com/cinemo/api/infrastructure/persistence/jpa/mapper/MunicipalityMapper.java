@@ -1,6 +1,7 @@
 package com.cinemo.api.infrastructure.persistence.jpa.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.cinemo.api.domain.Municipality;
 import com.cinemo.api.infrastructure.persistence.jpa.entity.MunicipalityEntity;

@@ -23,7 +23,7 @@ public class MunicipalityEntity {
     @JoinColumn(name = "state_id", nullable = false)
     private StateEntity state;
 
-    @OneToMany(mappedBy = "cinema")
+    @OneToMany(mappedBy = "municipality")
     private List<CinemaEntity> cinemas;
 
 }
