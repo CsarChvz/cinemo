@@ -6,8 +6,6 @@ import lombok.Data;
 public class Municipality {
 
   private Long id;
-
   private String name;
-
   private State state;
 }
