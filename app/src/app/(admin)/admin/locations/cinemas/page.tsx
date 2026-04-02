@@ -93,7 +93,7 @@ export default function CinemasListPage() {
   } = useLocationTableManagement<CinemaRecord>({
     initialData: DUMMY_CINEMAS,
     defaultSortColumn: 'name',
-    pageSize: 5,
+    pageSize: 10,
     filterFn: (item, q) =>
       item.name.toLowerCase().includes(q.toLowerCase()) ||
       item.municipality.toLowerCase().includes(q.toLowerCase()) ||
@@ -124,7 +124,6 @@ export default function CinemasListPage() {
         <Paper withBorder radius="md" shadow="xs">
           <DataTable
             idAccessor="id"
-            height={550}
             withTableBorder
             // 3. Conectamos los datos y paginación
             records={records}
