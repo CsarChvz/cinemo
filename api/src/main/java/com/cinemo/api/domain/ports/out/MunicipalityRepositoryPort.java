@@ -11,4 +11,6 @@ public interface MunicipalityRepositoryPort {
   Optional<Municipality> findByName(String name);
 
   List<Municipality> findAll();
+
+  Optional<Municipality> findById(Long id);
 }

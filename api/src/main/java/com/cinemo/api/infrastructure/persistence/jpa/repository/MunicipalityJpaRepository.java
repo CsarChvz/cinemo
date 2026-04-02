@@ -13,4 +13,7 @@ public interface MunicipalityJpaRepository extends JpaRepository<MunicipalityEnt
 
   @EntityGraph(attributePaths = { "state" })
   List<MunicipalityEntity> findAll();
+
+  @EntityGraph(attributePaths = { "state" })
+  Optional<MunicipalityEntity> findById(Long id);
 }

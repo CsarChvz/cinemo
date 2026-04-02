@@ -1,6 +1,7 @@
 package com.cinemo.api.infrastructure.web.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import com.cinemo.api.infrastructure.web.controller.dto.municipality.Municipalit
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/v1/muncipality")
@@ -33,6 +35,14 @@ public class MunicipalityController {
     List<Municipality> municipalities = retrieveMunicipalityUseCase.getMunicipalities();
     List<MunicipalityResponseDto> responseDTOs = municipalities.stream().map(municipalityDtoMapper::toResponse)
         .toList();
+    return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<Optional<MunicipalityResponseDto>> getById(@PathVariable Long id) {
+    Optional<Municipality> municipalities = retrieveMunicipalityUseCase.getById(id);
+    Optional<MunicipalityResponseDto> responseDTOs = municipalities.map(municipalityDtoMapper::toResponse);
+
     return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
   }
 

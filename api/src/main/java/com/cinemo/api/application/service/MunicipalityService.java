@@ -1,6 +1,7 @@
 package com.cinemo.api.application.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.cinemo.api.application.exceptions.DuplicateMunicipalityException;
 import com.cinemo.api.domain.Municipality;
@@ -29,6 +30,11 @@ public class MunicipalityService implements ManageMunicipalityUseCase, RetrieveM
   @Override
   public List<Municipality> getMunicipalities() {
     return municipalityRepositoryPort.findAll();
+  }
+
+  @Override
+  public Optional<Municipality> getById(Long id) {
+    return municipalityRepositoryPort.findById(id);
   }
 
 }

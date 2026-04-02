@@ -38,4 +38,9 @@ public class MunicipalityJpaAdapter implements MunicipalityRepositoryPort {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
   }
 
+  @Override
+  public Optional<Municipality> findById(Long id) {
+    return jpaRepository.findById(id).map(mapper::toDomain);
+  }
+
 }
