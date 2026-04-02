@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -30,6 +31,11 @@ public class MunicipalityJpaAdapter implements MunicipalityRepositoryPort {
   @Override
   public Optional<Municipality> findByName(String name) {
     return jpaRepository.findByName(name).map(mapper::toDomain);
+  }
+
+  @Override
+  public List<Municipality> findAll() {
+    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
   }
 
 }
