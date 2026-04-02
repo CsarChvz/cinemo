@@ -122,7 +122,14 @@ export default function GestionFuncionesPage() {
                 accessor: 'actions',
                 title: 'Acciones',
                 textAlign: 'right',
-                render: () => <ActionButtons />,
+                render: (record: any) => {
+                  // Obtenemos el ID de la función o de la película (según tus datos)
+                  const recordId = record.id || record.movie?.id;
+
+                  return (
+                    <ActionButtons id={recordId} basePath="/admin/funciones" />
+                  );
+                },
               },
             ]}
           />

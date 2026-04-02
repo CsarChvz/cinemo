@@ -1,4 +1,4 @@
-import { Group, Stack, Text, ActionIcon } from '@mantine/core';
+import { Group, Stack, Text, ActionIcon, Tooltip } from '@mantine/core';
 import {
   IconCalendar,
   IconClock,
@@ -7,6 +7,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 
 export const DateTimeCell = ({ date }: { date: Date | string }) => (
   <Stack gap={0}>
@@ -23,16 +24,57 @@ export const DateTimeCell = ({ date }: { date: Date | string }) => (
   </Stack>
 );
 
-export const ActionButtons = () => (
+interface ActionButtonsProps {
+  id: string | number;
+  basePath: string; // Ej: '/admin/funciones' o '/admin/locations/states'
+  onDelete?: (id: string | number) => void;
+}
+
+export const ActionButtons = ({
+  id,
+  basePath,
+  onDelete,
+}: ActionButtonsProps) => (
   <Group gap={4} justify="right" wrap="nowrap">
-    <ActionIcon size="sm" variant="subtle" color="green">
-      <IconEye size={16} />
-    </ActionIcon>
-    <ActionIcon size="sm" variant="subtle" color="blue">
-      <IconEdit size={16} />
-    </ActionIcon>
-    <ActionIcon size="sm" variant="subtle" color="red">
-      <IconTrash size={16} />
-    </ActionIcon>
+    <Tooltip label="Ver detalle">
+      <ActionIcon
+        component={Link}
+        href={`${basePath}/${id}`}
+        size="sm"
+        variant="subtle"
+        color="gray"
+      >
+        <IconEye size={16} />
+      </ActionIcon>
+    </Tooltip>
+
+    <Tooltip label="Editar">
+      <ActionIcon
+        component={Link}
+        href={`${basePath}/${id}/edit`}
+        size="sm"
+        variant="subtle"
+        color="blue"
+      >
+        <IconEdit size={16} />
+      </ActionIcon>
+    </Tooltip>
+
+    <Tooltip label="Eliminar">
+      <ActionIcon
+        size="sm"
+        variant="subtle"
+        color="red"
+        onClick={() => {
+          if (onDelete) {
+            onDelete(id);
+          } else {
+            console.log('Eliminar registro con ID:', id);
+          }
+        }}
+      >
+        <IconTrash size={16} />
+      </ActionIcon>
+    </Tooltip>
   </Group>
 );
