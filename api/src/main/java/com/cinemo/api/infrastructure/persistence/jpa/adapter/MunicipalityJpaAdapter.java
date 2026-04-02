@@ -43,4 +43,18 @@ public class MunicipalityJpaAdapter implements MunicipalityRepositoryPort {
     return jpaRepository.findById(id).map(mapper::toDomain);
   }
 
+  @Override
+  public Municipality modify(Municipality municipality) {
+    MunicipalityEntity entity = mapper.toEntity(municipality);
+    MunicipalityEntity savedEntity = jpaRepository.save(entity);
+
+    return mapper.toDomain(savedEntity);
+  }
+
+  @Override
+  public void remove(Municipality municipality) {
+    MunicipalityEntity entity = mapper.toEntity(municipality);
+    jpaRepository.delete(entity);
+  }
+
 }

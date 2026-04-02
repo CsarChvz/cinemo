@@ -13,4 +13,8 @@ public interface MunicipalityRepositoryPort {
   List<Municipality> findAll();
 
   Optional<Municipality> findById(Long id);
+
+  Municipality modify(Municipality municipality);
+
+  void remove(Municipality municipality);
 }

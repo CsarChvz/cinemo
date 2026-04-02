@@ -16,10 +16,14 @@ import com.cinemo.api.domain.ports.in.municipality.RetrieveMunicipalityUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityResponseDto;
+import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityUpdateRequestDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
@@ -52,6 +56,25 @@ public class MunicipalityController {
     Municipality createdMunicipality = manageMunicipalityUseCase.create(domain);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(municipalityDtoMapper.toResponse(createdMunicipality));
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<MunicipalityResponseDto> updateMunicipality(@PathVariable Long id,
+      @Valid @RequestBody MunicipalityUpdateRequestDto requestDto) {
+    return retrieveMunicipalityUseCase.getById(id).map(
+        existingMunicipality -> {
+          municipalityDtoMapper.updateDomainFromDto(requestDto, existingMunicipality);
+          Municipality updated = manageMunicipalityUseCase.edit(existingMunicipality);
+          return ResponseEntity.ok(municipalityDtoMapper.toResponse(updated));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteState(@PathVariable Long id) {
+    return retrieveMunicipalityUseCase.getById(id).map(existingMunicipality -> {
+      manageMunicipalityUseCase.delete(existingMunicipality);
+      return ResponseEntity.noContent().<Void>build();
+    }).orElseGet(() -> ResponseEntity.notFound().build());
   }
 
 }

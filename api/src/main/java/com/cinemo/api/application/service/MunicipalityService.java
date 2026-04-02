@@ -37,4 +37,14 @@ public class MunicipalityService implements ManageMunicipalityUseCase, RetrieveM
     return municipalityRepositoryPort.findById(id);
   }
 
+  @Override
+  public Municipality edit(Municipality municipality) {
+    return municipalityRepositoryPort.modify(municipality);
+  }
+
+  @Override
+  public void delete(Municipality municipality) {
+    municipalityRepositoryPort.remove(municipality);
+  }
+
 }
