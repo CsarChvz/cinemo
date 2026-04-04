@@ -1,6 +1,7 @@
 package com.cinemo.api.application.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.cinemo.api.domain.Cinema;
 import com.cinemo.api.domain.ports.in.cinema.ManageCinemaUseCase;
@@ -21,6 +22,16 @@ public class CinemaService implements ManageCinemaUseCase, RetrieveCinemaUseCase
     @Override
     public List<Cinema> getCinemas() {
         return cinemaRepositoryPort.findAll();
+    }
+
+    @Override
+    public Optional<Cinema> getById(Long id) {
+        return cinemaRepositoryPort.findById(id);
+    }
+
+    @Override
+    public void delete(Cinema cinema) {
+        cinemaRepositoryPort.delete(cinema);
     }
 
 }

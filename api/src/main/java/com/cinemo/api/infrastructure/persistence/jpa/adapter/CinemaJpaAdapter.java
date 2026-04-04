@@ -1,6 +1,7 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,17 @@ public class CinemaJpaAdapter implements CinemaRepositoryPort {
     @Override
     public List<Cinema> findAll() {
         return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public Optional<Cinema> findById(Long id) {
+        return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public void delete(Cinema cinema) {
+        CinemaEntity entity = mapper.toEntity(cinema);
+        jpaRepository.delete(entity);
     }
 
 }
