@@ -24,6 +24,4 @@ public class StateEntity {
     @Column(nullable = false, unique = true, length = 10)
     private String code;
 
-    @OneToMany(mappedBy = "state")
-    private List<MunicipalityEntity> municipalities;
 }

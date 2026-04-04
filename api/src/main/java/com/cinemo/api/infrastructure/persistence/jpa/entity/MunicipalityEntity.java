@@ -1,7 +1,5 @@
 package com.cinemo.api.infrastructure.persistence.jpa.entity;
 
-import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
