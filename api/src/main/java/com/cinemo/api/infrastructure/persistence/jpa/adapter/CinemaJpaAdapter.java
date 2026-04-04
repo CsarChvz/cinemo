@@ -1,5 +1,7 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.cinemo.api.domain.Cinema;
@@ -9,7 +11,6 @@ import com.cinemo.api.infrastructure.persistence.jpa.mapper.CinemaMapper;
 import com.cinemo.api.infrastructure.persistence.jpa.repository.CinemaJpaRepository;
 
 import lombok.RequiredArgsConstructor;
-
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class CinemaJpaAdapter implements CinemaRepositoryPort {
         CinemaEntity entitySaved = jpaRepository.save(entity);
 
         return mapper.toDomain(entitySaved);
+    }
+
+    @Override
+    public List<Cinema> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 
 }
