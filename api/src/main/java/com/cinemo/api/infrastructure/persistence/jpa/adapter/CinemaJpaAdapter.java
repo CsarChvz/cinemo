@@ -44,4 +44,12 @@ public class CinemaJpaAdapter implements CinemaRepositoryPort {
         jpaRepository.delete(entity);
     }
 
+    @Override
+    public Cinema modify(Cinema cinema) {
+        CinemaEntity entity = mapper.toEntity(cinema);
+        CinemaEntity savedEntity = jpaRepository.save(entity);
+
+        return mapper.toDomain(savedEntity);
+    }
+
 }

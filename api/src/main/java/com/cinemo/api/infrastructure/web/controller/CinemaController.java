@@ -9,6 +9,7 @@ import com.cinemo.api.domain.ports.in.cinema.RetrieveCinemaUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
+import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaUpdateRequestDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +56,17 @@ public class CinemaController {
         Optional<CinemaResponseDto> responseDto = cinema.map(cinemaDtoMapper::toResponse);
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CinemaResponseDto> update(@PathVariable Long id,
+            @Valid @RequestBody CinemaUpdateRequestDto requestDto) {
+        return retrieveCinemaUseCase.getById(id).map(
+                existingCinema -> {
+                    cinemaDtoMapper.updateDomainFromDto(requestDto, existingCinema);
+                    Cinema updated = manageCinemaUseCase.update(existingCinema);
+                    return ResponseEntity.ok(cinemaDtoMapper.toResponse(updated));
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

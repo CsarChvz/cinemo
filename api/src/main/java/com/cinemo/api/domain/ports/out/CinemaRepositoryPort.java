@@ -13,5 +13,7 @@ public interface CinemaRepositoryPort {
 
     Optional<Cinema> findById(Long id);
 
+    Cinema modify(Cinema cinema);
+
     void delete(Cinema cinema);
 }

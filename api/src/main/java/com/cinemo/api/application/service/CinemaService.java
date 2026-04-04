@@ -34,4 +34,9 @@ public class CinemaService implements ManageCinemaUseCase, RetrieveCinemaUseCase
         cinemaRepositoryPort.delete(cinema);
     }
 
+    @Override
+    public Cinema update(Cinema cinema) {
+        return cinemaRepositoryPort.modify(cinema);
+    }
+
 }
