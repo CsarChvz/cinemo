@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -30,6 +31,25 @@ public class MovieJpaAdapter implements MovieRepositoryPort {
     @Override
     public Optional<Movie> findById(Long id) {
         return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Movie> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public Movie modify(Movie movie) {
+        MovieEntity entity = mapper.toEntity(movie);
+        MovieEntity entityModified = jpaRepository.save(entity);
+
+        return mapper.toDomain(entityModified);
+    }
+
+    @Override
+    public void delete(Movie movie) {
+        MovieEntity entity = mapper.toEntity(movie);
+        jpaRepository.delete(entity);
     }
 
 }

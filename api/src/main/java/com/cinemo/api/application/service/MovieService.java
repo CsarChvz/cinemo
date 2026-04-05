@@ -1,5 +1,6 @@
 package com.cinemo.api.application.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.cinemo.api.domain.Movie;
@@ -21,6 +22,21 @@ public class MovieService implements ManageMovieUseCase, RetrieveMovieUseCase {
     @Override
     public Movie create(Movie movie) {
         return movieRepositoryPort.create(movie);
+    }
+
+    @Override
+    public List<Movie> getMovies() {
+        return movieRepositoryPort.findAll();
+    }
+
+    @Override
+    public Movie update(Movie movie) {
+        return movieRepositoryPort.modify(movie);
+    }
+
+    @Override
+    public void delete(Movie movie) {
+        movieRepositoryPort.delete(movie);
     }
 
 }
