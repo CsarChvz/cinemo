@@ -1,37 +1,25 @@
-'use client';
+import { Container } from '@mantine/core';
+import { Metadata } from 'next';
+import { api, HydrateClient } from '@/trpc/server';
+import { MoviesClientWrapper } from '@/components/movies/MoviesClientWrapper';
+// Importamos el wrapper que acabamos de crear
 
-import { Container, Stack } from '@mantine/core';
-import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
-import { useMovieFilters } from '@/hooks/useMovieFilters';
-import { MovieCatalogHeader } from '@/components/movies/MovieCatalogHeader/MovieCatalogHeader';
-import { MovieGrid } from '@/components/movies/MovieGrid/MovieGrid';
-import { DUMMY_MOVIES } from '@/data/MoviesDummy';
+// 1. Metadatos para SEO
+export const metadata: Metadata = {
+  title: 'Catálogo de Películas | Cinemo',
+  description:
+    'Explora nuestra cartelera completa. Filtra por género, clasificación y encuentra tu próxima película favorita.',
+};
 
-
-export default function MoviesPage() {
-  const { state, actions, filteredMovies } = useMovieFilters(DUMMY_MOVIES);
+// 2. Componente de servidor asíncrono
+export default async function MoviesPage() {
+  const movies = await api.movie.getAllMovies();
 
   return (
-    <Container size={'xl'} py={'xl'}>
-      <ImplementationDevTools
-        isManual={state.isManual}
-        onChange={actions.setIsManual}
-      />
-
-      <Stack gap={'xl'}>
-        <MovieCatalogHeader
-          search={state.search}
-          onSearchChange={actions.setSearch}
-          sort={state.sort}
-          onSortChange={actions.setSort}
-          genres={state.genres}
-          onGenresChange={actions.setGenres}
-          clasifications={state.clasifications}
-          onClasificationsChange={actions.setClasifications}
-        />
-
-        <MovieGrid movies={filteredMovies} adminView={false} />
-      </Stack>
-    </Container>
+    <HydrateClient>
+      <Container size="xl" py="xl">
+        <MoviesClientWrapper initialMovies={movies} />
+      </Container>
+    </HydrateClient>
   );
 }
