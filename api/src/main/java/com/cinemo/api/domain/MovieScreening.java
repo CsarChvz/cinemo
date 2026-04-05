@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MovieScreening {
     private Long id;
-    private String state;
-    private String municipality;
     private LocalDateTime start;
     private LocalDateTime end;
     private Integer ticketsRemaining;

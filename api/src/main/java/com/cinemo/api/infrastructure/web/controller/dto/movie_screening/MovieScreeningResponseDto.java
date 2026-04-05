@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MovieScreeningResponseDto {
     private Long id;
-    private String state;
-    private String municipality;
     private LocalDateTime start;
     private LocalDateTime end;
     private Integer ticketsRemaining;

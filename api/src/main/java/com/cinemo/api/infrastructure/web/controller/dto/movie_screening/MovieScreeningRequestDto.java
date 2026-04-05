@@ -1,18 +1,11 @@
 package com.cinemo.api.infrastructure.web.controller.dto.movie_screening;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
 public class MovieScreeningRequestDto {
-    @NotNull(message = "El estado es obligatorio")
-    private String state;
-
-    @NotBlank(message = "El municipio es obligatorio")
-    private String municipality;
-
     @NotNull(message = "La fecha de inicio es obligatoria")
     private LocalDateTime start;
 
