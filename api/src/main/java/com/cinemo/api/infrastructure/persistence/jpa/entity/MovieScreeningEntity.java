@@ -23,12 +23,6 @@ public class MovieScreeningEntity {
     @JoinColumn(name = "room_id", nullable = false)
     private CinemaRoomEntity room;
 
-    @Column(name = "state", nullable = false, length = 100)
-    private String state;
-
-    @Column(name = "municipality", nullable = false, length = 100)
-    private String municipality;
-
     @Column(name = "start_time", nullable = false)
     private LocalDateTime start;
 
