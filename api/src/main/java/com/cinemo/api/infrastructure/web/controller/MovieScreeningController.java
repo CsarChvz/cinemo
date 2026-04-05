@@ -1,7 +1,10 @@
 package com.cinemo.api.infrastructure.web.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,4 +45,21 @@ public class MovieScreeningController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping
+    public ResponseEntity<List<MovieScreeningResponseDto>> getAll() {
+        List<MovieScreeningResponseDto> response = retrieveMovieScreeningUseCase.getAll().stream()
+                .map(movieScreeningDtoMapper::toResponse)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return retrieveMovieScreeningUseCase.getById(id)
+                .map(screening -> {
+                    manageMovieScreeningUseCase.delete(screening);
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
