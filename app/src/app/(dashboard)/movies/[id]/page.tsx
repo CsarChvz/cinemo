@@ -1,54 +1,52 @@
-'use client';
-
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Container, Button } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
 
-import { useEffect, useState } from 'react';
-import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
+import { api } from '@/trpc/server';
 import { MovieNotFound } from '@/components/movies/MovieNotFound/MovieNotFound';
 import { DetailsOfMovie } from '@/components/movies/DetailsOfMovie/DetailsOfMovie';
 import MovieScreening from '@/components/movie-screenings/MovieScreenings/MovieScreenings';
-import { DUMMY_MOVIES } from '@/data/MoviesDummy';
+import { BackButton } from '@/components/common/BackButton';
 
+interface MovieDetailPageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ cine?: string }>;
+}
 
-export default function MovieDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+/**
+ * Página de detalle de película - Server Component
+ * Obtiene los datos del servidor usando tRPC
+ */
+export default async function MovieDetailPage({
+  params,
+  searchParams,
+}: MovieDetailPageProps) {
+  const { id } = await params;
+  const { cine } = await searchParams;
 
-  const cine = searchParams.get('cine');
-  const movie = DUMMY_MOVIES.find((m) => m.id === Number(params.id));
+  // Convertir y validar que el ID sea un número válido
+  const movieId = Number(id);
+  if (isNaN(movieId) || movieId <= 0) {
+    notFound();
+  }
 
-  const [isManual, setIsManual] = useState(false);
-
-  // Cargar estado inicial del LocalStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('manual-implementation');
-    if (saved !== null) setIsManual(JSON.parse(saved));
-  }, []);
-
-  if (!movie) {
-    return <MovieNotFound router={router} />;
+  // Obtener la película del servidor
+  let movie;
+  try {
+    movie = await api.movie.getMovieById(movieId);
+  } catch (error) {
+    // Si la película no existe o hay error, mostrar 404
+    notFound();
   }
 
   return (
     <Container size="xl" py="xl">
-      <ImplementationDevTools isManual={isManual} onChange={setIsManual} />
+      {/* Header de Navegación */}
+      <BackButton />
 
-      {/* 1. Header de Navegación */}
-      <Button
-        variant="subtle"
-        leftSection={<IconArrowLeft size={16} />}
-        onClick={() => router.push('/movies')}
-        mb="xl"
-        color="gray"
-      >
-        Volver al catálogo
-      </Button>
+      {/* Detalle de la película */}
       <DetailsOfMovie movie={movie} />
 
-      {/* 3. Sección de Funciones (Separada) */}
+      {/* Sección de Funciones */}
       <MovieScreening movie={movie} cinema={cine ?? ''} />
     </Container>
   );

@@ -25,11 +25,11 @@ export enum MovieClassification {
 
 // 2. Creas tu esquema Zod usando z. para enlazar los enums de TypeScript
 export const MovieSchema = z.object({
-  id: z.number().optional(), // Lo dejamos opcional como en tu interfaz original
+  id: z.number().optional(),
   title: z.string(),
   posterUrl: z.string(),
   genre: z.enum(MovieGenre),
-  durationMin: z.number(), // Nos quedamos con el número, es mejor para la base de datos
+  durationMin: z.number(),
   description: z.string(),
   director: z.string(),
   producer: z.string(),
@@ -40,5 +40,4 @@ export const MovieSchema = z.object({
 
 export const MovieListSchema = z.array(MovieSchema);
 
-// 3. ¡La Magia! Infieres el tipo de TypeScript directamente del esquema
 export type Movie = z.infer<typeof MovieSchema>;
