@@ -20,6 +20,6 @@ public interface CinemaRoomDtoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cinema.id", source = "cinemaId")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-        void updateDomainFromDto(CinemaRoomUpdateRequestDto dto, @MappingTarget CinemaRoom cinema);
+    void updateDomainFromDto(CinemaRoomUpdateRequestDto dto, @MappingTarget CinemaRoom cinema);
 
 }
