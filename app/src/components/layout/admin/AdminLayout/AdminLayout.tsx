@@ -60,7 +60,7 @@ export function AdminShellLayout({ children }: { children: React.ReactNode }) {
 
           <NavLink
             component={Link}
-            href="/admin/funciones"
+            href="/admin/movie-screenings"
             label="Funciones"
             leftSection={<IconCalendarStats size={20} />}
           />

@@ -40,7 +40,7 @@ export default function EditarFuncionPage() {
       <Stack gap="lg">
         <Button
           component={Link}
-          href="/admin/funciones"
+          href="/admin/movie-screenings"
           variant="subtle"
           color="gray"
           leftSection={<IconArrowLeft size={16} />}

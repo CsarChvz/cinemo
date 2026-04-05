@@ -26,7 +26,7 @@ export const DateTimeCell = ({ date }: { date: Date | string }) => (
 
 interface ActionButtonsProps {
   id: string | number;
-  basePath: string; // Ej: '/admin/funciones' o '/admin/locations/states'
+  basePath: string; // Ej: '/admin/movie-screenings' o '/admin/locations/states'
   onDelete?: (id: string | number) => void;
 }
 

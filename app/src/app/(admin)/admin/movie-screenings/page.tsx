@@ -19,6 +19,7 @@ import {
   ActionButtons,
   DateTimeCell,
 } from '@/components/movie-screenings/ScreeningTableCells/ScreeningTableCells';
+import Link from 'next/link';
 
 
 export default function GestionFuncionesPage() {
@@ -45,7 +46,12 @@ export default function GestionFuncionesPage() {
               Administra horarios, disponibilidad y complejos.
             </Text>
           </Stack>
-          <Button leftSection={<IconPlus size={18} />} variant="filled">
+          <Button
+            leftSection={<IconPlus size={18} />}
+            variant="filled"
+            component={Link}
+            href="/admin/movie-screenings/create"
+          >
             Nueva Función
           </Button>
         </Group>
@@ -127,7 +133,7 @@ export default function GestionFuncionesPage() {
                   const recordId = record.id || record.movie?.id;
 
                   return (
-                    <ActionButtons id={recordId} basePath="/admin/funciones" />
+                    <ActionButtons id={recordId} basePath="/admin/movie-screenings" />
                   );
                 },
               },
