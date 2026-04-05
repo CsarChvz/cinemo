@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MovieCard, MovieCardProps } from './MovieCard';
 import { MantineProvider } from '@mantine/core';
-import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
+import { MovieClassification, MovieGenre } from '@/schemas/movie';
 
 // Helper para envolver el componente en el provider de Mantine
 const renderWithProvider = (ui: React.ReactElement) => {
@@ -14,9 +14,9 @@ describe('MovieCard Component', () => {
     title: 'Interstellar',
     posterUrl: 'https://test-url.com/poster.jpg',
     genre: MovieGenre.CIENCIA_FICCION,
-    duration: '169 min',
+    durationMin: 169,
     description: 'Un viaje a través de un agujero de gusano.',
-    clasification: MovieClasification.B15,
+    classification: MovieClassification.B15,
     onViewDetails: jest.fn(), // Usando el estándar de Jest
   };
 
@@ -25,8 +25,8 @@ describe('MovieCard Component', () => {
 
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByText(mockProps.genre)).toBeInTheDocument();
-    expect(screen.getByText(mockProps.duration)).toBeInTheDocument();
-    expect(screen.getByText(mockProps.clasification)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.durationMin)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.classification)).toBeInTheDocument();
     expect(screen.getByText(mockProps.description)).toBeInTheDocument();
   });
 

@@ -1,11 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MantineProvider } from '@mantine/core';
 import MovieScreening from './MovieScreenings';
-import {
-  Movie,
-  MovieGenre,
-  MovieClasification,
-} from '@/interfaces/movie.interface';
+import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
+
 
 const meta: Meta<typeof MovieScreening> = {
   title: 'Components/Movie Screenings/MovieScreening',
@@ -37,13 +34,14 @@ const mockMovie: Movie = {
   posterUrl:
     'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
   genre: MovieGenre.CIENCIA_FICCION,
-  duration: '169 min',
+  durationMin: 169,
   description:
     'Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por asegurar la supervivencia de la humanidad.',
   director: 'Christopher Nolan',
   producer: 'Emma Thomas',
-  clasification: MovieClasification.B,
+  classification: MovieClassification.B,
   releaseYear: 2014,
+  isActive: false,
 };
 
 // 1. Estado inicial: Sin cine seleccionado

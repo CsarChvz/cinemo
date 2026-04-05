@@ -11,9 +11,9 @@ import {
 } from '@mantine/core';
 import { IconArrowLeft, IconEdit, IconTrash } from '@tabler/icons-react';
 import { MovieScreening } from '@/interfaces/movie_screening.interface';
-import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
 import { ScreeningDetailContent } from '@/components/movie-screenings/ScreeningDetailContent/ScreeningDetailContent';
 import { MovieSummaryCard } from '@/components/movie-screenings/MovieSummaryCard/MovieSummaryCard';
+import { MovieClassification, MovieGenre } from '@/schemas/movie';
 
 export default function DetalleFuncionPage() {
   const { id } = useParams();
@@ -25,13 +25,14 @@ export default function DetalleFuncionPage() {
     movie: {
       title: 'Interstellar',
       genre: MovieGenre.CIENCIA_FICCION,
-      duration: '169 min',
-      clasification: MovieClasification.A,
+      durationMin: 169,
+      classification: MovieClassification.A,
       posterUrl: '',
       description: '',
       director: '',
       producer: '',
       releaseYear: 0,
+      isActive: false,
     },
     cinema: 'Cinepolis La Gran Plaza',
     municipality: 'Zapopan, Jalisco',

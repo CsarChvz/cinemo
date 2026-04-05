@@ -2,7 +2,7 @@ import { Box, Stack, Badge, Title, rem, Paper, Grid, GridCol, Center, Text } fro
 import { IconMapPin } from "@tabler/icons-react";
 import { LocationSidebar } from "../LocationSidebar";
 import { ProgramGuideContent } from "../ProgramGuideContent";
-import { Movie } from "@/interfaces/movie.interface";
+import { Movie } from '@/schemas/movie';
 
 interface MovieScreeningProps{
     movie: Movie

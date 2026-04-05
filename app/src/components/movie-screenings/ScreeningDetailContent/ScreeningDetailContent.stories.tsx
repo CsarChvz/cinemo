@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ScreeningDetailContent } from './ScreeningDetailContent';
 import { MantineProvider, Container } from '@mantine/core';
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
 // Asegúrate de tener esta interfaz o cámbiala por la ruta correcta
 import { MovieScreening } from '@/interfaces/movie_screening.interface';
+import { MovieClassification, MovieGenre } from '@/schemas/movie';
 
 const meta: Meta<typeof ScreeningDetailContent> = {
   title: 'Components/Movie Screenings/ScreeningDetailContent',
@@ -29,12 +29,13 @@ const mockScreening: MovieScreening = {
     title: 'Interstellar',
     posterUrl: '',
     genre: MovieGenre.CIENCIA_FICCION,
-    duration: '169 min',
+    durationMin: 169,
     description: '',
     director: 'Christopher Nolan',
     producer: '',
-    clasification: MovieClasification.B,
+    classification: MovieClassification.B,
     releaseYear: 2014,
+    isActive: false,
   },
   status: 'Activa',
   start: new Date(2026, 2, 26, 18, 30), // 26 de Marzo, 2026 6:30 PM

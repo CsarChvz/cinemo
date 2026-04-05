@@ -1,21 +1,18 @@
-import {
-  Movie,
-  MovieClasification,
-  MovieGenre,
-} from '@/interfaces/movie.interface';
 import { MovieScreening } from '@/interfaces/movie_screening.interface';
+import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
 
-// 1. Dummy Data
+// 1. Dummy Data para Películas
 export const DUMMY_MOVIES: Movie[] = [
   {
     id: 1,
     title: 'Interstellar',
     genre: MovieGenre.CIENCIA_FICCION,
-    clasification: MovieClasification.B,
-    duration: '169 min',
+    classification: MovieClassification.B,
+    durationMin: 169,
     releaseYear: 2014,
     director: 'Christopher Nolan',
     producer: 'Emma Thomas',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
     description:
@@ -25,11 +22,12 @@ export const DUMMY_MOVIES: Movie[] = [
     id: 2,
     title: 'The Dark Knight',
     genre: MovieGenre.ACCION,
-    clasification: MovieClasification.B15,
-    duration: '152 min',
+    classification: MovieClassification.B15,
+    durationMin: 152,
     releaseYear: 2008,
     director: 'Christopher Nolan',
     producer: 'Charles Roven',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
     description:
@@ -39,11 +37,12 @@ export const DUMMY_MOVIES: Movie[] = [
     id: 3,
     title: 'Spider-Man: Across the Spider-Verse',
     genre: MovieGenre.ANIMACION,
-    clasification: MovieClasification.A,
-    duration: '140 min',
+    classification: MovieClassification.A,
+    durationMin: 140,
     releaseYear: 2023,
     director: 'Joaquim Dos Santos',
     producer: 'Phil Lord',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=800',
     description: 'Miles Morales se lanza a través del Multiverso.',
@@ -52,11 +51,12 @@ export const DUMMY_MOVIES: Movie[] = [
     id: 4,
     title: 'Pulp Fiction',
     genre: MovieGenre.DRAMA,
-    clasification: MovieClasification.C,
-    duration: '154 min',
+    classification: MovieClassification.C,
+    durationMin: 154,
     releaseYear: 1994,
     director: 'Quentin Tarantino',
     producer: 'Lawrence Bender',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=800',
     description:
@@ -66,11 +66,12 @@ export const DUMMY_MOVIES: Movie[] = [
     id: 5,
     title: 'Inception',
     genre: MovieGenre.CIENCIA_FICCION,
-    clasification: MovieClasification.B,
-    duration: '148 min',
+    classification: MovieClassification.B,
+    durationMin: 148,
     releaseYear: 2010,
     director: 'Christopher Nolan',
     producer: 'Emma Thomas',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=800',
     description: 'Un ladrón que roba secretos a través del subconsciente.',
@@ -79,11 +80,12 @@ export const DUMMY_MOVIES: Movie[] = [
     id: 6,
     title: 'Shrek',
     genre: MovieGenre.COMEDIA,
-    clasification: MovieClasification.AA,
-    duration: '90 min',
+    classification: MovieClassification.AA,
+    durationMin: 90,
     releaseYear: 2001,
     director: 'Andrew Adamson',
     producer: 'Aron Warner',
+    isActive: true,
     posterUrl:
       'https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=800',
     description:
@@ -91,7 +93,7 @@ export const DUMMY_MOVIES: Movie[] = [
   },
 ];
 
-
+// 2. Dummy Data para Funciones (Screenings)
 export const DUMMY_SCREENINGS: MovieScreening[] = [
   {
     id: 101,
@@ -101,13 +103,14 @@ export const DUMMY_SCREENINGS: MovieScreening[] = [
       genre: MovieGenre.CIENCIA_FICCION,
       posterUrl:
         'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
-      duration: '169 min',
+      durationMin: 169,
       description:
         'Un equipo de exploradores viaja a través de un agujero de gusano.',
       director: 'Christopher Nolan',
       producer: 'Emma Thomas',
-      clasification: MovieClasification.B,
+      classification: MovieClassification.B,
       releaseYear: 2014,
+      isActive: true,
     },
     state: 'Jalisco',
     municipality: 'Zapopan',
@@ -127,12 +130,13 @@ export const DUMMY_SCREENINGS: MovieScreening[] = [
       genre: MovieGenre.ACCION,
       posterUrl:
         'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
-      duration: '152 min',
+      durationMin: 152,
       description: 'Batman se enfrenta al Joker por el alma de Gotham.',
       director: 'Christopher Nolan',
       producer: 'Charles Roven',
-      clasification: MovieClasification.B15,
+      classification: MovieClassification.B15,
       releaseYear: 2008,
+      isActive: true,
     },
     state: 'CDMX',
     municipality: 'Coyoacán',
@@ -152,12 +156,13 @@ export const DUMMY_SCREENINGS: MovieScreening[] = [
       genre: MovieGenre.ANIMACION,
       posterUrl:
         'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=800',
-      duration: '140 min',
+      durationMin: 140,
       description: 'Miles Morales se lanza a través del Multiverso.',
       director: 'Joaquim Dos Santos',
       producer: 'Phil Lord',
-      clasification: MovieClasification.A,
+      classification: MovieClassification.A,
       releaseYear: 2023,
+      isActive: true,
     },
     state: 'Nuevo León',
     municipality: 'Monterrey',
@@ -177,12 +182,13 @@ export const DUMMY_SCREENINGS: MovieScreening[] = [
       genre: MovieGenre.COMEDIA,
       posterUrl:
         'https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=800',
-      duration: '90 min',
+      durationMin: 90,
       description: 'Un ogro cuya soledad es interrumpida.',
       director: 'Andrew Adamson',
       producer: 'Aron Warner',
-      clasification: MovieClasification.AA,
+      classification: MovieClassification.AA,
       releaseYear: 2001,
+      isActive: true,
     },
     state: 'Jalisco',
     municipality: 'Guadalajara',
@@ -202,12 +208,13 @@ export const DUMMY_SCREENINGS: MovieScreening[] = [
       genre: MovieGenre.CIENCIA_FICCION,
       posterUrl:
         'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=800',
-      duration: '148 min',
+      durationMin: 148,
       description: 'Un ladrón que roba secretos a través del subconsciente.',
       director: 'Christopher Nolan',
       producer: 'Emma Thomas',
-      clasification: MovieClasification.B,
+      classification: MovieClassification.B,
       releaseYear: 2010,
+      isActive: true,
     },
     state: 'Jalisco',
     municipality: 'Zapopan',

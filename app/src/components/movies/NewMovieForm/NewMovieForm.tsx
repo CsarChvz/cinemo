@@ -1,5 +1,7 @@
 'use client';
 
+// 1. Importaciones actualizadas con el nuevo esquema de Zod
+import { Movie, MovieGenre, MovieClassification } from '@/schemas/movie';
 import {
   TextInput,
   Button,
@@ -12,25 +14,17 @@ import {
   NumberInput,
   Textarea,
   Group,
+  Switch,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy, IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
-import {
-  MovieClasification,
-  MovieGenre,
-  Movie,
-} from '@/interfaces/movie.interface';
 
-// 1. Definición de la Interface de Props
+// 2. Definición de la Interface de Props
 interface NuevaPeliculaFormProps {
-  /** Datos iniciales para el modo edición. Si no se pasan, el form inicia vacío */
   initialValues?: Partial<Movie>;
-  /** Flag para saber si estamos editando o creando */
   isEditing?: boolean;
-  /** Función que se ejecuta al enviar el formulario con éxito */
   onSubmit?: (values: Movie) => void;
-  /** Si es true, todos los campos se bloquean */
   readOnly?: boolean;
 }
 
@@ -40,19 +34,19 @@ export function NuevaPeliculaForm({
   onSubmit,
   readOnly = false,
 }: NuevaPeliculaFormProps) {
-  // 2. Configuración del formulario con tipos
+  // 3. Configuración del formulario con tipos
   const form = useForm<Movie>({
-    // Usamos initialValues si existen, sino ponemos defaults seguros
     initialValues: {
       title: initialValues?.title || '',
       posterUrl: initialValues?.posterUrl || '',
-      genre: initialValues?.genre || MovieGenre.ACCION, // Un default del enum
-      duration: initialValues?.duration || '',
+      genre: initialValues?.genre || MovieGenre.ACCION,
+      durationMin: initialValues?.durationMin || 120, // Cambiado a número (ej. 120 min)
       description: initialValues?.description || '',
       director: initialValues?.director || '',
       producer: initialValues?.producer || '',
-      clasification: initialValues?.clasification || MovieClasification.A,
+      classification: initialValues?.classification || MovieClassification.A, // Corregido a doble 's'
       releaseYear: initialValues?.releaseYear || new Date().getFullYear(),
+      isActive: initialValues?.isActive ?? true, // Añadido porque Zod lo requiere
     },
 
     validate: {
@@ -60,7 +54,8 @@ export function NuevaPeliculaForm({
       posterUrl: (v) =>
         v.length < 1 ? 'La URL del poster es requerida' : null,
       genre: (v) => (!v ? 'Selecciona un género' : null),
-      clasification: (v) => (!v ? 'Selecciona la clasificación' : null),
+      classification: (v) => (!v ? 'Selecciona la clasificación' : null),
+      durationMin: (v) => (v <= 0 ? 'La duración debe ser mayor a 0' : null), // Nueva validación
     },
   });
 
@@ -131,14 +126,15 @@ export function NuevaPeliculaForm({
                 label="Clasificación"
                 placeholder="Selecciona"
                 disabled={readOnly}
-                data={Object.values(MovieClasification)}
-                {...form.getInputProps('clasification')}
+                data={Object.values(MovieClassification)} // Corregido
+                {...form.getInputProps('classification')} // Corregido
               />
-              <TextInput
-                label="Duración"
-                placeholder="Ej. 120 min"
+              {/* Cambiado a NumberInput para respetar Zod */}
+              <NumberInput
+                label="Duración (minutos)"
+                placeholder="Ej. 120"
                 disabled={readOnly}
-                {...form.getInputProps('duration')}
+                {...form.getInputProps('durationMin')} // Corregido
               />
             </SimpleGrid>
 
@@ -168,6 +164,14 @@ export function NuevaPeliculaForm({
               minRows={3}
               disabled={readOnly}
               {...form.getInputProps('description')}
+            />
+
+            {/* Nuevo campo Switch para manejar el boolean isActive de Zod */}
+            <Switch
+              label="Película Activa (Visible en el catálogo)"
+              mt="sm"
+              disabled={readOnly}
+              {...form.getInputProps('isActive', { type: 'checkbox' })}
             />
 
             {!readOnly && (

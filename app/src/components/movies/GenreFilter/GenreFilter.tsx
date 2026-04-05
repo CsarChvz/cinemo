@@ -10,7 +10,7 @@ import {
   ScrollArea,
 } from '@mantine/core';
 import { IconFilter, IconCheck, IconX } from '@tabler/icons-react';
-import { MovieGenre } from '@/interfaces/movie.interface';
+import { MovieGenre } from '@/schemas/movie';
 
 export interface GenreFilterProps {
   value: MovieGenre[];

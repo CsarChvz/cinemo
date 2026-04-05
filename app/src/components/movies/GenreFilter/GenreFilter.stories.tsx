@@ -1,7 +1,7 @@
-import { MovieGenre } from '@/interfaces/movie.interface';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { GenreFilter } from './GenreFilter';
+import { MovieGenre } from '@/schemas/movie';
 
 const meta: Meta<typeof GenreFilter> = {
   title: 'Components/Movies/Filters/GenreFilter',

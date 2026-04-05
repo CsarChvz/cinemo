@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MantineProvider, Container } from '@mantine/core';
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
+import { MovieGenre, MovieClassification } from '@/schemas/movie';
 import { NuevaPeliculaForm } from './NewMovieForm';
 
 const meta: Meta<typeof NuevaPeliculaForm> = {
@@ -40,12 +40,12 @@ export const Editar: Story = {
       posterUrl:
         'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
       genre: MovieGenre.CIENCIA_FICCION,
-      duration: '169 min',
+      durationMin: 169,
       description:
         'Un equipo de exploradores viaja a través de un agujero de gusano...',
       director: 'Christopher Nolan',
       producer: 'Syncopy Inc.',
-      clasification: MovieClasification.B,
+      classification: MovieClassification.B,
       releaseYear: 2014,
     },
     onSubmit: (values) => console.log('Actualizando datos:', values),
@@ -61,11 +61,11 @@ export const SoloLectura: Story = {
       posterUrl:
         'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
       genre: MovieGenre.ACCION,
-      duration: '148 min',
+      durationMin: 158,
       description: 'Peter Parker busca la ayuda del Doctor Strange...',
       director: 'Jon Watts',
       producer: 'Marvel Studios',
-      clasification: MovieClasification.B,
+      classification: MovieClassification.B,
       releaseYear: 2021,
     },
   },

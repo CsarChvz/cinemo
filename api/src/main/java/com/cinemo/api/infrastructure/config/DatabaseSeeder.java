@@ -30,7 +30,7 @@ public class DatabaseSeeder {
             System.out.println("🌱 Iniciando el poblado masivo de la base de datos...");
 
             // ==========================================
-            // 1 & 2. ESTADOS Y MUNICIPIOS (Desde la imagen)
+            // 1 & 2. ESTADOS Y MUNICIPIOS
             // ==========================================
             Map<String, List<String>> locations = new LinkedHashMap<>();
             locations.put("Jalisco|J11", Arrays.asList("Guadalajara", "Zapopan", "Tlaquepaque", "Tonalá", "Zapotlanejo",
@@ -66,8 +66,7 @@ public class DatabaseSeeder {
             // 3 & 4. CINES Y SALAS
             // ==========================================
             List<CinemaRoomEntity> allSavedRooms = new ArrayList<>();
-            // Tomamos algunos municipios aleatorios (o los primeros) para asignarles cines
-            int[] cinemaMunicipalityIndexes = { 0, 1, 9, 10, 17, 25, 29, 38, 40, 41 }; // Índices variados
+            int[] cinemaMunicipalityIndexes = { 0, 1, 9, 10, 17, 25, 29, 38, 40, 41 };
 
             for (int i = 0; i < 10; i++) {
                 MunicipalityEntity targetMun = allSavedMunicipalities.get(cinemaMunicipalityIndexes[i]);
@@ -78,7 +77,6 @@ public class DatabaseSeeder {
                 cinema.setMunicipality(targetMun);
                 cinema = cinemaRepo.save(cinema);
 
-                // Creamos 2 salas por cada cine
                 for (int j = 1; j <= 2; j++) {
                     CinemaRoomEntity room = new CinemaRoomEntity();
                     room.setName("Sala " + j + (j == 1 ? " VIP" : " Tradicional"));
@@ -92,19 +90,20 @@ public class DatabaseSeeder {
             System.out.println("✅ 10 Cines y 20 Salas guardados.");
 
             // ==========================================
-            // 5. PELÍCULAS (10 Registros)
+            // 5. PELÍCULAS (Ajustadas a los Enums de Zod/TS)
             // ==========================================
             String[][] movieData = {
-                    { "Dune: Part Two", "Sci-Fi", "166", "Denis Villeneuve", "PG-13" },
-                    { "Kung Fu Panda 4", "Animation", "94", "Mike Mitchell", "PG" },
-                    { "Godzilla x Kong: The New Empire", "Action", "115", "Adam Wingard", "PG-13" },
-                    { "Civil War", "Thriller", "109", "Alex Garland", "R" },
-                    { "Ghostbusters: Frozen Empire", "Comedy", "115", "Gil Kenan", "PG-13" },
-                    { "Oppenheimer", "Drama", "180", "Christopher Nolan", "R" },
-                    { "Spider-Man: Across the Spider-Verse", "Animation", "140", "Joaquim Dos Santos", "PG" },
-                    { "Barbie", "Comedy", "114", "Greta Gerwig", "PG-13" },
-                    { "The Batman", "Action", "176", "Matt Reeves", "PG-13" },
-                    { "Inside Out 2", "Animation", "100", "Kelsey Mann", "PG" }
+                    { "Dune: Part Two", "Ciencia Ficcion", "166", "Denis Villeneuve", "B15" },
+                    { "Kung Fu Panda 4", "Animacion", "94", "Mike Mitchell", "A" },
+                    { "Godzilla x Kong: The New Empire", "Accion", "115", "Adam Wingard", "B" },
+                    { "Civil War", "Thriller", "109", "Alex Garland", "C" },
+                    { "Ghostbusters: Frozen Empire", "Comedia", "115", "Gil Kenan", "B" },
+                    { "Oppenheimer", "Drama", "180", "Christopher Nolan", "C" },
+                    { "Spider-Man: Across the Spider-Verse", "Animacion", "140", "Joaquim Dos Santos", "A" },
+                    { "Barbie", "Comedia", "114", "Greta Gerwig", "B" },
+                    { "The Batman", "Accion", "176", "Matt Reeves", "B15" },
+                    { "Cinemo: The Origin", "Ciencia Ficcion", "120", "Cesar Chavez Rodriguez", "B15" } // Ajuste
+                                                                                                        // especial
             };
 
             List<MovieEntity> allSavedMovies = new ArrayList<>();
@@ -117,7 +116,7 @@ public class DatabaseSeeder {
                 movie.setClassification(data[4]);
                 movie.setPosterUrl("https://ejemplo.com/posters/" + data[0].replace(" ", "_").toLowerCase() + ".jpg");
                 movie.setDescription("Sinopsis de " + data[0] + "...");
-                movie.setProducer("Warner/Disney/Universal");
+                movie.setProducer("Alan, Ricardo y Alex");
                 movie.setReleaseYear(2024);
                 movie.setIsActive(true);
                 allSavedMovies.add(movieRepo.save(movie));
@@ -125,14 +124,11 @@ public class DatabaseSeeder {
             System.out.println("✅ 10 Películas guardadas.");
 
             // ==========================================
-            // 6. FUNCIONES (SCREENINGS) - Mínimo 30
+            // 6. FUNCIONES (SCREENINGS)
             // ==========================================
-            // Vamos a generar 40 funciones distribuyéndolas en las salas creadas
             LocalDateTime baseTime = LocalDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0);
 
             for (int i = 0; i < 40; i++) {
-                // Seleccionamos sala y película de forma cíclica para que quede bien
-                // distribuido
                 CinemaRoomEntity room = allSavedRooms.get(i % allSavedRooms.size());
                 MovieEntity movie = allSavedMovies.get(i % allSavedMovies.size());
 
@@ -140,8 +136,6 @@ public class DatabaseSeeder {
                 screening.setMovie(movie);
                 screening.setRoom(room);
 
-                // Horarios escalonados: empezamos a las 2pm y sumamos 3 horas por iteración en
-                // la misma sala
                 LocalDateTime startTime = baseTime.plusHours(3 * (i / allSavedRooms.size()));
                 screening.setStart(startTime);
                 screening.setEnd(startTime.plusMinutes(movie.getDurationMin()));

@@ -9,28 +9,20 @@ import {
 } from '@mantine/core';
 import { IconHeart, IconClock } from '@tabler/icons-react';
 import classes from './MovieCard.module.css';
-import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
 import Link from 'next/link';
+import { Movie } from '@/schemas/movie';
 
-export interface MovieCardProps {
-  id: number;
-  title: string;
-  posterUrl: string;
-  genre: MovieGenre;
-  duration: string;
-  description: string;
-  clasification: MovieClasification;
+export interface MovieCardProps extends Movie {
   onViewDetails?: () => void;
 }
-
 export function MovieCard({
   id,
   title,
   posterUrl,
   genre,
-  duration,
+  durationMin,
   description, // Se agregó coma
-  clasification,
+  classification,
   onViewDetails,
 }: MovieCardProps) {
   return (
@@ -50,7 +42,7 @@ export function MovieCard({
             {title}
           </Text>
           <Badge size="sm" variant="filled" color="blue">
-            {clasification}
+            {classification}
           </Badge>
         </Group>
 
@@ -64,7 +56,7 @@ export function MovieCard({
           <Group gap={4}>
             <IconClock size={14} stroke={1.5} />
             <Text fz="xs" c="dimmed">
-              {duration}
+              {durationMin}
             </Text>
           </Group>
         </Group>

@@ -16,7 +16,7 @@ import { NuevaPeliculaForm } from '@/components/movies/NewMovieForm/NewMovieForm
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Movie } from '@/interfaces/movie.interface';
+import { Movie, MovieClassification } from '@/schemas/movie';
 
 export default function EditarPeliculaPage() {
   const params = useParams();
@@ -43,12 +43,13 @@ export default function EditarPeliculaPage() {
           title: 'Inception',
           posterUrl: 'https://ejemplo.com/poster.jpg',
           genre: 'Ciencia Ficcion' as any, // Cast temporal para el enum
-          duration: '148 min',
+          durationMin: 148,
           description: 'Un ladrón que roba secretos corporativos...',
           director: 'Christopher Nolan',
           producer: 'Warner Bros',
-          clasification: 'B' as any,
+          classification: MovieClassification.B,
           releaseYear: 2010,
+          isActive: true,
         };
 
         setMovieData(mockData);

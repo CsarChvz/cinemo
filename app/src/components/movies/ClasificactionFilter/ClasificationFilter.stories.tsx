@@ -1,22 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { ClasificationFilter } from './ClasificationFilter';
-import { MovieClasification } from '@/interfaces/movie.interface';
+import { ClassificationFilter } from './ClasificationFilter';
+import { MovieClassification } from '@/schemas/movie';
 
-const meta: Meta<typeof ClasificationFilter> = {
+const meta: Meta<typeof ClassificationFilter> = {
   title: 'Components/Movies/Filters/ClasificationFilter',
-  component: ClasificationFilter,
+  component: ClassificationFilter,
   tags: ['autodocs'],
 };
 
 export default meta;
 
-export const Interactive: StoryObj<typeof ClasificationFilter> = {
+export const Interactive: StoryObj<typeof ClassificationFilter> = {
   render: () => {
-    const [selected, setSelected] = useState<MovieClasification[]>([]);
+    const [selected, setSelected] = useState<MovieClassification[]>([]);
     return (
       <div style={{ padding: '2rem' }}>
-        <ClasificationFilter value={selected} onApply={setSelected} />
+        <ClassificationFilter value={selected} onApply={setSelected} />
         <div style={{ marginTop: '1rem' }}>
           <strong>Seleccionados:</strong> {selected.join(', ') || 'Ninguno'}
         </div>

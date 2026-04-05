@@ -18,14 +18,12 @@ import Link from 'next/link';
 import { SearchBar } from '@/components/movies/SearchBar/SearchBar';
 import { SortButton } from '@/components/movies/SortButton/SortButton';
 import { GenreFilter } from '@/components/movies/GenreFilter/GenreFilter';
-import { ClasificationFilter } from '@/components/movies/ClasificactionFilter/ClasificationFilter';
 import { ImplementationDevTools } from '@/components/common/ImplementationDevTools/ImplementationDevTools';
 
 // El nuevo componente de Admin
 import { AdminMovieCard } from '@/components/movies/AdminMovieCard/AdminMovieCard';
 
 // Interfaces y Enums
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
 import { SortOrder } from '@/interfaces/filter.interface';
 import { DUMMY_MOVIES } from '@/data/MoviesDummy';
 import { MovieGrid } from '@/components/movies/MovieGrid/MovieGrid';

@@ -2,11 +2,11 @@ import { Stack, Title, Text, Group } from '@mantine/core';
 import { SearchBar } from '@/components/movies/SearchBar/SearchBar';
 import { SortButton } from '@/components/movies/SortButton/SortButton';
 import { GenreFilter } from '@/components/movies/GenreFilter/GenreFilter';
-import { ClasificationFilter } from '@/components/movies/ClasificactionFilter/ClasificationFilter';
 
 // Importamos los tipos necesarios
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
 import { SortOrder } from '@/interfaces/filter.interface';
+import { MovieClassification, MovieGenre } from '@/schemas/movie';
+import { ClassificationFilter } from '../ClasificactionFilter/ClasificationFilter';
 
 // 1. Definimos la Interface
 interface MovieCatalogHeaderProps {
@@ -16,8 +16,8 @@ interface MovieCatalogHeaderProps {
   onSortChange: (value: SortOrder) => void;
   genres: MovieGenre[];
   onGenresChange: (genres: MovieGenre[]) => void;
-  clasifications: MovieClasification[];
-  onClasificationsChange: (clasifications: MovieClasification[]) => void;
+  clasifications: MovieClassification[];
+  onClasificationsChange: (clasifications: MovieClassification[]) => void;
 }
 
 // 2. Aplicamos la interface al componente
@@ -50,7 +50,7 @@ export function MovieCatalogHeader({
 
           <GenreFilter value={genres} onApply={onGenresChange} />
 
-          <ClasificationFilter
+          <ClassificationFilter
             value={clasifications}
             onApply={onClasificationsChange}
           />

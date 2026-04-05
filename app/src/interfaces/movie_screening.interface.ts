@@ -1,4 +1,4 @@
-import { Movie } from './movie.interface';
+import { Movie } from '@/schemas/movie';
 
 export interface MovieScreening {
   id: number;

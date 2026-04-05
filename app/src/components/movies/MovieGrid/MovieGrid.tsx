@@ -1,6 +1,6 @@
-import { Movie } from "@/interfaces/movie.interface";
-import { Center, SimpleGrid, Stack, Text } from "@mantine/core";
-import { MovieCard } from "../MovieCard/MovieCard";
+import { Movie } from '@/schemas/movie';
+import { Center, SimpleGrid, Stack, Text } from '@mantine/core';
+import { MovieCard } from '../MovieCard/MovieCard';
 import { AdminMovieCard } from '../AdminMovieCard/AdminMovieCard';
 
 interface MovieGridProps {
@@ -46,11 +46,15 @@ export function MovieGrid({
             id={movie.id ?? 0}
             title={movie.title}
             genre={movie.genre}
-            clasification={movie.clasification}
-            duration={movie.duration}
+            classification={movie.classification}
+            durationMin={movie.durationMin}
             description={movie.description}
             posterUrl={movie.posterUrl}
             onViewDetails={() => console.log('Ver:', movie.title)}
+            director={''}
+            producer={''}
+            releaseYear={0}
+            isActive={false}
           />
         )
       )}

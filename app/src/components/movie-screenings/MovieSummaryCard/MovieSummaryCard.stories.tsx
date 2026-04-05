@@ -1,11 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MovieSummaryCard } from './MovieSummaryCard';
 import { MantineProvider, Container } from '@mantine/core';
-import {
-  MovieGenre,
-  MovieClasification,
-  Movie,
-} from '@/interfaces/movie.interface';
+import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
+
 
 const meta: Meta<typeof MovieSummaryCard> = {
   title: 'Components/Movie Screenings/MovieSummaryCard',
@@ -30,12 +27,13 @@ const mockMovie: Movie = {
   posterUrl:
     'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
   genre: MovieGenre.ANIMACION,
-  duration: '140 min',
+  durationMin: 150,
   description: 'Miles Morales se lanza a través del Multiverso...',
   director: 'Joaquim Dos Santos',
   producer: 'Amy Pascal',
-  clasification: MovieClasification.A,
+  classification: MovieClassification.A,
   releaseYear: 2023,
+  isActive: false,
 };
 
 // 1. Vista estándar con botón de acción
@@ -53,8 +51,8 @@ export const SoloInfo: Story = {
       ...mockMovie,
       title: 'The Batman',
       genre: MovieGenre.ACCION,
-      clasification: MovieClasification.B,
-      duration: '176 min',
+      classification: MovieClassification.B,
+      durationMin: 176,
     },
   },
 };
