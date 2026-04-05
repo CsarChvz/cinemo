@@ -1,5 +1,5 @@
 {
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "editor.formatOnSave": true,
 
   // ==========================================
@@ -12,7 +12,7 @@
   "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  
+
   // Le decimos que la extensión de RedHat/Java se encargue del backend
   "[java]": { "editor.defaultFormatter": "redhat.java" },
 
@@ -35,8 +35,8 @@
     "**/api/target": true,
     "**/app/.next": true
   },
-  
-  // Evita que el buscador de VS Code (Ctrl+F global) se trabe buscando 
+
+  // Evita que el buscador de VS Code (Ctrl+F global) se trabe buscando
   // en archivos compilados o dependencias
   "search.exclude": {
     "**/node_modules": true,

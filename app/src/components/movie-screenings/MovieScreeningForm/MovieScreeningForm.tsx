@@ -1,4 +1,3 @@
-// components/screenings/MovieScreeningForm/MovieScreeningForm.tsx
 'use client';
 
 import {
@@ -16,12 +15,14 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 
 interface MovieScreeningFormProps {
   onSubmit: (values: any) => void;
-  initialValues?: any; 
+  initialValues?: any;
+  isEditing?: boolean;
 }
 
 export function MovieScreeningForm({
   onSubmit,
   initialValues,
+  isEditing = false,
 }: MovieScreeningFormProps) {
   const form = useForm({
     initialValues: initialValues || {
@@ -41,9 +42,13 @@ export function MovieScreeningForm({
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
-        <Title order={2}>Crear Nueva Función</Title>
+        <Title order={2}>
+          {isEditing ? 'Editar Función' : 'Crear Nueva Función'}
+        </Title>
         <Text c="dimmed" size="sm">
-          Asigna una película a una sala y horario específico.
+          {isEditing
+            ? 'Modifica los detalles de esta proyección.'
+            : 'Asigna una película a una sala y horario específico.'}
         </Text>
       </Stack>
 
@@ -98,7 +103,7 @@ export function MovieScreeningForm({
             variant="gradient"
             gradient={{ from: 'blue', to: 'cyan' }}
           >
-            Publicar Función
+            {isEditing ? 'Guardar Cambios' : 'Publicar Función'}
           </Button>
         </Stack>
       </form>

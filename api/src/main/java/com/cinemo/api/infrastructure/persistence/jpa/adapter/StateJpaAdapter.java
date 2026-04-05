@@ -1,0 +1,62 @@
+package com.cinemo.api.infrastructure.persistence.jpa.adapter;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
+import com.cinemo.api.domain.State;
+import com.cinemo.api.domain.ports.out.StateRepositoryPort;
+import com.cinemo.api.infrastructure.persistence.jpa.entity.StateEntity;
+import com.cinemo.api.infrastructure.persistence.jpa.mapper.StateMapper;
+import com.cinemo.api.infrastructure.persistence.jpa.repository.StateJpaRepository;
+
+import lombok.RequiredArgsConstructor;
+
+
+@Component
+@RequiredArgsConstructor
+public class StateJpaAdapter implements StateRepositoryPort{
+
+    private final StateJpaRepository jpaRepository;
+    private final StateMapper mapper;
+
+    @Override
+    public State saveState(State state) {
+        StateEntity entity = mapper.toEntity(state);
+        StateEntity savedEntity = jpaRepository.save(entity);
+
+        return mapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public Optional<State> findByName(String name) {
+        return jpaRepository.findByName(name).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<State> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Override
+    public Optional<State> findById(Long id) {
+        return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public State updateState(State state) {
+        StateEntity entity = mapper.toEntity(state);
+        StateEntity updatedEntity = jpaRepository.save(entity);
+
+        return mapper.toDomain(updatedEntity);
+    }
+
+    @Override
+    public void deleteState(State state) {
+
+        StateEntity entity = mapper.toEntity(state);
+        jpaRepository.delete(entity);
+    }
+
+}
