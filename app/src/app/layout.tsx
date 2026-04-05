@@ -11,6 +11,7 @@ import 'mantine-datatable/styles.layer.css';
 
 import { theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
+import { TRPCReactProvider } from '@/trpc/react';
 
 export const metadata = {
   title: 'Mantine Next.js template',
@@ -34,7 +35,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <MantineProvider theme={theme}>
           <Notifications />
-          {children}
+          <TRPCReactProvider>{children}</TRPCReactProvider>
         </MantineProvider>
       </body>
     </html>
