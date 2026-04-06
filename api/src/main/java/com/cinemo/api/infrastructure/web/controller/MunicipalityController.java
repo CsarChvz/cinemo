@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/v1/muncipality")
+@RequestMapping("/api/v1/municipalities")
 @RequiredArgsConstructor
 public class MunicipalityController {
   private final ManageMunicipalityUseCase manageMunicipalityUseCase;

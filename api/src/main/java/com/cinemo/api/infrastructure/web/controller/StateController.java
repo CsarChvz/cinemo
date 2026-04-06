@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/state")
+@RequestMapping("/api/v1/states")
 @RequiredArgsConstructor
 public class StateController {
 

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/v1/cinema")
+@RequestMapping("/api/v1/cinemas")
 @RequiredArgsConstructor
 public class CinemaController {
     private final ManageCinemaUseCase manageCinemaUseCase;

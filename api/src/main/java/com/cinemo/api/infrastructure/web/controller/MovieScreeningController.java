@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/movie-screening")
+@RequestMapping("/api/v1/movie-screenings")
 @RequiredArgsConstructor
 public class MovieScreeningController {
     private final ManageMovieScreeningUseCase manageMovieScreeningUseCase;
