@@ -15,4 +15,6 @@ public interface CinemaJpaRepository extends JpaRepository<CinemaEntity, Long> {
 
   @EntityGraph(attributePaths = { "municipality" })
   Optional<CinemaEntity> findById(Long id);
+
+  List<CinemaEntity> findByMunicipalityId(Long municipalityId);
 }

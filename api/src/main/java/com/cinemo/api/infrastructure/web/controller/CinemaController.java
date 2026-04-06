@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinemo.api.domain.Cinema;
 import com.cinemo.api.domain.ports.in.cinema.ManageCinemaUseCase;
 import com.cinemo.api.domain.ports.in.cinema.RetrieveCinemaUseCase;
+import com.cinemo.api.domain.ports.in.cinema.SearchCinemaUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CinemaController {
     private final ManageCinemaUseCase manageCinemaUseCase;
     private final RetrieveCinemaUseCase retrieveCinemaUseCase;
+    private final SearchCinemaUseCase searchCinemaUseCase;
     private final CinemaDtoMapper cinemaDtoMapper;
 
     @PostMapping
@@ -48,6 +51,15 @@ public class CinemaController {
         List<CinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
+    }
+
+    @GetMapping("/by-municipality/{municipalityId}")
+    public ResponseEntity<List<CinemaResponseDto>> getByMunicipality(
+            @PathVariable Long municipalityId) {
+        List<Cinema> cinemas = searchCinemaUseCase.getCinemasByMunicipalityId(municipalityId);
+        List<CinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
+
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
