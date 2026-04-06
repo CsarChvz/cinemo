@@ -2,6 +2,7 @@ import { CreateStateSchema, StateListSchema, StateSchema } from '@/schemas/state
 import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
 export const stateRouter = createTRPCRouter({
   /**
@@ -20,7 +21,17 @@ export const stateRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
-      return await apiClient(`/states/${input.id}`, StateSchema);
+      const data = await apiClient(
+        `/states/${input.id}`,
+        StateSchema.nullable()
+      );
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Estado con ID ${input.id} no encontrado`,
+        });
+      }
+      return data;
     }),
 
   /**
@@ -49,7 +60,7 @@ export const stateRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       return await apiClient(`/states/${input.id}`, StateSchema, {
-        method: 'PUT',
+        method: 'PATCH',
         body: input.data, // El body actualizado
       });
     }),

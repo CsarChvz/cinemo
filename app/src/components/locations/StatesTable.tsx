@@ -99,11 +99,11 @@ export default function StatesTable({ initialData }: StatesTableProps) {
                     <IconEdit size={16} />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="Eliminar">
+                {/* <Tooltip label="Eliminar">
                   <ActionIcon size="sm" variant="subtle" color="red">
                     <IconTrash size={16} />
                   </ActionIcon>
-                </Tooltip>
+                </Tooltip> */}
               </Group>
             ),
           },

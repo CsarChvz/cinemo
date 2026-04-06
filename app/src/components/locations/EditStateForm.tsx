@@ -1,5 +1,6 @@
 'use client';
 
+import { State } from '@/schemas/states';
 import { api } from '@/trpc/react';
 import {
   Paper,
@@ -14,22 +15,26 @@ import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-export interface StateFormValues {
+export interface EditStateFormValues {
   id?: string | number;
   name: string;
   code: string;
 }
 
-interface StateFormProps {
-  isEditing?: boolean;
+
+interface EditStateFormProps{
+  state: State
 }
 
-export function StateForm({ isEditing = false }: StateFormProps) {
+
+export function EditStateForm({
+  state
+}: EditStateFormProps) {
   const router = useRouter();
-  const form = useForm<StateFormValues>({
-    initialValues: {
-      name: '',
-      code: '',
+  const form = useForm<EditStateFormValues>({
+    initialValues:  {
+      name: state.name,
+      code: state.code,
     },
     validate: {
       name: (value) =>
@@ -43,7 +48,7 @@ export function StateForm({ isEditing = false }: StateFormProps) {
     },
   });
 
-  const createState = api.state.create.useMutation({
+  const editState = api.state.update.useMutation({
     onSuccess: () => {
       router.push('/admin/locations/states');
     },
@@ -53,18 +58,21 @@ export function StateForm({ isEditing = false }: StateFormProps) {
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
         <Title order={2}>
-          {isEditing ? 'Editar Estado' : 'Crear Nuevo Estado'}
+          Editar Estado
         </Title>
         <Text c="dimmed" size="sm">
-          {isEditing
-            ? 'Modifica los datos del estado existente.'
-            : 'Registra un nuevo estado en el catálogo.'}
+           Modifica los datos del estado existente.
         </Text>
       </Stack>
 
       <form
         onSubmit={form.onSubmit((values) => {
-          createState.mutate({ ...values });
+          editState.mutate({
+            id: state.id,
+            data: {
+              ...values,
+            },
+          });
         })}
       >
         <Stack gap="md">
@@ -92,7 +100,7 @@ export function StateForm({ isEditing = false }: StateFormProps) {
             variant="gradient"
             gradient={{ from: 'indigo', to: 'blue' }}
           >
-            {isEditing ? 'Guardar Cambios' : 'Crear Estado'}
+            Guardar Cambios
           </Button>
         </Stack>
       </form>

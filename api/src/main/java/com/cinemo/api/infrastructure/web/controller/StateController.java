@@ -55,6 +55,13 @@ public class StateController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<StateResponseDTO>> getById(@PathVariable Long id) {
+        Optional<State> state = retrieveStateUseCase.getById(id);
+        Optional<StateResponseDTO> responseDto = state.map(stateDtoMapper::toResponse);
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/struct")
     public ResponseEntity<List<StateResponseDTO>> getStatesFromMemory() {
         List<State> states = retrieveStateUseCase.getMemoryStates();
@@ -66,7 +73,7 @@ public class StateController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    @GetMapping("/{code}")
+    @GetMapping("/get-by-code/{code}")
     public ResponseEntity<Optional<StateResponseDTO>> getStatesByCode(@PathVariable String code) {
         Optional<State> state = retrieveStateUseCase.getByCode(code);
         Optional<StateResponseDTO> responseDTOs = state.map(stateDtoMapper::toResponse);
