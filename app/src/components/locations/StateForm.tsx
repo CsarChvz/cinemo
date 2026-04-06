@@ -1,5 +1,6 @@
 'use client';
 
+import { api } from '@/trpc/react';
 import {
   Paper,
   Title,
@@ -11,6 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export interface StateFormValues {
   id?: string | number;
@@ -19,16 +21,15 @@ export interface StateFormValues {
 }
 
 interface StateFormProps {
-  onSubmit: (values: StateFormValues) => void;
   initialValues?: StateFormValues;
   isEditing?: boolean;
 }
 
 export function StateForm({
-  onSubmit,
   initialValues,
   isEditing = false,
 }: StateFormProps) {
+  const router = useRouter();
   const form = useForm<StateFormValues>({
     initialValues: initialValues || {
       name: '',
@@ -46,6 +47,12 @@ export function StateForm({
     },
   });
 
+  const createState = api.state.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/locations/states');
+    },
+  });
+
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
@@ -59,7 +66,11 @@ export function StateForm({
         </Text>
       </Stack>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form
+        onSubmit={form.onSubmit((values) => {
+          createState.mutate({ ...values });
+        })}
+      >
         <Stack gap="md">
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <TextInput

@@ -1,72 +1,29 @@
-'use client';
-
-import {
-  Container,
-  Stack,
-  Group,
-  Title,
-  Text,
-  Button,
-  Paper,
-  TextInput,
-  ActionIcon,
-  Tooltip,
-  Badge,
-} from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
-import {
-  IconPlus,
-  IconSearch,
-  IconX,
-  IconEdit,
-  IconTrash,
-} from '@tabler/icons-react';
+import { Container, Stack, Group, Title, Text, Button } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useLocationTableManagement } from '@/hooks/useLocationTablesManagement';
+import { api } from '@/trpc/server';
+import StatesTable from '@/components/locations/StatesTable';
+import { ButtonNewState } from '@/components/locations/ButtonNewState';
 
-interface StateRecord extends Record<string, any> {
-  id: string;
-  name: string;
-  code: string;
-}
-
-
-// Puedes duplicar estos datos falsos para que veas cómo funciona la paginación (si pones 12, verás 2 páginas)
-const DUMMY_STATES: StateRecord[] = [
-  { id: '1', name: 'Jalisco', code: 'JAL' },
-  { id: '2', name: 'Ciudad de México', code: 'CDMX' },
-  { id: '3', name: 'Nuevo León', code: 'NL' },
-  { id: '4', name: 'Querétaro', code: 'QRO' },
-  { id: '5', name: 'Puebla', code: 'PUE' },
-  { id: '6', name: 'Yucatán', code: 'YUC' },
-  { id: '7', name: 'Quintana Roo', code: 'QROO' },
-  { id: '8', name: 'Sonora', code: 'SON' },
-  { id: '9', name: 'Chihuahua', code: 'CHIH' },
-  { id: '10', name: 'Sinaloa', code: 'SIN' },
-  { id: '11', name: 'Baja California', code: 'BC' },
-  { id: '12', name: 'Guanajuato', code: 'GTO' },
-];
-
-export default function StatesListPage() {
-  const {
-    records,
-    query,
-    setQuery,
-    sortStatus,
-    setSortStatus,
-    // ¡Extraemos la paginación!
-    page,
-    setPage,
-    totalRecords,
-    pageSize,
-  } = useLocationTableManagement<StateRecord>({
-    initialData: DUMMY_STATES,
-    defaultSortColumn: 'name',
-    pageSize: 5, // Le decimos que muestre 5 por página para probar la paginación rápido
-    filterFn: (item, q) =>
-      item.name.toLowerCase().includes(q.toLowerCase()) ||
-      item.code.toLowerCase().includes(q.toLowerCase()),
-  });
+/**
+ * Página de Administración de Estados
+ *
+ * CAMBIOS REALIZADOS:
+ * - ❌ Removida 'use client' → ahora es RSC (Render Server Component)
+ * - ✅ Trae datos reales con tRPC: api.state.getAll()
+ * - ✅ Separa lógica en componente <StatesTable />
+ * - ✅ Datos validados por Zod desde el router
+ *
+ * VENTAJAS:
+ * - Cero datos falsos (DUMMY_STATES eliminado)
+ * - Type-safe end-to-end
+ * - Mejor rendimiento (menos JS en cliente)
+ * - SEO-friendly (contenido en servidor)
+ */
+export default async function StatesListPage() {
+  // Trae TODOS los estados desde el backend Java
+  // via tRPC → apiClient → /states
+  const states = await api.state.getAll();
 
   return (
     <Container size="xl" py="xl">
@@ -78,88 +35,11 @@ export default function StatesListPage() {
               Administra los estados donde tienes presencia.
             </Text>
           </Stack>
-          <Button
-            component={Link}
-            href="/admin/locations/states/create"
-            leftSection={<IconPlus size={18} />}
-            variant="filled"
-            color="indigo"
-          >
-            Nuevo Estado
-          </Button>
+          <ButtonNewState />
         </Group>
 
-        <Paper withBorder radius="md" shadow="xs">
-          <DataTable
-            idAccessor="id"
-            height={550}
-            withTableBorder
-            // 1. Datos y Ordenamiento
-            records={records}
-            sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
-            // 2. Paginación mágica
-            totalRecords={totalRecords}
-            recordsPerPage={pageSize}
-            page={page}
-            onPageChange={setPage}
-            columns={[
-              {
-                accessor: 'name',
-                title: 'Estado',
-                sortable: true,
-                filter: (
-                  <TextInput
-                    placeholder="Buscar estado..."
-                    leftSection={<IconSearch size={16} />}
-                    rightSection={
-                      <ActionIcon
-                        size="sm"
-                        variant="transparent"
-                        onClick={() => setQuery('')}
-                      >
-                        <IconX size={14} />
-                      </ActionIcon>
-                    }
-                    value={query}
-                    onChange={(e) => setQuery(e.currentTarget.value)}
-                  />
-                ),
-                render: ({ name }: any) => (
-                  <Text fw={600} size="sm">
-                    {name}
-                  </Text>
-                ),
-              },
-              { accessor: 'code', title: 'Código', sortable: true },
-              {
-                accessor: 'actions',
-                title: 'Acciones',
-                textAlign: 'right',
-                render: ({ id }) => (
-                  <Group gap={4} justify="right" wrap="nowrap">
-                    <Tooltip label="Editar">
-                      <ActionIcon
-                        component={Link}
-                        href={`/admin/locations/states/edit/${id}`}
-                        size="sm"
-                        variant="subtle"
-                        color="blue"
-                      >
-                        <IconEdit size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Eliminar">
-                      <ActionIcon size="sm" variant="subtle" color="red">
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                ),
-              },
-            ]}
-          />
-        </Paper>
+        {/* Componente que maneja filtrado, búsqueda, paginación y tabla */}
+        <StatesTable initialData={states} />
       </Stack>
     </Container>
   );
