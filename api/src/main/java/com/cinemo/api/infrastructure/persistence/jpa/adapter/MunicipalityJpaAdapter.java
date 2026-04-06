@@ -57,4 +57,9 @@ public class MunicipalityJpaAdapter implements MunicipalityRepositoryPort {
     jpaRepository.delete(entity);
   }
 
+  @Override
+  public List<Municipality> findByStateId(Long stateId) {
+    return jpaRepository.findByStateId(stateId).stream().map(mapper::toDomain).toList();
+  }
+
 }

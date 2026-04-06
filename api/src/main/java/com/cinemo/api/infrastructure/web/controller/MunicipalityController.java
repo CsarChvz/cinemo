@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinemo.api.domain.Municipality;
 import com.cinemo.api.domain.ports.in.municipality.ManageMunicipalityUseCase;
 import com.cinemo.api.domain.ports.in.municipality.RetrieveMunicipalityUseCase;
+import com.cinemo.api.domain.ports.in.municipality.SearchMunicipalitiesUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.municipality.MunicipalityResponseDto;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class MunicipalityController {
   private final ManageMunicipalityUseCase manageMunicipalityUseCase;
   private final RetrieveMunicipalityUseCase retrieveMunicipalityUseCase;
+  private final SearchMunicipalitiesUseCase searchMunicipalitiesUseCase;
   private final MunicipalityDtoMapper municipalityDtoMapper;
 
   @GetMapping
@@ -40,6 +42,16 @@ public class MunicipalityController {
     List<MunicipalityResponseDto> responseDTOs = municipalities.stream().map(municipalityDtoMapper::toResponse)
         .toList();
     return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
+  }
+
+  @GetMapping("/by-state/{stateId}")
+  public ResponseEntity<List<MunicipalityResponseDto>> getByStateId(
+      @PathVariable Long stateId) {
+    List<Municipality> municipalities = searchMunicipalitiesUseCase.getMunicipalitiesByStateId(stateId);
+    List<MunicipalityResponseDto> responseDtos = municipalities.stream().map(municipalityDtoMapper::toResponse)
+        .toList();
+
+    return ResponseEntity.ok(responseDtos);
   }
 
   @GetMapping("/{id}")

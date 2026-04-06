@@ -17,4 +17,6 @@ public interface MunicipalityRepositoryPort {
   Municipality modify(Municipality municipality);
 
   void remove(Municipality municipality);
+
+  List<Municipality> findByStateId(Long stateId);
 }
