@@ -1,4 +1,5 @@
 import { movieRouter } from './routers/movie';
+import { municipalityRouter } from './routers/municipality';
 import { postRouter } from './routers/post';
 import { stateRouter } from './routers/state';
 import { createCallerFactory, createTRPCRouter } from './trpc';
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   movie: movieRouter,
   state: stateRouter,
+  municipality: municipalityRouter,
 });
 
 // export type definition of API
