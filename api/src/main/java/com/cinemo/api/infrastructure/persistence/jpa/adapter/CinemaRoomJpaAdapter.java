@@ -50,4 +50,9 @@ public class CinemaRoomJpaAdapter implements CinemaRoomRepositoryPort {
         return mapper.toDomain(savedEntity);
     }
 
+    @Override
+    public List<CinemaRoom> findRoomsByCinemaId(Long roomId) {
+        return jpaRepository.findByCinemaId(roomId).stream().map(mapper::toDomain).toList();
+    }
+
 }

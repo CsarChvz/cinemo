@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinemo.api.domain.CinemaRoom;
 import com.cinemo.api.domain.ports.in.cinema_room.ManageCinemaRoomUseCase;
 import com.cinemo.api.domain.ports.in.cinema_room.RetrieveCinemaRoomUseCase;
+import com.cinemo.api.domain.ports.in.cinema_room.SearchRoomUseCase;
+import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomResponseDto;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CinemaRoomController {
     private final ManageCinemaRoomUseCase manageCinemaRoomUseCase;
     private final RetrieveCinemaRoomUseCase retrieveCinemaRoomUseCase;
+    private final SearchRoomUseCase searchRoomUseCase;
     private final CinemaRoomDtoMapper cinemaDtoMapper;
 
     @PostMapping
@@ -48,6 +51,14 @@ public class CinemaRoomController {
         List<CinemaRoomResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
+    }
+
+    @GetMapping("/by-cinema/{cinemaId}")
+    public ResponseEntity<List<CinemaRoomResponseDto>> getRoomsByCinema(@PathVariable Long cinemaId) {
+        List<CinemaRoom> rooms = searchRoomUseCase.getRoomsByCinemaId(cinemaId);
+        List<CinemaRoomResponseDto> responseDtos = rooms.stream().map(cinemaDtoMapper::toResponse).toList();
+
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
