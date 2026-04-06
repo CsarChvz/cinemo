@@ -7,7 +7,6 @@ export default function CreateStatePage() {
     <Container size="md" py="xl">
       <Stack gap="lg">
         <BackButtonStates />
-
         <StateForm />
       </Stack>
     </Container>
