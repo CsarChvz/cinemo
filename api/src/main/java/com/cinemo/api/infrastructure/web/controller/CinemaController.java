@@ -11,6 +11,7 @@ import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaUpdateRequestDto;
+import com.cinemo.api.infrastructure.web.controller.dto.cinema.SimpleCinemaResponseDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +54,10 @@ public class CinemaController {
     }
 
     @GetMapping("/by-municipality/{municipalityId}")
-    public ResponseEntity<List<CinemaResponseDto>> getByMunicipality(
+    public ResponseEntity<List<SimpleCinemaResponseDto>> getByMunicipality(
             @PathVariable Long municipalityId) {
         List<Cinema> cinemas = searchCinemaUseCase.getCinemasByMunicipalityId(municipalityId);
-        List<CinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
+        List<SimpleCinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponseSimple).toList();
 
         return ResponseEntity.ok(responseDtos);
     }

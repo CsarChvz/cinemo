@@ -17,6 +17,9 @@ public interface CinemaRoomDtoMapper {
 
     CinemaRoomResponseDto toResponse(CinemaRoom domain);
 
+    @Mapping(target = "cinemaId", source = "cinema.id")
+    SimpleCinemaRoomResponseDto toResponseSimple(CinemaRoom domain);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cinema.id", source = "cinemaId")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

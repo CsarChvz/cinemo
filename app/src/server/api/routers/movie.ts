@@ -52,7 +52,7 @@ export const movieRouter = createTRPCRouter({
    */
   getAllMovies: publicProcedure.query(async () => {
     try {
-      return await fetchFromMovieAPI('/movie', MovieListSchema);
+      return await fetchFromMovieAPI('/movies', MovieListSchema);
     } catch (error) {
       if (error instanceof TRPCError) throw error;
 
@@ -72,7 +72,7 @@ export const movieRouter = createTRPCRouter({
     .input(z.number().int().positive('El ID debe ser un número positivo'))
     .query(async ({ input }) => {
       try {
-        return await fetchFromMovieAPI(`/movie/${input}`, MovieSchema);
+        return await fetchFromMovieAPI(`/movies/${input}`, MovieSchema);
       } catch (error) {
         if (error instanceof TRPCError) throw error;
 

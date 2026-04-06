@@ -7,11 +7,11 @@ import com.cinemo.api.domain.CinemaRoom;
 import com.cinemo.api.domain.ports.in.cinema_room.ManageCinemaRoomUseCase;
 import com.cinemo.api.domain.ports.in.cinema_room.RetrieveCinemaRoomUseCase;
 import com.cinemo.api.domain.ports.in.cinema_room.SearchRoomUseCase;
-import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomUpdateRequestDto;
+import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.SimpleCinemaRoomResponseDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,9 +54,9 @@ public class CinemaRoomController {
     }
 
     @GetMapping("/by-cinema/{cinemaId}")
-    public ResponseEntity<List<CinemaRoomResponseDto>> getRoomsByCinema(@PathVariable Long cinemaId) {
+    public ResponseEntity<List<SimpleCinemaRoomResponseDto>> getRoomsByCinema(@PathVariable Long cinemaId) {
         List<CinemaRoom> rooms = searchRoomUseCase.getRoomsByCinemaId(cinemaId);
-        List<CinemaRoomResponseDto> responseDtos = rooms.stream().map(cinemaDtoMapper::toResponse).toList();
+        List<SimpleCinemaRoomResponseDto> responseDtos = rooms.stream().map(cinemaDtoMapper::toResponseSimple).toList();
 
         return ResponseEntity.ok(responseDtos);
     }
