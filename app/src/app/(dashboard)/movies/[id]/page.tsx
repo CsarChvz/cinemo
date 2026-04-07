@@ -1,11 +1,10 @@
-// app/movies/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { Container } from '@mantine/core';
 
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { DetailsOfMovie } from '@/components/movies/DetailsOfMovie/DetailsOfMovie';
-import { BackButton } from '@/components/common/BackButton';
 import { MovieScreening } from '@/components/movie-screenings/MovieScreenings/MovieScreenings';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 interface MovieDetailPageProps {
   params: Promise<{ id: string }>;
@@ -42,7 +41,7 @@ export default async function MovieDetailPage({
 
   return (
     <Container size="xl" py="xl">
-      <BackButton />
+      <BackButton href="/dashboard/users" />
 
       <DetailsOfMovie movie={movie} />
 

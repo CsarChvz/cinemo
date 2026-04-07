@@ -1,7 +1,7 @@
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { ButtonNewScreening } from '@/components/movie-screenings/ButtonNewScreening';
-import ScreeningsTable from '@/components/movie-screenings/ScreeningsTable';
+import ScreeningsTable from '@/components/movie-screenings/ScreeningsTable/ScreeningsTable';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 export default async function GestionFuncionesPage() {
   const screenings = await api.movieScreening.getAll();
@@ -16,7 +16,7 @@ export default async function GestionFuncionesPage() {
               Administra horarios, disponibilidad y complejos.
             </Text>
           </Stack>
-          <ButtonNewScreening />
+          <BackButton href="/dashboard/users" />
         </Group>
 
         <ScreeningsTable initialData={screenings} />

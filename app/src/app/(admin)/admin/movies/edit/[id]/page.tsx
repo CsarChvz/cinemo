@@ -1,8 +1,8 @@
 import { Container, Stack, Title, Text } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { BackButtonMovies } from '@/components/movies/BackButtonMovies';
-import { EditMovieForm } from '@/components/movies/EditMovieForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { EditMovieForm } from '@/components/movies/EditMovieForm/EditMovieForm';
 
 interface EditarPeliculaPageProps {
   params: Promise<{ id: string }>;
@@ -28,7 +28,7 @@ export default async function EditarPeliculaPage({
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonMovies />
+        <BackButton href="/admin/movies" />
 
         <div>
           <Title order={2}>Editar Película</Title>

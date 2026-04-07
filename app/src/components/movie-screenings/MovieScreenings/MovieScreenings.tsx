@@ -1,4 +1,3 @@
-// components/movie-screenings/MovieScreenings.tsx
 import {
   Box,
   Stack,
@@ -12,13 +11,13 @@ import {
   Text,
 } from '@mantine/core';
 import { IconMapPin } from '@tabler/icons-react';
-import { LocationSidebar } from '../LocationSidebar';
-import { ProgramGuideContent } from '../ProgramGuideContent';
 import { Movie } from '@/schemas/movie';
+import { ProgramGuideContent } from '../ProgramGuideContent/ProgramGuideContent';
+import { LocationSidebar } from '../LocationSidebar/LocationSidebar';
 
 interface MovieScreeningProps {
   movie: Movie;
-  cinemaId?: number; // 🔥 Cambiado a cinemaId numérico
+  cinemaId?: number;
 }
 
 export function MovieScreening({ movie, cinemaId }: MovieScreeningProps) {
@@ -38,12 +37,10 @@ export function MovieScreening({ movie, cinemaId }: MovieScreeningProps) {
 
       <Paper withBorder p="xl" radius="lg" shadow="xs">
         <Grid gap="xl">
-          {/* Filtros de Ubicación (Se conecta solo a la URL) */}
           <GridCol span={{ base: 12, md: 3 }}>
             <LocationSidebar />
           </GridCol>
 
-          {/* Resultado de Horarios */}
           <GridCol span={{ base: 12, md: 9 }}>
             {cinemaId && !isNaN(cinemaId) ? (
               <ProgramGuideContent cinemaId={cinemaId} movieId={movie.id} />

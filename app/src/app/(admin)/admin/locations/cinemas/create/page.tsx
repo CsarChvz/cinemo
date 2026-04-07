@@ -1,13 +1,12 @@
-// app/admin/locations/cinemas/create/page.tsx
 import { Container, Stack } from '@mantine/core';
-import { CinemaForm } from '@/components/locations/CinemaForm';
-import { BackButtonCinemas } from '@/components/locations/BackButtonCinemas';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { CinemaForm } from '@/components/locations/Cinema/CinemaForm';
 
 export default function CreateCinemaPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonCinemas />
+        <BackButton href="/dashboard/users" />
         <CinemaForm />
       </Stack>
     </Container>

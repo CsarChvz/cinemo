@@ -1,7 +1,7 @@
 import { Container, Stack, Group, Title, Text, Button } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import StatesTable from '@/components/locations/StatesTable';
-import { ButtonNewState } from '@/components/locations/ButtonNewState';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import StatesTable from '@/components/locations/State/StatesTable';
 
 export default async function StatesListPage() {
   const states = await api.state.getAll();
@@ -16,7 +16,7 @@ export default async function StatesListPage() {
               Administra los estados donde tienes presencia.
             </Text>
           </Stack>
-          <ButtonNewState />
+          <BackButton href="/dashboard/users" />
         </Group>
 
         <StatesTable initialData={states} />

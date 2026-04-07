@@ -1,15 +1,7 @@
-import { BackButton } from '@/components/common/BackButton';
-import {
-  Container,
-  Title,
-  Text,
-  Button,
-  Stack,
-  Paper,
-  Center,
-} from '@mantine/core';
-import { IconMovieOff, IconArrowLeft } from '@tabler/icons-react';
-import Link from 'next/link';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { Container, Title, Text, Stack, Paper, Center } from '@mantine/core';
+import { IconMovieOff } from '@tabler/icons-react';
+
 export function MovieNotFound() {
   return (
     <Container size="sm" py={80}>
@@ -27,7 +19,7 @@ export function MovieNotFound() {
               el enlace es incorrecto, o ha sido removida de Cinemo.
             </Text>
 
-            <BackButton />
+            <BackButton href="/dashboard/users" />
           </Stack>
         </Center>
       </Paper>

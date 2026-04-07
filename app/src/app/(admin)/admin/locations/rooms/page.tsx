@@ -1,7 +1,7 @@
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import RoomsTable from '@/components/locations/RoomsTable';
-import { ButtonNewRoom } from '@/components/locations/ButtonNewRoom';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import RoomsTable from '@/components/locations/Room/RoomsTable';
 
 export default async function RoomsListPage() {
   const rooms = await api.room.getAll();
@@ -16,7 +16,7 @@ export default async function RoomsListPage() {
               Administra el aforo, tipo y disponibilidad de cada sala.
             </Text>
           </Stack>
-          <ButtonNewRoom />
+          <BackButton href="/dashboard/users" />
         </Group>
 
         <RoomsTable initialData={rooms} />

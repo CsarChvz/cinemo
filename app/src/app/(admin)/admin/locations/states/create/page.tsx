@@ -1,12 +1,12 @@
 import { Container, Stack } from '@mantine/core';
-import { StateForm } from '@/components/locations/StateForm';
-import { BackButtonStates } from '@/components/locations/BackButtonStates';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { StateForm } from '@/components/locations/State/StateForm';
 
 export default function CreateStatePage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonStates />
+        <BackButton href="/dashboard/users" />
         <StateForm />
       </Stack>
     </Container>

@@ -1,7 +1,7 @@
 import { Container } from '@mantine/core';
 import { Metadata } from 'next';
 import { api, HydrateClient } from '@/trpc-folder/trpc-adaptadores/server';
-import { AdminMoviesClientWrapper } from '@/components/movies/AdminMoviesClientWrapper';
+import { AdminMoviesClientWrapper } from '@/components/movies/AdminMoviesClientWrapper/AdminMoviesClientWrapper';
 
 export const metadata: Metadata = {
   title: 'Administración de Películas | Cinemo',

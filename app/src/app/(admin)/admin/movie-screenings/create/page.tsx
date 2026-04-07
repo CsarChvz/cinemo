@@ -1,12 +1,12 @@
 import { Container, Stack } from '@mantine/core';
-import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
 import { MovieScreeningForm } from '@/components/movie-screenings/MovieScreeningForm/MovieScreeningForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 export default function NuevaFuncionPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonScreenings />
+        <BackButton href="/dashboard/users" />
         <MovieScreeningForm />
       </Stack>
     </Container>

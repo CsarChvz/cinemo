@@ -1,8 +1,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { BackButtonRooms } from '@/components/locations/BackButtonRooms';
-import { EditRoomForm } from '@/components/locations/EditRoomForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { EditRoomForm } from '@/components/locations/Room/EditRoomForm';
 
 interface EditRoomPageProps {
   params: Promise<{ id: string }>;
@@ -26,7 +26,7 @@ export default async function EditRoomPage({ params }: EditRoomPageProps) {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonRooms />
+        <BackButton href="/dashboard/users" />
         <EditRoomForm room={room} />
       </Stack>
     </Container>

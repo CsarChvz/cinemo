@@ -1,12 +1,12 @@
 import { Container, Stack } from '@mantine/core';
-import { RoomForm } from '@/components/locations/RoomForm';
-import { BackButtonRooms } from '@/components/locations/BackButtonRooms';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { RoomForm } from '@/components/locations/Room/RoomForm';
 
 export default function CreateRoomPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonRooms />
+        <BackButton href="/dashboard/users" />
         <RoomForm />
       </Stack>
     </Container>

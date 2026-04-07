@@ -1,8 +1,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { EditStateForm } from '@/components/locations/EditStateForm';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { BackButtonStates } from '@/components/locations/BackButtonStates';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { EditStateForm } from '@/components/locations/State/EditStateForm';
 
 interface EditStatePageProps {
   params: Promise<{ id: string }>;
@@ -21,7 +21,7 @@ export default async function EditStatePage({ params }: EditStatePageProps) {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonStates />
+        <BackButton href="/dashboard/users" />
         <EditStateForm state={state} />
       </Stack>
     </Container>

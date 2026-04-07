@@ -1,8 +1,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
-import { EditMovieScreeningForm } from '@/components/movie-screenings/EditMovieScreeningForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { EditMovieScreeningForm } from '@/components/movie-screenings/EditMovieScreeningForm/EditMovieScreeningForm';
 
 interface EditarFuncionPageProps {
   params: Promise<{ id: string }>;
@@ -27,7 +27,7 @@ export default async function EditarFuncionPage({
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonScreenings />
+        <BackButton href="/dashboard/users" />
         <EditMovieScreeningForm screening={screening} />
       </Stack>
     </Container>

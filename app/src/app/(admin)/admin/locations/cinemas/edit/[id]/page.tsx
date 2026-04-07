@@ -2,8 +2,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { BackButtonCinemas } from '@/components/locations/BackButtonCinemas'; // El botón que creamos antes
-import { EditCinemaForm } from '@/components/locations/EditCinemaForm';
+import { EditCinemaForm } from '@/components/locations/Cinema/EditCinemaForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 interface EditCinemaPageProps {
   params: Promise<{ id: string }>;
@@ -27,7 +27,7 @@ export default async function EditCinemaPage({ params }: EditCinemaPageProps) {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonCinemas />
+        <BackButton href="/dashboard/users" />
         <EditCinemaForm cinema={cinema} />
       </Stack>
     </Container>

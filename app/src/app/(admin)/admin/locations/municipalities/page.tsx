@@ -1,8 +1,8 @@
 // app/admin/locations/municipalities/page.tsx
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { ButtonNewMunicipality } from '@/components/locations/ButtonNewMunicipality';
-import MunicipalitiesTable from '@/components/locations/MunicipalitiesTable';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import MunicipalitiesTable from '@/components/locations/Municipality/MunicipalitiesTable';
 
 export default async function MunicipalitiesListPage() {
   const municipalities = await api.municipality.getAll();
@@ -18,7 +18,7 @@ export default async function MunicipalitiesListPage() {
               estados.
             </Text>
           </Stack>
-          <ButtonNewMunicipality />
+          <BackButton href="/dashboard/users" />
         </Group>
 
         <MunicipalitiesTable initialData={municipalities} />

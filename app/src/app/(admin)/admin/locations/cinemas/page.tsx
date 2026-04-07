@@ -1,8 +1,7 @@
-// app/admin/locations/cinemas/page.tsx
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import CinemasTable from '@/components/locations/CinemasTable';
-import { ButtonNewCinema } from '@/components/locations/ButtonNewCinema';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import CinemasTable from '@/components/locations/Cinema/CinemasTable';
 
 export default async function CinemasListPage() {
   // Obtenemos los cines desde el servidor
@@ -18,7 +17,7 @@ export default async function CinemasListPage() {
               Administra las sucursales y sus ubicaciones.
             </Text>
           </Stack>
-          <ButtonNewCinema />
+          <BackButton href="/dashboard/users" />
         </Group>
 
         <CinemasTable initialData={cinemas} />

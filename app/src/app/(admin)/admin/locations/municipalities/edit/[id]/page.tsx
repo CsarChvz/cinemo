@@ -1,8 +1,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { EditMunicipalityForm } from '@/components/locations/EditMunicipalityForm';
-import { BackButtonMunicipalities } from '@/components/locations/BackButtonMunicipalities';
+import { EditMunicipalityForm } from '@/components/locations/Municipality/EditMunicipalityForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 interface EditMunicipalityPageProps {
   params: Promise<{ id: string }>;
@@ -30,7 +30,7 @@ export default async function EditMunicipalityPage({
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonMunicipalities />
+        <BackButton href="/dashboard/users" />
         <EditMunicipalityForm municipality={municipality} />
       </Stack>
     </Container>

@@ -1,7 +1,7 @@
 // app/cartelera/page.tsx
 import { Container, Grid, GridCol, Title, Text, Box } from '@mantine/core';
-import { LocationSidebar } from '@/components/movie-screenings/LocationSidebar';
-import { ProgramGuideContent } from '@/components/movie-screenings/ProgramGuideContent';
+import { ProgramGuideContent } from '@/components/movie-screenings/ProgramGuideContent/ProgramGuideContent';
+import { LocationSidebar } from '@/components/movie-screenings/LocationSidebar/LocationSidebar';
 
 export default async function MovieScreeningsPage({
   searchParams,

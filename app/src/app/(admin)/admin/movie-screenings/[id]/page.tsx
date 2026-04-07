@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { ScreeningDetailContent } from '@/components/movie-screenings/ScreeningDetailContent/ScreeningDetailContent';
 import { MovieSummaryCard } from '@/components/movie-screenings/MovieSummaryCard/MovieSummaryCard';
-import { ScreeningActionButtons } from '@/components/movie-screenings/ScreeningActionButtons';
-import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { ScreeningActionButtons } from '@/components/movie-screenings/ScreeningActionButtons/ScreeningActionButtons';
 
 interface DetalleFuncionPageProps {
   params: Promise<{ id: string }>;
@@ -30,8 +30,7 @@ export default async function DetalleFuncionPage({
     <Container size="lg" py="xl">
       <Stack gap="lg">
         <Group justify="space-between">
-          <BackButtonScreenings />
-
+          <BackButton href="/dashboard/users" />
           <ScreeningActionButtons id={screening.id} />
         </Group>
 
