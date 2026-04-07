@@ -10,7 +10,6 @@ interface FeaturedMoviesSectionProps {
 }
 
 export function FeaturedMoviesSection({ movies }: FeaturedMoviesSectionProps) {
-  // Opcional: Si quieres mostrar solo las primeras 4 películas activas en el inicio
   const activeMovies = movies.filter((m) => m.isActive).slice(0, 4);
 
   return (

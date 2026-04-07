@@ -24,9 +24,17 @@ export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
   const durationFormatted = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 
   return (
-    <Card withBorder radius="md" p="md" className={classes.card} shadow="sm">
+    <Card
+      withBorder
+      radius="md"
+      p="md"
+      className={classes.card}
+      shadow="sm"
+      // 🔥 1. Le decimos a la tarjeta que tome el 100% del alto y use Flexbox
+      h="100%"
+      style={{ display: 'flex', flexDirection: 'column' }}
+    >
       <Card.Section>
-        {/* Aspect Ratio 2:3 (Estándar de póster de cine) */}
         <AspectRatio ratio={4 / 4}>
           <Image
             src={movie.posterUrl}
@@ -36,7 +44,13 @@ export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
         </AspectRatio>
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md" p="md">
+      {/* 🔥 3. flexGrow: 1 hace que esta sección central se estire y llene el espacio vacío */}
+      <Card.Section
+        className={classes.section}
+        mt="md"
+        p="md"
+        style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+      >
         <Group justify="space-between" align="start" wrap="nowrap">
           <Text fz="lg" fw={700} lineClamp={2} style={{ flex: 1 }}>
             {movie.title}
@@ -66,7 +80,8 @@ export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
         </Text>
       </Card.Section>
 
-      <Group mt="md">
+      {/* 🔥 4. mt="auto" empuja este grupo de botones al fondo de la tarjeta siempre */}
+      <Group mt="auto" pt="md">
         <Button
           radius="md"
           component={Link}

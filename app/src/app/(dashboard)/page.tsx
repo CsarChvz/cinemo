@@ -5,7 +5,6 @@ import { CtaSection } from '@/components/Welcome/CtaSection';
 import { HeroSection } from '@/components/Welcome/HeroSection';
 import { api, HydrateClient } from '@/trpc/server';
 
-// 1. Añadimos Metadata nativa de Next.js para SEO
 export const metadata: Metadata = {
   title: 'Cinemo | Tu cine, tu momento',
   description:
