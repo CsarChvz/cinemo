@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { DataTableSortStatus } from 'mantine-datatable';
 import { useDebouncedValue } from '@mantine/hooks';
 import sortBy from 'lodash/sortBy';
-import { MovieScreening } from '@/interfaces/movie_screening.interface';
+import { MovieScreening } from '@/schemas/movie-screening';
 
 export function useScreeningManagement(initialData: MovieScreening[]) {
   const [page, setPage] = useState(1);
@@ -24,9 +24,9 @@ export function useScreeningManagement(initialData: MovieScreening[]) {
 
   const { records, total } = useMemo(() => {
     // 1. Filtrar
-    let result = initialData.filter(({ movie, cinema, municipality }) => {
+    let result = initialData.filter(({ movie, room }) => {
       const searchStr =
-        `${movie.title} ${cinema} ${municipality}`.toLowerCase();
+        `${movie.title} ${room.cinema.name} ${room.cinema.municipality.name}`.toLowerCase();
       return searchStr.includes(debouncedQuery.trim().toLowerCase());
     });
 
