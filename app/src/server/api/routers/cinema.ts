@@ -39,6 +39,27 @@ export const cinemaRouter = createTRPCRouter({
     }),
 
   /**
+   * Obtiene todos los cines desde el backend de Java por el municipio
+   * GET /cinemas/by
+   */
+
+  getByMunicipalityId: publicProcedure
+    .input(z.object({ municipalityId: z.number().int().positive() }))
+    .query(async ({ input }) => {
+      const data = await apiClient(
+        `/rooms/by-municipality/${input.municipalityId}`,
+        CinemaListSchema
+      );
+
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Cine con ID ${input.municipalityId} no encontrado`,
+        });
+      }
+      return data;
+    }),
+  /**
    * Crea un nuevo cine enviando name, address y municipalityId en el body
    * POST /cinemas
    */

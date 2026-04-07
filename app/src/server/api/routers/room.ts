@@ -22,6 +22,23 @@ export const roomRouter = createTRPCRouter({
       return data;
     }),
 
+  getByCinemaId: publicProcedure
+    .input(z.object({ cinemaId: z.number().int().positive() }))
+    .query(async ({ input }) => {
+      const data = await apiClient(
+        `/rooms/by-cinema/${input.cinemaId}`,
+        RoomListSchema
+      );
+
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Cine con ID ${input.cinemaId} no encontrado`,
+        });
+      }
+      return data;
+    }),
+
   create: publicProcedure
     .input(CreateRoomSchema)
     .mutation(async ({ input }) => {
