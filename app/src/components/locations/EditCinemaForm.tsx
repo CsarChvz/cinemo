@@ -1,6 +1,8 @@
+// components/locations/EditCinemaForm.tsx
 'use client';
 
 import { api } from '@/trpc/react';
+import { Cinema } from '@/schemas/cinema'; // Tu tipo Zod
 import {
   Paper,
   Title,
@@ -16,27 +18,28 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
-export interface CinemaFormValues {
-  id?: string | number;
+export interface EditCinemaFormValues {
   name: string;
   address: string;
   stateId: string;
   municipalityId: string;
 }
 
-interface CinemaFormProps {
-  isEditing?: boolean;
+interface EditCinemaFormProps {
+  cinema: Cinema; // Recibimos los datos iniciales desde el servidor
 }
 
-export function CinemaForm({ isEditing = false }: CinemaFormProps) {
+export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
   const router = useRouter();
 
-  const form = useForm<CinemaFormValues>({
+  // Inicializamos el formulario con los datos del cine
+  const form = useForm<EditCinemaFormValues>({
     initialValues: {
-      name: '',
-      address: '',
-      stateId: '',
-      municipalityId: '',
+      name: cinema.name,
+      address: cinema.address,
+      // Extraemos el ID del estado desde la relación anidada
+      stateId: cinema.municipality.state.id.toString(),
+      municipalityId: cinema.municipality.id.toString(),
     },
     validate: {
       name: (value) => (value.trim().length < 3 ? 'Nombre muy corto' : null),
@@ -47,13 +50,13 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
     },
   });
 
-  // 1. Obtenemos los datos reales del backend
+  // 1. Obtenemos los catálogos para los Selects
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
   const { data: municipalities, isLoading: isLoadingMunicipalities } =
     api.municipality.getAll.useQuery();
 
-  // 2. Mapeamos los estados al formato que requiere el Select
+  // 2. Mapeamos los estados
   const statesData = useMemo(() => {
     return (
       states?.map((state) => ({
@@ -63,7 +66,7 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
     );
   }, [states]);
 
-  // 3. Filtramos dinámicamente los municipios según el estado seleccionado
+  // 3. Filtramos municipios dinámicamente según el estado seleccionado
   const availableMunicipalities = useMemo(() => {
     if (!form.values.stateId || !municipalities) return [];
 
@@ -75,10 +78,9 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
       }));
   }, [form.values.stateId, municipalities]);
 
-  // 4. Definimos la mutación interna para crear
-  const createCinema = api.cinema.create.useMutation({
+  // 4. Definimos la mutación interna para ACTUALIZAR
+  const editCinema = api.cinema.update.useMutation({
     onSuccess: () => {
-      // Redirigimos al catálogo al terminar
       router.push('/admin/locations/cinemas');
     },
   });
@@ -86,23 +88,21 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
-        <Title order={2}>
-          {isEditing ? 'Editar Complejo' : 'Crear Nuevo Complejo'}
-        </Title>
+        <Title order={2}>Editar Complejo</Title>
         <Text c="dimmed" size="sm">
-          {isEditing
-            ? 'Actualiza la información del cine.'
-            : 'Registra un nuevo cine especificando su ubicación exacta.'}
+          Actualiza la información del cine existente.
         </Text>
       </Stack>
 
       <form
         onSubmit={form.onSubmit((values) => {
-          // Ejecutamos la mutación aquí mismo
-          createCinema.mutate({
-            name: values.name,
-            address: values.address,
-            municipalityId: Number(values.municipalityId), // Transformamos a número para Zod
+          editCinema.mutate({
+            id: cinema.id, // Pasamos el ID del cine que estamos editando
+            data: {
+              name: values.name,
+              address: values.address,
+              municipalityId: Number(values.municipalityId),
+            },
           });
         })}
       >
@@ -135,7 +135,8 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
               {...form.getInputProps('stateId')}
               onChange={(val) => {
                 form.setFieldValue('stateId', val || '');
-                form.setFieldValue('municipalityId', ''); // Magia de la cascada
+                // Si el usuario cambia de estado manualmente, borramos el municipio actual
+                form.setFieldValue('municipalityId', '');
               }}
             />
             <Select
@@ -163,10 +164,10 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'violet', to: 'purple' }}
-            loading={createCinema.isPending} // Spinner automático de tRPC
+            loading={editCinema.isPending} // Spinner automático durante el PUT/PATCH
             disabled={isLoadingStates || isLoadingMunicipalities}
           >
-            {isEditing ? 'Guardar Cambios' : 'Crear Cine'}
+            Guardar Cambios
           </Button>
         </Stack>
       </form>
