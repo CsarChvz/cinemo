@@ -30,7 +30,6 @@ export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
       p="md"
       className={classes.card}
       shadow="sm"
-      // 🔥 1. Le decimos a la tarjeta que tome el 100% del alto y use Flexbox
       h="100%"
       style={{ display: 'flex', flexDirection: 'column' }}
     >
@@ -44,7 +43,6 @@ export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
         </AspectRatio>
       </Card.Section>
 
-      {/* 🔥 3. flexGrow: 1 hace que esta sección central se estire y llene el espacio vacío */}
       <Card.Section
         className={classes.section}
         mt="md"

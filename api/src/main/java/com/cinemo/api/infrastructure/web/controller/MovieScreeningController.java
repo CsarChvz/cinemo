@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.MovieScreening;
@@ -61,5 +62,20 @@ public class MovieScreeningController {
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<MovieScreeningResponseDto>> search(
+            @RequestParam(required = false) Long movieId,
+            @RequestParam(required = false) Long stateId,
+            @RequestParam(required = false) Long municipalityId,
+            @RequestParam(required = false) Long cinemaId) {
+        List<MovieScreeningResponseDto> response = retrieveMovieScreeningUseCase
+                .search(movieId, stateId, municipalityId, cinemaId)
+                .stream()
+                .map(movieScreeningDtoMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }

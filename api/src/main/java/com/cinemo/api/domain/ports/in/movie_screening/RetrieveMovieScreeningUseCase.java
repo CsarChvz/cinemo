@@ -9,4 +9,6 @@ public interface RetrieveMovieScreeningUseCase {
     Optional<MovieScreening> getById(Long id);
 
     List<MovieScreening> getAll();
+
+    List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId);
 }

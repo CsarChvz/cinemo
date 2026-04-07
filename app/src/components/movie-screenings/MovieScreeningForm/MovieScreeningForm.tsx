@@ -59,7 +59,7 @@ export function MovieScreeningForm({
   // 1. CARGA INICIAL: Películas y Estados
   // ==========================================
   const { data: movies, isLoading: isLoadingMovies } =
-    api.movie.getAllMovies.useQuery();
+    api.movie.getAll.useQuery();
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
 

@@ -62,7 +62,7 @@ export function EditMovieScreeningForm({
   // 1. CARGA INICIAL
   // ==========================================
   const { data: movies, isLoading: isLoadingMovies } =
-    api.movie.getAllMovies.useQuery();
+    api.movie.getAll.useQuery();
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
 

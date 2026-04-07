@@ -13,6 +13,34 @@ export const movieScreeningRouter = createTRPCRouter({
     return await apiClient('/movie-screenings', MovieScreeningListSchema);
   }),
 
+  search: publicProcedure
+    .input(
+      z
+        .object({
+          movieId: z.number().int().positive().optional(),
+          stateId: z.number().int().positive().optional(),
+          municipalityId: z.number().int().positive().optional(),
+          cinemaId: z.number().int().positive().optional(),
+        })
+        .optional() // Todo el objeto es opcional
+    )
+    .query(async ({ input }) => {
+      const params = new URLSearchParams();
+
+      if (input?.movieId) params.append('movieId', input.movieId.toString());
+      if (input?.stateId) params.append('stateId', input.stateId.toString());
+      if (input?.municipalityId)
+        params.append('municipalityId', input.municipalityId.toString());
+      if (input?.cinemaId) params.append('cinemaId', input.cinemaId.toString());
+
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+
+      return await apiClient(
+        `/movie-screenings/search${queryString}`,
+        MovieScreeningListSchema
+      );
+    }),
+
   getById: publicProcedure
     .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {

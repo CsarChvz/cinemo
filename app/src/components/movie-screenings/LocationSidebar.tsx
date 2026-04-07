@@ -1,4 +1,7 @@
+// components/movie-screenings/LocationSidebar.tsx
 'use client';
+
+import { api } from '@/trpc/react';
 import {
   NavLink,
   Stack,
@@ -7,72 +10,109 @@ import {
   ScrollArea,
   Select,
   Divider,
+  Center,
+  Loader,
 } from '@mantine/core';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import {
-  IconMapPin,
-  IconMap2,
-  IconBuildingCommunity,
-} from '@tabler/icons-react';
-
-
-// @TODO: Get Cinemas around the Country with the database
-// Mock de cines por municipio
-const CINES_POR_MUNI: Record<string, string[]> = {
-  zapopan: ['Cinemo Plaza Patria', 'Cinemo Andares', 'Cinemo Gran Plaza'],
-  guadalajara: ['Cinemo Centro', 'Cinemo Magno'],
-};
+import { IconBuildingCommunity } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
 export function LocationSidebar() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const currentEstado = searchParams.get('estado') || '';
-  const currentMuni = searchParams.get('municipio') || '';
-  const currentCine = searchParams.get('cine') || '';
+  // Leemos los IDs de la URL
+  const currentStateId = searchParams.get('stateId') || '';
+  const currentMuniId = searchParams.get('municipalityId') || '';
+  const currentCinemaId = searchParams.get('cinemaId') || '';
 
-  const updateUrl = (key: string, value: string) => {
+  // 1. CARGA DE DATOS: Estados
+  const { data: states, isLoading: isLoadingStates } =
+    api.state.getAll.useQuery();
+  const stateOptions = useMemo(
+    () => states?.map((s) => ({ value: s.id.toString(), label: s.name })) || [],
+    [states]
+  );
+
+  // 2. CASCADA: Municipios
+  const stateIdNum = Number(currentStateId);
+  const { data: municipalities, isFetching: isFetchingMunicipalities } =
+    api.municipality.getByStateId.useQuery(
+      { stateId: stateIdNum },
+      { enabled: !!currentStateId && !isNaN(stateIdNum) }
+    );
+  const muniOptions = useMemo(
+    () =>
+      municipalities?.map((m) => ({ value: m.id.toString(), label: m.name })) ||
+      [],
+    [municipalities]
+  );
+
+  // 3. CASCADA: Cines
+  const muniIdNum = Number(currentMuniId);
+  const { data: cinemas, isFetching: isFetchingCinemas } =
+    api.cinema.getByMunicipalityId.useQuery(
+      { municipalityId: muniIdNum },
+      { enabled: !!currentMuniId && !isNaN(muniIdNum) }
+    );
+
+  // Función para actualizar la URL sin recargar la página
+  const updateUrl = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value.toLowerCase());
 
-    // Resetear niveles inferiores
-    if (key === 'estado') {
-      params.delete('municipio');
-      params.delete('cine');
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
     }
-    if (key === 'municipio') {
-      params.delete('cine');
+
+    // Cascada de limpieza
+    if (key === 'stateId') {
+      params.delete('municipalityId');
+      params.delete('cinemaId');
+    }
+    if (key === 'municipalityId') {
+      params.delete('cinemaId');
     }
 
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+  };;
 
   return (
-    <Paper withBorder p="xs" h="100%" radius="md">
+    <Paper withBorder p="xs" h="100%" radius="md" shadow="sm">
       <Stack gap="xs">
-        <Text fw={800} size="xs" c="dimmed" px="sm">
+        <Text fw={800} size="xs" c="dimmed" px="sm" mt="xs">
           UBICACIÓN
         </Text>
+
         <Select
-          placeholder="Estado"
-          data={[{ value: 'jalisco', label: 'Jalisco' }]}
-          value={currentEstado}
-          onChange={(val) => val && updateUrl('estado', val)}
+          clearable
+          placeholder={isLoadingStates ? 'Cargando...' : 'Estado'}
+          data={stateOptions}
+          value={currentStateId}
+          onChange={(val) => updateUrl('stateId', val)}
+          disabled={isLoadingStates}
           size="sm"
           mx="sm"
         />
 
-        {currentEstado && (
-          <Select
-            placeholder="Municipio"
-            data={['Zapopan', 'Guadalajara']}
-            value={currentMuni.charAt(0).toUpperCase() + currentMuni.slice(1)}
-            onChange={(val) => val && updateUrl('municipio', val)}
-            size="sm"
-            mx="sm"
-          />
-        )}
+        <Select
+          clearable
+          placeholder={
+            isFetchingMunicipalities
+              ? 'Cargando...'
+              : currentStateId
+                ? 'Municipio'
+                : 'Selecciona un estado'
+          }
+          data={muniOptions}
+          value={currentMuniId}
+          onChange={(val) => updateUrl('municipalityId', val)}
+          disabled={!currentStateId || isFetchingMunicipalities}
+          size="sm"
+          mx="sm"
+        />
 
         <Divider
           my="sm"
@@ -81,26 +121,33 @@ export function LocationSidebar() {
           labelPosition="center"
         />
 
-        <ScrollArea h={300} offsetScrollbars px="xs">
-          <Stack gap={4}>
-            {currentMuni ? (
-              CINES_POR_MUNI[currentMuni.toLowerCase()]?.map((cine) => (
+        <ScrollArea h={350} offsetScrollbars px="xs">
+          {isFetchingCinemas ? (
+            <Center p="xl">
+              <Loader size="sm" type="dots" />
+            </Center>
+          ) : cinemas && cinemas.length > 0 ? (
+            <Stack gap={4}>
+              {cinemas.map((cine) => (
                 <NavLink
-                  key={cine}
-                  label={cine}
+                  key={cine.id}
+                  label={cine.name}
                   leftSection={<IconBuildingCommunity size={16} />}
-                  active={currentCine === cine.toLowerCase()}
-                  onClick={() => updateUrl('cine', cine)}
+                  active={currentCinemaId === cine.id.toString()}
+                  onClick={() => updateUrl('cinemaId', cine.id.toString())}
                   variant="light"
-                  radioGroup="md"
+                  color="blue"
+                  style={{ borderRadius: 8 }}
                 />
-              ))
-            ) : (
-              <Text size="xs" c="dimmed" ta="center" py="md">
-                Selecciona un municipio
-              </Text>
-            )}
-          </Stack>
+              ))}
+            </Stack>
+          ) : (
+            <Text size="xs" c="dimmed" ta="center" py="md">
+              {currentMuniId
+                ? 'No hay cines en este municipio'
+                : 'Selecciona un municipio para ver cines'}
+            </Text>
+          )}
         </ScrollArea>
       </Stack>
     </Paper>
