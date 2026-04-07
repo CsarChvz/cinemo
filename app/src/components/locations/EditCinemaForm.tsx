@@ -2,7 +2,7 @@
 'use client';
 
 import { api } from '@/trpc/react';
-import { Cinema } from '@/schemas/cinema'; // Tu tipo Zod
+import { Cinema } from '@/schemas/cinema';
 import {
   Paper,
   Title,
@@ -50,13 +50,10 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
     },
   });
 
-  // 1. Obtenemos los catálogos para los Selects
+  // 1. Obtenemos TODOS los estados para el primer Select
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
-  const { data: municipalities, isLoading: isLoadingMunicipalities } =
-    api.municipality.getAll.useQuery();
 
-  // 2. Mapeamos los estados
   const statesData = useMemo(() => {
     return (
       states?.map((state) => ({
@@ -66,17 +63,27 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
     );
   }, [states]);
 
-  // 3. Filtramos municipios dinámicamente según el estado seleccionado
-  const availableMunicipalities = useMemo(() => {
-    if (!form.values.stateId || !municipalities) return [];
+  // 2. Obtenemos los municipios DINÁMICAMENTE según el estado seleccionado
+  const stateIdNum = Number(form.values.stateId);
+  const { data: municipalities, isFetching: isFetchingMunicipalities } =
+    api.municipality.getByStateId.useQuery(
+      { stateId: stateIdNum },
+      {
+        // Solo dispara la petición si tenemos un stateId válido.
+        // Al estar editando, esto será verdadero desde el inicio.
+        enabled: !!form.values.stateId && !isNaN(stateIdNum),
+      }
+    );
 
-    return municipalities
-      .filter((m) => m.state.id.toString() === form.values.stateId)
-      .map((m) => ({
-        value: m.id.toString(),
-        label: m.name,
-      }));
-  }, [form.values.stateId, municipalities]);
+  // 3. Mapeamos directamente la respuesta de la API
+  const availableMunicipalities = useMemo(() => {
+    if (!municipalities || !Array.isArray(municipalities)) return [];
+
+    return municipalities.map((m) => ({
+      value: m.id.toString(),
+      label: m.name,
+    }));
+  }, [municipalities]);
 
   // 4. Definimos la mutación interna para ACTUALIZAR
   const editCinema = api.cinema.update.useMutation({
@@ -142,7 +149,7 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
             <Select
               label="Municipio"
               placeholder={
-                isLoadingMunicipalities
+                isFetchingMunicipalities
                   ? 'Cargando municipios...'
                   : form.values.stateId
                     ? 'Selecciona un municipio'
@@ -150,7 +157,7 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
               }
               searchable
               withAsterisk
-              disabled={!form.values.stateId || isLoadingMunicipalities}
+              disabled={!form.values.stateId || isFetchingMunicipalities}
               data={availableMunicipalities}
               {...form.getInputProps('municipalityId')}
             />
@@ -164,8 +171,8 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'violet', to: 'purple' }}
-            loading={editCinema.isPending} // Spinner automático durante el PUT/PATCH
-            disabled={isLoadingStates || isLoadingMunicipalities}
+            loading={editCinema.isPending} // Spinner automático durante el PATCH/PUT
+            disabled={isLoadingStates || isFetchingMunicipalities}
           >
             Guardar Cambios
           </Button>

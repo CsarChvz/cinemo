@@ -39,6 +39,28 @@ export const municipalityRouter = createTRPCRouter({
     }),
 
   /**
+   * Obtiene Municipios por su stateId
+   * GET /municipalities/by-state/{stateId}
+   */
+
+  getByStateId: publicProcedure
+    .input(z.object({ stateId: z.number().int().positive() }))
+    .query(async ({ input }) => {
+      const data = await apiClient(
+        `/municipalities/by-state/${input.stateId}`,
+        MunicipalityListSchema
+      );
+
+      if (!data) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Estado con ID ${input.stateId} no encontrado`,
+        });
+      }
+      return data;
+    }),
+
+  /**
    * Crea un nuevo municipio enviando name y stateId en el body
    * POST /municipalities
    */

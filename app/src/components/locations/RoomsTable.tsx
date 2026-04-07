@@ -120,8 +120,9 @@ export default function RoomsTable({ initialData }: RoomsTableProps) {
             },
             {
               accessor: 'isActive',
-              title: 'Estado',
+              title: 'Status',
               textAlign: 'center',
+              render: ({ isActive }) => <Text>{String(isActive)}</Text>,
             },
             {
               accessor: 'actions',

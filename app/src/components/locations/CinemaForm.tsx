@@ -47,13 +47,10 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
     },
   });
 
-  // 1. Obtenemos los datos reales del backend
+  // 1. Obtenemos TODOS los estados para el primer Select
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
-  const { data: municipalities, isLoading: isLoadingMunicipalities } =
-    api.municipality.getAll.useQuery();
 
-  // 2. Mapeamos los estados al formato que requiere el Select
   const statesData = useMemo(() => {
     return (
       states?.map((state) => ({
@@ -63,22 +60,31 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
     );
   }, [states]);
 
-  // 3. Filtramos dinámicamente los municipios según el estado seleccionado
+  // 2. Obtenemos los municipios DINÁMICAMENTE según el estado seleccionado
+  const stateIdNum = Number(form.values.stateId);
+  const { data: municipalities, isFetching: isFetchingMunicipalities } =
+    api.municipality.getByStateId.useQuery(
+      { stateId: stateIdNum },
+      {
+        // Solo ejecuta la petición a la API si hay un stateId seleccionado válido
+        enabled: !!form.values.stateId && !isNaN(stateIdNum),
+      }
+    );
+
+  // 3. Mapeamos directamente la respuesta de la API (ya vienen filtrados)
   const availableMunicipalities = useMemo(() => {
-    if (!form.values.stateId || !municipalities) return [];
+    // Verificamos que sea un array (por si acaso la API devuelve error o null)
+    if (!municipalities || !Array.isArray(municipalities)) return [];
 
-    return municipalities
-      .filter((m) => m.state.id.toString() === form.values.stateId)
-      .map((m) => ({
-        value: m.id.toString(),
-        label: m.name,
-      }));
-  }, [form.values.stateId, municipalities]);
+    return municipalities.map((m) => ({
+      value: m.id.toString(),
+      label: m.name,
+    }));
+  }, [municipalities]);
 
-  // 4. Definimos la mutación interna para crear
+  // 4. Mutación para crear el cine
   const createCinema = api.cinema.create.useMutation({
     onSuccess: () => {
-      // Redirigimos al catálogo al terminar
       router.push('/admin/locations/cinemas');
     },
   });
@@ -98,11 +104,10 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
 
       <form
         onSubmit={form.onSubmit((values) => {
-          // Ejecutamos la mutación aquí mismo
           createCinema.mutate({
             name: values.name,
             address: values.address,
-            municipalityId: Number(values.municipalityId), // Transformamos a número para Zod
+            municipalityId: Number(values.municipalityId),
           });
         })}
       >
@@ -141,7 +146,9 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
             <Select
               label="Municipio"
               placeholder={
-                isLoadingMunicipalities
+                // Usamos isFetching porque queremos que muestre cargando
+                // cada vez que el estado cambia y hace una nueva petición
+                isFetchingMunicipalities
                   ? 'Cargando municipios...'
                   : form.values.stateId
                     ? 'Selecciona un municipio'
@@ -149,7 +156,8 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
               }
               searchable
               withAsterisk
-              disabled={!form.values.stateId || isLoadingMunicipalities}
+              // Bloqueamos mientras carga la petición
+              disabled={!form.values.stateId || isFetchingMunicipalities}
               data={availableMunicipalities}
               {...form.getInputProps('municipalityId')}
             />
@@ -163,8 +171,8 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'violet', to: 'purple' }}
-            loading={createCinema.isPending} // Spinner automático de tRPC
-            disabled={isLoadingStates || isLoadingMunicipalities}
+            loading={createCinema.isPending}
+            disabled={isLoadingStates || isFetchingMunicipalities}
           >
             {isEditing ? 'Guardar Cambios' : 'Crear Cine'}
           </Button>
