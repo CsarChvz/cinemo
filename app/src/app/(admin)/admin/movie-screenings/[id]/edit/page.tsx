@@ -1,65 +1,36 @@
-'use client';
+// app/admin/movie-screenings/edit/[id]/page.tsx
+import { Container, Stack } from '@mantine/core';
+import { notFound } from 'next/navigation';
+import { api } from '@/trpc/server';
+import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
+import { EditMovieScreeningForm } from '@/components/movie-screenings/EditMovieScreeningForm';
 
-import { MovieScreeningForm } from '@/components/movie-screenings/MovieScreeningForm/MovieScreeningForm';
-import { Button, Container, Stack, Center, Loader } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+interface EditarFuncionPageProps {
+  params: Promise<{ id: string }>;
+}
 
-export default function EditarFuncionPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default async function EditarFuncionPage({
+  params,
+}: EditarFuncionPageProps) {
+  const { id } = await params;
+  const screeningId = Number(id);
 
-  const [initialData, setInitialData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  if (isNaN(screeningId) || screeningId <= 0) {
+    notFound();
+  }
 
-  useEffect(() => {
-    // Simulación de fetch a tu API para obtener los datos de la función
-    setTimeout(() => {
-      setInitialData({
-        peliculaId: 'Interstellar',
-        estadoId: 'Jalisco',
-        municipioId: 'Zapopan',
-        cineId: 'Andares',
-        salaId: 'VIP',
-        // Simulamos que la función es mañana a las 8:00 PM
-        horario: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-      });
-      setLoading(false);
-    }, 500);
-  }, [id]);
+  // Obtenemos los datos actuales de la función
+  const screening = await api.movieScreening.getById({ id: screeningId });
 
-  const handleSubmit = (values: any) => {
-    console.log(`Enviando a la API para ACTUALIZAR función ${id}:`, values);
-    // Aquí harías tu fetch PUT o PATCH a /api/screenings/{id}
-  };
+  if (!screening) {
+    notFound();
+  }
 
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <Button
-          component={Link}
-          href="/admin/movie-screenings"
-          variant="subtle"
-          color="gray"
-          leftSection={<IconArrowLeft size={16} />}
-          w="fit-content"
-        >
-          Volver a lista
-        </Button>
-
-        {loading ? (
-          <Center h={300}>
-            <Loader color="blue" />
-          </Center>
-        ) : (
-          <MovieScreeningForm
-            initialValues={initialData}
-            onSubmit={handleSubmit}
-            isEditing // Le pasamos la bandera para que cambie los textos
-          />
-        )}
+        <BackButtonScreenings />
+        <EditMovieScreeningForm screening={screening} />
       </Stack>
     </Container>
   );
