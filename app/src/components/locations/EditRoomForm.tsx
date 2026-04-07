@@ -1,6 +1,8 @@
+// components/locations/EditRoomForm.tsx
 'use client';
 
 import { api } from '@/trpc/react';
+import { Room } from '@/schemas/room'; // Asegúrate de tener esta ruta correcta
 import {
   Paper,
   Title,
@@ -17,7 +19,7 @@ import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-export interface RoomFormValues {
+export interface EditRoomFormValues {
   name: string;
   roomType: string;
   capacity: number;
@@ -25,16 +27,22 @@ export interface RoomFormValues {
   isActive: boolean;
 }
 
-export function RoomForm() {
+interface EditRoomFormProps {
+  room: Room;
+}
+
+export function EditRoomForm({ room }: EditRoomFormProps) {
   const router = useRouter();
 
-  const form = useForm<RoomFormValues>({
+  const form = useForm<EditRoomFormValues>({
+    // Llenamos el formulario con los datos que llegaron del servidor
     initialValues: {
-      name: '',
-      roomType: '',
-      capacity: 0,
-      cinemaId: '',
-      isActive: true,
+      name: room.name,
+      roomType: room.roomType,
+      capacity: room.capacity,
+      isActive: room.isActive,
+      // Extraemos el ID del cine de la relación anidada de Zod
+      cinemaId: room.cinema.id.toString(),
     },
     validate: {
       name: (value) => (value.trim().length < 2 ? 'Nombre muy corto' : null),
@@ -54,7 +62,8 @@ export function RoomForm() {
       label: cinema.name,
     })) || [];
 
-  const createRoom = api.room.create.useMutation({
+  // Mutación para ACTUALIZAR
+  const editRoom = api.room.update.useMutation({
     onSuccess: () => {
       router.push('/admin/locations/rooms');
     },
@@ -63,20 +72,23 @@ export function RoomForm() {
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
-        <Title order={2}>Crear Nueva Sala</Title>
+        <Title order={2}>Editar Sala</Title>
         <Text c="dimmed" size="sm">
-          Registra una nueva sala y asígnala a un complejo.
+          Modifica el aforo, tipo o disponibilidad de la sala.
         </Text>
       </Stack>
 
       <form
         onSubmit={form.onSubmit((values) => {
-          createRoom.mutate({
-            name: values.name,
-            roomType: values.roomType,
-            capacity: values.capacity,
-            isActive: values.isActive,
-            cinemaId: Number(values.cinemaId),
+          editRoom.mutate({
+            id: room.id,
+            data: {
+              name: values.name,
+              roomType: values.roomType,
+              capacity: values.capacity,
+              isActive: values.isActive,
+              cinemaId: Number(values.cinemaId),
+            },
           });
         })}
       >
@@ -133,10 +145,10 @@ export function RoomForm() {
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'teal', to: 'green' }}
-            loading={createRoom.isPending}
+            loading={editRoom.isPending}
             disabled={isLoadingCinemas}
           >
-            Crear Sala
+            Guardar Cambios
           </Button>
         </Stack>
       </form>
