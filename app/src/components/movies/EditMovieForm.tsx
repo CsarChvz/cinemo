@@ -1,14 +1,12 @@
-// components/movies/MovieForm.tsx
+// components/movies/EditMovieForm.tsx
 'use client';
 
 import { api } from '@/trpc/react';
-import { MovieGenre, MovieClassification } from '@/schemas/movie';
+import { Movie, MovieGenre, MovieClassification } from '@/schemas/movie';
 import {
   TextInput,
   Button,
   Paper,
-  Title,
-  Text,
   Stack,
   SimpleGrid,
   Select,
@@ -20,7 +18,8 @@ import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-export interface MovieFormValues {
+// Usamos la misma interfaz de valores que el formulario de creación
+export interface EditMovieFormValues {
   title: string;
   posterUrl: string;
   genre: string;
@@ -33,26 +32,26 @@ export interface MovieFormValues {
   isActive: boolean;
 }
 
-interface MovieFormProps {
-  isEditing?: boolean;
+interface EditMovieFormProps {
+  movie: Movie;
 }
 
-export function MovieForm({ isEditing = false }: MovieFormProps) {
+export function EditMovieForm({ movie }: EditMovieFormProps) {
   const router = useRouter();
 
-  // 1. Configuración del formulario
-  const form = useForm<MovieFormValues>({
+  // 1. Inicializamos el formulario con los datos de la base de datos
+  const form = useForm<EditMovieFormValues>({
     initialValues: {
-      title: '',
-      posterUrl: '',
-      genre: '',
-      durationMin: 120, // Valor por defecto razonable
-      description: '',
-      director: '',
-      producer: '',
-      classification: '',
-      releaseYear: new Date().getFullYear(),
-      isActive: true,
+      title: movie.title,
+      posterUrl: movie.posterUrl,
+      genre: movie.genre,
+      durationMin: movie.durationMin,
+      description: movie.description,
+      director: movie.director,
+      producer: movie.producer,
+      classification: movie.classification,
+      releaseYear: movie.releaseYear,
+      isActive: movie.isActive,
     },
     validate: {
       title: (v) => (v.trim().length < 1 ? 'El título es requerido' : null),
@@ -68,46 +67,37 @@ export function MovieForm({ isEditing = false }: MovieFormProps) {
     },
   });
 
-  // 2. Mutación de tRPC para CREAR la película
-  const createMovie = api.movie.create.useMutation({
+  // 2. Mutación de tRPC para ACTUALIZAR la película
+  const editMovie = api.movie.update.useMutation({
     onSuccess: () => {
-      // Si todo sale bien, regresamos a la tabla de películas
       router.push('/admin/movies');
+      router.refresh(); // Refrescamos para asegurar que la lista muestre los cambios
     },
     onError: (error) => {
-      console.error('Error al guardar la película:', error.message);
+      console.error('Error al actualizar la película:', error.message);
       alert(`Ocurrió un error: ${error.message}`);
     },
   });
 
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
-      <Stack gap={5} mb="xl">
-        <Title order={2}>
-          {isEditing ? 'Editar Película' : 'Registrar Nueva Película'}
-        </Title>
-        <Text c="dimmed" size="sm">
-          {isEditing
-            ? 'Modifica la información de la cinta seleccionada.'
-            : 'Añade un nuevo estreno a la cartelera de Cinemo.'}
-        </Text>
-      </Stack>
-
       <form
         onSubmit={form.onSubmit((values) => {
-          // 3. Ejecutamos la mutación pasando los valores del formulario
-          createMovie.mutate({
-            title: values.title,
-            posterUrl: values.posterUrl,
-            // Casteamos a los Enums de TypeScript para satisfacer a Zod
-            genre: values.genre as MovieGenre,
-            classification: values.classification as MovieClassification,
-            durationMin: values.durationMin,
-            description: values.description,
-            director: values.director,
-            producer: values.producer,
-            releaseYear: values.releaseYear,
-            isActive: values.isActive,
+          // 3. Ejecutamos la mutación pasando el ID y los valores actualizados
+          editMovie.mutate({
+            id: movie.id!, // Pasamos el ID de la película que estamos editando
+            data: {
+              title: values.title,
+              posterUrl: values.posterUrl,
+              genre: values.genre as MovieGenre,
+              classification: values.classification as MovieClassification,
+              durationMin: values.durationMin,
+              description: values.description,
+              director: values.director,
+              producer: values.producer,
+              releaseYear: values.releaseYear,
+              isActive: values.isActive,
+            },
           });
         })}
       >
@@ -194,9 +184,9 @@ export function MovieForm({ isEditing = false }: MovieFormProps) {
             variant="gradient"
             gradient={{ from: 'blue.6', to: 'cyan.6' }}
             leftSection={<IconDeviceFloppy size={20} />}
-            loading={createMovie.isPending} // Spinner automático durante el guardado
+            loading={editMovie.isPending} // Spinner automático durante el guardado
           >
-            {isEditing ? 'Actualizar Película' : 'Guardar Película'}
+            Actualizar Película
           </Button>
         </Stack>
       </form>

@@ -10,7 +10,7 @@ import {
   Stack,
   Badge,
   Menu,
-  rem,
+  AspectRatio,
 } from '@mantine/core';
 import {
   IconEdit,
@@ -20,49 +20,50 @@ import {
   IconEye,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { Movie } from '@/schemas/movie';
 
 interface AdminMovieCardProps {
-  id: number;
-  title: string;
-  posterUrl: string;
-  isActive: boolean;
+  movie: Movie;
   onDelete?: (id: number) => void;
   onToggleStatus?: (id: number) => void;
 }
 
 export function AdminMovieCard({
-  id,
-  title,
-  posterUrl,
-  isActive,
+  movie,
   onDelete,
   onToggleStatus,
 }: AdminMovieCardProps) {
   return (
     <Card withBorder radius="md" p="sm" shadow="sm">
       <Card.Section>
-        <Image
-          src={posterUrl}
-          height={180}
-          alt={title}
-          fallbackSrc="https://placehold.co/400x200?text=No+Image"
-        />
+        {/* Aspect Ratio 3:4 (Un poco más compacto para vistas administrativas) */}
+        <AspectRatio ratio={4 / 4}>
+          <Image
+            src={movie.posterUrl}
+            alt={movie.title}
+            fallbackSrc="https://placehold.co/300x400?text=Sin+Imagen"
+          />
+        </AspectRatio>
       </Card.Section>
 
       <Stack gap="xs" mt="md">
         <Group justify="space-between" wrap="nowrap">
           <Text fw={700} lineClamp={1} size="sm" style={{ flex: 1 }}>
-            {title}
+            {movie.title}
           </Text>
-          <Badge color={isActive ? 'green' : 'gray'} variant="light" size="xs">
-            {isActive ? 'Activa' : 'Inactiva'}
+          <Badge
+            color={movie.isActive ? 'green' : 'gray'}
+            variant="light"
+            size="xs"
+          >
+            {movie.isActive ? 'Activa' : 'Inactiva'}
           </Badge>
         </Group>
 
         <Group grow gap="xs">
           <Button
             component={Link}
-            href={`/admin/movies/${id}/edit`}
+            href={`/admin/movies/edit/${movie.id}`}
             variant="light"
             size="compact-xs"
             leftSection={<IconEdit size={14} />}
@@ -70,7 +71,7 @@ export function AdminMovieCard({
             Editar
           </Button>
 
-          <Menu shadow="md" width={160} position="bottom-end">
+          <Menu shadow="md" width={180} position="bottom-end">
             <Menu.Target>
               <ActionIcon variant="default" size="sm">
                 <IconDotsVertical size={16} />
@@ -81,17 +82,21 @@ export function AdminMovieCard({
               <Menu.Label>Opciones rápidas</Menu.Label>
               <Menu.Item
                 leftSection={
-                  isActive ? <IconEyeOff size={14} /> : <IconEye size={14} />
+                  movie.isActive ? (
+                    <IconEyeOff size={14} />
+                  ) : (
+                    <IconEye size={14} />
+                  )
                 }
-                onClick={() => onDelete?.(id)}
+                onClick={() => onToggleStatus?.(movie.id!)}
               >
-                {isActive ? 'Desactivar' : 'Activar'}
+                {movie.isActive ? 'Desactivar' : 'Activar'}
               </Menu.Item>
               <Menu.Divider />
               <Menu.Item
                 color="red"
                 leftSection={<IconTrash size={14} />}
-                onChange={() => onToggleStatus?.(id)}
+                onClick={() => onDelete?.(movie.id!)}
               >
                 Eliminar película
               </Menu.Item>

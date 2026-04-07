@@ -1,85 +1,85 @@
-import { env } from '@/env';
+// routers/movie.ts
+import {
+  CreateMovieSchema, // Asegúrate de tener este esquema en tu archivo
+  MovieListSchema,
+  MovieSchema,
+} from '@/schemas/movie';
+import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { MovieListSchema, MovieSchema } from '@/schemas/movie';
+import { TRPCError } from '@trpc/server';
 
-/**
- * Helper para hacer fetch a la API externa
- * Centraliza la lógica de comunicación con el backend de Java
- */
-async function fetchFromMovieAPI<T>(
-  endpoint: string,
-  schema: z.ZodSchema<T>
-): Promise<T> {
-  const url = `${env.NEXT_PUBLIC_API_URL}${endpoint}`;
-
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      // Descomenta si tu API requiere autenticación:
-      // Authorization: `Bearer ${env.API_KEY}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new TRPCError({
-      code: response.status === 404 ? 'NOT_FOUND' : 'BAD_GATEWAY',
-      message: `La API respondió con status ${response.status}`,
-    });
-  }
-
-  const data = await response.json();
-
-  try {
-    return schema.parse(data);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'El formato de la respuesta de la API no es válido',
-        cause: error,
-      });
-    }
-    throw error;
-  }
-}
 export const movieRouter = createTRPCRouter({
   /**
-   * Obtiene todas las películas disponibles
-   * @returns Lista de películas validadas
+   * Obtiene todas las películas desde el backend
+   * GET /movies
    */
-  getAllMovies: publicProcedure.query(async () => {
-    try {
-      return await fetchFromMovieAPI('/movies', MovieListSchema);
-    } catch (error) {
-      if (error instanceof TRPCError) throw error;
-
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Error desconocido al obtener películas',
-      });
-    }
+  getAll: publicProcedure.query(async () => {
+    return await apiClient('/movies', MovieListSchema);
   }),
 
   /**
-   * Obtiene una película específica por ID
-   * @param id - ID de la película
-   * @returns Datos de la película validados
+   * Obtiene una película por su ID
+   * GET /movies/{id}
    */
-  getMovieById: publicProcedure
-    .input(z.number().int().positive('El ID debe ser un número positivo'))
+  getById: publicProcedure
+    .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
-      try {
-        return await fetchFromMovieAPI(`/movies/${input}`, MovieSchema);
-      } catch (error) {
-        if (error instanceof TRPCError) throw error;
+      const data = await apiClient(
+        `/movies/${input.id}`,
+        MovieSchema.nullable()
+      );
 
+      if (!data) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `Error al obtener la película con ID ${input}`,
+          code: 'NOT_FOUND',
+          message: `Película con ID ${input.id} no encontrada`,
         });
       }
+      return data;
+    }),
+
+  /**
+   * Crea una nueva película
+   * POST /movies
+   */
+  create: publicProcedure
+    .input(CreateMovieSchema)
+    .mutation(async ({ input }) => {
+      // Usamos z.any() en la respuesta para evitar choques con el backend
+      await apiClient('/movies', z.any(), {
+        method: 'POST',
+        body: input,
+      });
+    }),
+
+  /**
+   * Actualiza una película existente por ID
+   * PUT /movies/{id}
+   */
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.number().int(),
+        data: CreateMovieSchema,
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await apiClient(`/movies/${input.id}`, z.any(), {
+        method: 'PUT', // Usamos PUT como descubrimos con las funciones
+        body: input.data,
+      });
+    }),
+
+  /**
+   * Elimina una película por ID
+   * DELETE /movies/{id}
+   */
+  delete: publicProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ input }) => {
+      return await apiClient(`/movies/${input.id}`, z.any(), {
+        method: 'DELETE',
+      });
     }),
 });

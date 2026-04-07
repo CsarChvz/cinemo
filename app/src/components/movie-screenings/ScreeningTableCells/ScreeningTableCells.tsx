@@ -30,11 +30,7 @@ interface ActionButtonsProps {
   onDelete?: (id: string | number) => void;
 }
 
-export const ActionButtons = ({
-  id,
-  basePath,
-  onDelete,
-}: ActionButtonsProps) => (
+export const ActionButtons = ({ id, basePath, onDelete }: ActionButtonsProps) => (
   <Group gap={4} justify="right" wrap="nowrap">
     <Tooltip label="Ver detalle">
       <ActionIcon
@@ -60,7 +56,7 @@ export const ActionButtons = ({
       </ActionIcon>
     </Tooltip>
 
-    <Tooltip label="Eliminar">
+    {/* <Tooltip label="Eliminar">
       <ActionIcon
         size="sm"
         variant="subtle"
@@ -75,6 +71,6 @@ export const ActionButtons = ({
       >
         <IconTrash size={16} />
       </ActionIcon>
-    </Tooltip>
+    </Tooltip> */}
   </Group>
 );

@@ -7,28 +7,35 @@ import Link from 'next/link';
 import { useMovieFilters } from '@/hooks/useMovieFilters';
 import { MovieCatalogHeader } from '@/components/movies/MovieCatalogHeader/MovieCatalogHeader';
 import { MovieGrid } from '@/components/movies/MovieGrid/MovieGrid';
+import { Movie } from '@/schemas/movie';
 
-// Definimos la interfaz para las props que recibe del servidor
 interface AdminMoviesClientWrapperProps {
-  initialMovies: any[]; // Idealmente, cambia 'any[]' por tu tipo exacto (ej: Movie[])
+  initialMovies: Movie[];
 }
 
 export function AdminMoviesClientWrapper({
   initialMovies,
 }: AdminMoviesClientWrapperProps) {
-  // Inicializamos tus filtros con los datos que vinieron del servidor
   const { state, actions, filteredMovies } = useMovieFilters(initialMovies);
+
+  const handleDelete = (id: number) => console.log('Eliminando', id);
+  const handleToggleStatus = (id: number) =>
+    console.log('Cambiando status', id);
 
   return (
     <Stack gap="xl">
       <Group justify="space-between" align="flex-start">
+        {/* Llenamos el div vacío para darle contexto a la pantalla */}
         <div>
-
+          <Title order={2}>Catálogo de Películas</Title>
+          <Text c="dimmed" size="sm">
+            Administra la cartelera, activa o desactiva películas.
+          </Text>
         </div>
 
         <Button
           component={Link}
-          href="/admin/movies/nueva"
+          href="/admin/movies/create" 
           leftSection={<IconPlus size={18} />}
           size="md"
           variant="gradient"
@@ -50,8 +57,12 @@ export function AdminMoviesClientWrapper({
           onClasificationsChange={actions.setClasifications}
         />
 
-        {/* Pasamos filteredMovies al grid, manteniendo tu vista de admin */}
-        <MovieGrid movies={filteredMovies} adminView={true} />
+        <MovieGrid
+          movies={filteredMovies}
+          adminView={true}
+          handleDelete={handleDelete}
+          handleToggleStatus={handleToggleStatus}
+        />
       </Stack>
     </Stack>
   );

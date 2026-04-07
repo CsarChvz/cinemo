@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 // 2. Componente de servidor asíncrono
 export default async function MoviesPage() {
-  const movies = await api.movie.getAllMovies();
+  const movies = await api.movie.getAll();
 
   return (
     <HydrateClient>

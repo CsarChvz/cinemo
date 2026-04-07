@@ -33,10 +33,10 @@ export function MovieCatalogHeader({
 }: MovieCatalogHeaderProps) {
   return (
     <header>
-      <Stack gap="xs" mb="lg">
+      {/* <Stack gap="xs" mb="lg">
         <Title order={1}>Catálogo de Películas</Title>
         <Text c="dimmed">Explora nuestra selección de cine.</Text>
-      </Stack>
+      </Stack> */}
 
       <Group justify="space-between" align="flex-end">
         <SearchBar

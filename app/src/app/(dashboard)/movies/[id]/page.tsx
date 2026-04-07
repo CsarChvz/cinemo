@@ -32,9 +32,8 @@ export default async function MovieDetailPage({
   // Obtener la película del servidor
   let movie;
   try {
-    movie = await api.movie.getMovieById(movieId);
+    movie = await api.movie.getById({ id: movieId });
   } catch (error) {
-    // Si la película no existe o hay error, mostrar 404
     notFound();
   }
 
