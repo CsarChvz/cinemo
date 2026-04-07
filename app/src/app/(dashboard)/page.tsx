@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 // 3. El componente principal es asíncrono (RSC)
 export default async function HomePage() {
-  const movies = await api.movie.getAllMovies();
+  const movies = await api.movie.getAll();
   return (
     <HydrateClient>
       <Stack gap={0}>
