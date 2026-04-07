@@ -1,11 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MovieGrid } from './MovieGrid';
 import { MantineProvider, Container } from '@mantine/core';
-import {
-  MovieGenre,
-  MovieClasification,
-  Movie,
-} from '@/interfaces/movie.interface';
+import { MovieGenre, MovieClassification, Movie } from '@/schemas/movie';
 
 const meta: Meta<typeof MovieGrid> = {
   title: 'Components/Movies/MovieGrid',
@@ -31,12 +27,13 @@ const mockMovies: Movie[] = [
     posterUrl:
       'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800',
     genre: MovieGenre.CIENCIA_FICCION,
-    duration: '169 min',
+    durationMin: 169,
     description: 'Exploración espacial y viajes en el tiempo.',
-    clasification: MovieClasification.B,
+    classification: MovieClassification.B,
     director: 'Christopher Nolan',
     producer: 'Emma Thomas',
     releaseYear: 2014,
+    isActive: false,
   },
   {
     id: 2,
@@ -44,12 +41,13 @@ const mockMovies: Movie[] = [
     posterUrl:
       'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
     genre: MovieGenre.ANIMACION,
-    duration: '140 min',
+    durationMin: 150,
     description: 'Miles Morales a través del multiverso.',
-    clasification: MovieClasification.A,
+    classification: MovieClassification.A,
     director: 'Joaquim Dos Santos',
     producer: 'Amy Pascal',
     releaseYear: 2023,
+    isActive: false,
   },
   {
     id: 3,
@@ -57,12 +55,13 @@ const mockMovies: Movie[] = [
     posterUrl:
       'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
     genre: MovieGenre.ACCION,
-    duration: '152 min',
+    durationMin: 152,
     description: 'Batman contra el Joker en Gotham.',
-    clasification: MovieClasification.B,
+    classification: MovieClassification.B,
     director: 'Christopher Nolan',
     producer: 'Charles Roven',
     releaseYear: 2008,
+    isActive: false,
   },
 ];
 

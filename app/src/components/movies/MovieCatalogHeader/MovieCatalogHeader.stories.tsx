@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MovieCatalogHeader } from './MovieCatalogHeader';
 import { MantineProvider, Container } from '@mantine/core';
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
+import { MovieGenre, MovieClassification } from '@/schemas/movie';
 import { SortOrder } from '@/interfaces/filter.interface';
 
 const meta: Meta<typeof MovieCatalogHeader> = {
@@ -39,7 +39,7 @@ export const ConFiltrosActivos: Story = {
     ...Default.args,
     search: 'Spider-Man',
     genres: [MovieGenre.ACCION, MovieGenre.ANIMACION],
-    clasifications: [MovieClasification.A],
+    clasifications: [MovieClassification.A],
   },
 };
 

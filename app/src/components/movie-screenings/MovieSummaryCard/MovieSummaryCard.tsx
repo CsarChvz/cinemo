@@ -1,3 +1,4 @@
+import { Movie } from '@/schemas/movie';
 import {
   Paper,
   Group,
@@ -8,7 +9,6 @@ import {
   Button,
 } from '@mantine/core';
 import { IconMovie } from '@tabler/icons-react';
-import { Movie } from '@/interfaces/movie.interface';
 
 interface MovieSummaryCardProps {
   movie: Movie;
@@ -45,13 +45,13 @@ export function MovieSummaryCard({
               •
             </Text>
             <Text size="sm" c="dimmed">
-              {movie.duration}
+              {movie.durationMin}
             </Text>
             <Text size="sm" c="dimmed">
               •
             </Text>
             <Badge size="xs" variant="outline" color="blue">
-              {movie.clasification}
+              {movie.classification}
             </Badge>
             {movie.releaseYear > 0 && (
               <>

@@ -11,4 +11,6 @@ public interface CinemaRoomRepositoryPort {
     List<CinemaRoom> findAll();
     CinemaRoom modify(CinemaRoom cinemaRoom);
     void delete(CinemaRoom cinemaRoom);
+
+    List<CinemaRoom> findRoomsByCinemaId(Long roomId);
 }

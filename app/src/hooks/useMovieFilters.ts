@@ -1,5 +1,5 @@
 import { SortOrder } from "@/interfaces/filter.interface";
-import { Movie, MovieClasification, MovieGenre } from "@/interfaces/movie.interface";
+import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
 import { useMemo, useState } from "react";
 
 export function useMovieFilters(initialMovies: Movie[]){
@@ -7,7 +7,7 @@ export function useMovieFilters(initialMovies: Movie[]){
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState<SortOrder>(SortOrder.DEFAULT);
     const [genres, setGenres] = useState<MovieGenre[]>([]);
-    const [clasifications, setClasifications] = useState<MovieClasification[]>(
+    const [clasifications, setClasifications] = useState<MovieClassification[]>(
       []
     );
     const [isManual, setIsManual] = useState(false);
@@ -38,7 +38,7 @@ export function useMovieFilters(initialMovies: Movie[]){
 
           if (clasifications.length > 0) {
             result = result.filter((m) =>
-              clasifications.includes(m.clasification)
+              clasifications.includes(m.classification)
             );
           }
 

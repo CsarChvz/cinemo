@@ -1,5 +1,6 @@
 'use client';
 
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Paper,
   Title,
@@ -13,6 +14,7 @@ import {
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 export interface CinemaFormValues {
   id?: string | number;
@@ -23,31 +25,14 @@ export interface CinemaFormValues {
 }
 
 interface CinemaFormProps {
-  onSubmit: (values: CinemaFormValues) => void;
-  initialValues?: CinemaFormValues;
   isEditing?: boolean;
 }
 
-// Datos falsos simulando lo que vendría de tu API
-const MOCK_STATES = [
-  { value: '1', label: 'Jalisco' },
-  { value: '2', label: 'Nuevo León' },
-];
+export function CinemaForm({ isEditing = false }: CinemaFormProps) {
+  const router = useRouter();
 
-const MOCK_MUNICIPALITIES = [
-  { value: '101', label: 'Zapopan', stateId: '1' },
-  { value: '102', label: 'Guadalajara', stateId: '1' },
-  { value: '201', label: 'Monterrey', stateId: '2' },
-  { value: '202', label: 'San Pedro Garza García', stateId: '2' },
-];
-
-export function CinemaForm({
-  onSubmit,
-  initialValues,
-  isEditing = false,
-}: CinemaFormProps) {
   const form = useForm<CinemaFormValues>({
-    initialValues: initialValues || {
+    initialValues: {
       name: '',
       address: '',
       stateId: '',
@@ -62,11 +47,47 @@ export function CinemaForm({
     },
   });
 
-  // Filtrar municipios basándonos en el estado seleccionado actualmente en el form
+  // 1. Obtenemos TODOS los estados para el primer Select
+  const { data: states, isLoading: isLoadingStates } =
+    api.state.getAll.useQuery();
+
+  const statesData = useMemo(() => {
+    return (
+      states?.map((state) => ({
+        value: state.id.toString(),
+        label: state.name,
+      })) || []
+    );
+  }, [states]);
+
+  // 2. Obtenemos los municipios DINÁMICAMENTE según el estado seleccionado
+  const stateIdNum = Number(form.values.stateId);
+  const { data: municipalities, isFetching: isFetchingMunicipalities } =
+    api.municipality.getByStateId.useQuery(
+      { stateId: stateIdNum },
+      {
+        // Solo ejecuta la petición a la API si hay un stateId seleccionado válido
+        enabled: !!form.values.stateId && !isNaN(stateIdNum),
+      }
+    );
+
+  // 3. Mapeamos directamente la respuesta de la API (ya vienen filtrados)
   const availableMunicipalities = useMemo(() => {
-    if (!form.values.stateId) return [];
-    return MOCK_MUNICIPALITIES.filter((m) => m.stateId === form.values.stateId);
-  }, [form.values.stateId]);
+    // Verificamos que sea un array (por si acaso la API devuelve error o null)
+    if (!municipalities || !Array.isArray(municipalities)) return [];
+
+    return municipalities.map((m) => ({
+      value: m.id.toString(),
+      label: m.name,
+    }));
+  }, [municipalities]);
+
+  // 4. Mutación para crear el cine
+  const createCinema = api.cinema.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/locations/cinemas');
+    },
+  });
 
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
@@ -81,7 +102,15 @@ export function CinemaForm({
         </Text>
       </Stack>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form
+        onSubmit={form.onSubmit((values) => {
+          createCinema.mutate({
+            name: values.name,
+            address: values.address,
+            municipalityId: Number(values.municipalityId),
+          });
+        })}
+      >
         <Stack gap="md">
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <TextInput
@@ -101,27 +130,34 @@ export function CinemaForm({
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <Select
               label="Estado"
-              placeholder="Selecciona el estado"
+              placeholder={
+                isLoadingStates ? 'Cargando...' : 'Selecciona el estado'
+              }
               searchable
               withAsterisk
-              data={MOCK_STATES}
-              // Sobrescribimos el onChange para limpiar el municipio si el estado cambia
+              data={statesData}
+              disabled={isLoadingStates}
               {...form.getInputProps('stateId')}
               onChange={(val) => {
                 form.setFieldValue('stateId', val || '');
-                form.setFieldValue('municipalityId', ''); // <--- Magia de la cascada
+                form.setFieldValue('municipalityId', ''); // Magia de la cascada
               }}
             />
             <Select
               label="Municipio"
               placeholder={
-                form.values.stateId
-                  ? 'Selecciona un municipio'
-                  : 'Primero selecciona un estado'
+                // Usamos isFetching porque queremos que muestre cargando
+                // cada vez que el estado cambia y hace una nueva petición
+                isFetchingMunicipalities
+                  ? 'Cargando municipios...'
+                  : form.values.stateId
+                    ? 'Selecciona un municipio'
+                    : 'Primero selecciona un estado'
               }
               searchable
               withAsterisk
-              disabled={!form.values.stateId} // Se deshabilita si no hay estado
+              // Bloqueamos mientras carga la petición
+              disabled={!form.values.stateId || isFetchingMunicipalities}
               data={availableMunicipalities}
               {...form.getInputProps('municipalityId')}
             />
@@ -135,6 +171,8 @@ export function CinemaForm({
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'violet', to: 'purple' }}
+            loading={createCinema.isPending}
+            disabled={isLoadingStates || isFetchingMunicipalities}
           >
             {isEditing ? 'Guardar Cambios' : 'Crear Cine'}
           </Button>

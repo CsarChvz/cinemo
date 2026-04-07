@@ -26,7 +26,6 @@ import {
   IconArrowDownRight,
 } from '@tabler/icons-react';
 
-// Estilos necesarios para las gráficas
 import '@mantine/charts/styles.css';
 
 // --- DATA DUMMY ---

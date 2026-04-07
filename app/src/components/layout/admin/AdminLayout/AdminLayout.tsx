@@ -46,17 +46,11 @@ export function AdminShellLayout({ children }: { children: React.ReactNode }) {
 
           {/* Sección de Películas */}
           <NavLink
-            label="Películas"
+            component={Link}
+            href="/admin/movies"
             leftSection={<IconMovie size={20} />}
-            childrenOffset={28}
-          >
-            <NavLink component={Link} href="/admin/movies" label="Ver todas" />
-            <NavLink
-              component={Link}
-              href="/admin/movies/nueva"
-              label="Agregar nueva"
-            />
-          </NavLink>
+            label="Peliculas"
+          />
 
           <NavLink
             component={Link}

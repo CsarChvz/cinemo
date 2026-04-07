@@ -1,14 +1,19 @@
-// 1. Importa GridCol por separado (Ya no es Grid.Col)
+// app/cartelera/page.tsx
 import { Container, Grid, GridCol, Title, Text, Box } from '@mantine/core';
 import { LocationSidebar } from '@/components/movie-screenings/LocationSidebar';
 import { ProgramGuideContent } from '@/components/movie-screenings/ProgramGuideContent';
 
-export default async function CarteleraPage({
+export default async function MovieScreeningsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ estado?: string; municipio?: string; cine?: string }>;
+  // Ahora esperamos IDs para hacer las consultas a la BD
+  searchParams: Promise<{
+    stateId?: string;
+    municipalityId?: string;
+    cinemaId?: string;
+  }>;
 }) {
-  const { estado, municipio, cine } = await searchParams;
+  const { stateId, municipalityId, cinemaId } = await searchParams;
 
   return (
     <Container size="xl" py="xl">
@@ -18,8 +23,8 @@ export default async function CarteleraPage({
         </GridCol>
 
         <GridCol span={{ base: 12, md: 9 }}>
-          {cine ? (
-            <ProgramGuideContent cine={cine} />
+          {cinemaId ? (
+            <ProgramGuideContent cinemaId={Number(cinemaId)} />
           ) : (
             <Box
               ta="center"
@@ -27,8 +32,8 @@ export default async function CarteleraPage({
               style={{ border: '2px dashed #ddd', borderRadius: 16 }}
             >
               <Text c="dimmed">
-                Selecciona un complejo cinematográfico para ver el horario
-                visual.
+                Selecciona un complejo cinematográfico en el menú lateral para
+                ver el horario.
               </Text>
             </Box>
           )}

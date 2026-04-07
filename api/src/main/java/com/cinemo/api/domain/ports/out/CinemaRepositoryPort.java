@@ -16,4 +16,6 @@ public interface CinemaRepositoryPort {
     Cinema modify(Cinema cinema);
 
     void delete(Cinema cinema);
+
+    List<Cinema> findByMunicipalityId(Long municipalityId);
 }

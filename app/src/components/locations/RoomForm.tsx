@@ -1,5 +1,6 @@
 'use client';
 
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Paper,
   Title,
@@ -11,91 +12,76 @@ import {
   Select,
   NumberInput,
   Switch,
-  Group,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export interface RoomFormValues {
-  id?: string | number;
   name: string;
   roomType: string;
-  capacity: number | '';
+  capacity: number;
   cinemaId: string;
   isActive: boolean;
 }
 
-interface RoomFormProps {
-  onSubmit: (values: RoomFormValues) => void;
-  initialValues?: RoomFormValues;
-  isEditing?: boolean;
-}
+export function RoomForm() {
+  const router = useRouter();
 
-// Datos falsos de Cines (Simulando la BD)
-const MOCK_CINEMAS = [
-  { value: '1', label: 'Cinemo Andares' },
-  { value: '2', label: 'Cinemo Galerías' },
-  { value: '3', label: 'Cinemo Punto Valle' },
-];
-
-export function RoomForm({
-  onSubmit,
-  initialValues,
-  isEditing = false,
-}: RoomFormProps) {
   const form = useForm<RoomFormValues>({
-    initialValues: initialValues || {
+    initialValues: {
       name: '',
       roomType: '',
-      capacity: '',
+      capacity: 0,
       cinemaId: '',
       isActive: true,
     },
     validate: {
       name: (value) => (value.trim().length < 2 ? 'Nombre muy corto' : null),
-      roomType: (value) => (!value ? 'Selecciona el tipo de sala' : null),
+      roomType: (value) => (!value ? 'Selecciona un tipo de sala' : null),
       capacity: (value) =>
-        !value || Number(value) <= 0 ? 'Capacidad inválida' : null,
-      cinemaId: (value) => (!value ? 'Selecciona un complejo' : null),
+        value <= 0 ? 'La capacidad debe ser mayor a 0' : null,
+      cinemaId: (value) => (!value ? 'Selecciona un cine' : null),
+    },
+  });
+
+  const { data: cinemas, isLoading: isLoadingCinemas } =
+    api.cinema.getAll.useQuery();
+
+  const cinemaOptions =
+    cinemas?.map((cinema) => ({
+      value: cinema.id.toString(),
+      label: cinema.name,
+    })) || [];
+
+  const createRoom = api.room.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/locations/rooms');
     },
   });
 
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
       <Stack gap={5} mb="xl">
-        <Group justify="space-between" align="flex-start">
-          <Stack gap={5}>
-            <Title order={2}>
-              {isEditing ? 'Editar Sala' : 'Crear Nueva Sala'}
-            </Title>
-            <Text c="dimmed" size="sm">
-              Define el aforo, tipo y estado de la sala para la venta de
-              boletos.
-            </Text>
-          </Stack>
-
-          <Switch
-            label="Sala Activa"
-            description="Apagar si está en mantenimiento"
-            size="md"
-            color="green"
-            {...form.getInputProps('isActive', { type: 'checkbox' })}
-          />
-        </Group>
+        <Title order={2}>Crear Nueva Sala</Title>
+        <Text c="dimmed" size="sm">
+          Registra una nueva sala y asígnala a un complejo.
+        </Text>
       </Stack>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form
+        onSubmit={form.onSubmit((values) => {
+          createRoom.mutate({
+            name: values.name,
+            roomType: values.roomType,
+            capacity: values.capacity,
+            isActive: values.isActive,
+            cinemaId: Number(values.cinemaId),
+          });
+        })}
+      >
         <Stack gap="md">
-          <Select
-            label="Complejo (Cine)"
-            placeholder="¿A qué cine pertenece esta sala?"
-            searchable
-            withAsterisk
-            data={MOCK_CINEMAS}
-            {...form.getInputProps('cinemaId')}
-          />
-
-          <SimpleGrid cols={{ base: 1, sm: 3 }}>
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <TextInput
               label="Nombre de la Sala"
               placeholder="Ej. Sala 01"
@@ -103,21 +89,41 @@ export function RoomForm({
               {...form.getInputProps('name')}
             />
             <Select
-              label="Tipo de Sala"
-              placeholder="Ej. VIP, 3D"
+              label="Cine al que pertenece"
+              placeholder={
+                isLoadingCinemas ? 'Cargando cines...' : 'Selecciona un cine'
+              }
+              searchable
               withAsterisk
-              data={['Estándar', '3D', '4DX', 'IMAX', 'VIP', 'MacroXE']}
+              data={cinemaOptions}
+              disabled={isLoadingCinemas}
+              {...form.getInputProps('cinemaId')}
+            />
+          </SimpleGrid>
+
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            <Select
+              label="Tipo de Sala"
+              placeholder="Selecciona el formato"
+              withAsterisk
+              data={['Estándar', 'VIP', 'IMAX', '4DX', 'MacroXE']}
               {...form.getInputProps('roomType')}
             />
             <NumberInput
-              label="Capacidad (Aforo)"
-              placeholder="Ej. 120"
+              label="Aforo (Capacidad)"
+              placeholder="Ej. 150"
               withAsterisk
               min={1}
-              max={500}
               {...form.getInputProps('capacity')}
             />
           </SimpleGrid>
+
+          <Switch
+            label="Sala Activa"
+            description="Si se desactiva, se considera en mantenimiento"
+            mt="sm"
+            {...form.getInputProps('isActive', { type: 'checkbox' })}
+          />
 
           <Button
             type="submit"
@@ -127,8 +133,10 @@ export function RoomForm({
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'teal', to: 'green' }}
+            loading={createRoom.isPending}
+            disabled={isLoadingCinemas}
           >
-            {isEditing ? 'Guardar Cambios' : 'Crear Sala'}
+            Crear Sala
           </Button>
         </Stack>
       </form>

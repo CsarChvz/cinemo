@@ -10,24 +10,25 @@ import {
   ScrollArea,
 } from '@mantine/core';
 import { IconFilter, IconCheck, IconX } from '@tabler/icons-react';
-import { MovieClasification } from '@/interfaces/movie.interface';
-export interface ClasificationFilterProps {
-  value: MovieClasification[];
-  onApply: (values: MovieClasification[]) => void;
+import { MovieClassification } from '@/schemas/movie';
+export interface classificationFilterProps {
+  value: MovieClassification[];
+  onApply: (values: MovieClassification[]) => void;
 }
 
-export function ClasificationFilter({
+export function ClassificationFilter({
   value,
   onApply,
-}: ClasificationFilterProps) {
+}: classificationFilterProps) {
   const [opened, setOpened] = useState(false);
-  const [tempSelected, setTempSelected] = useState<MovieClasification[]>(value);
+  const [tempSelected, setTempSelected] =
+    useState<MovieClassification[]>(value);
 
-  const handleToggle = (clasification: MovieClasification) => {
+  const handleToggle = (classification: MovieClassification) => {
     setTempSelected((current) =>
-      current.includes(clasification)
-        ? current.filter((g) => g !== clasification)
-        : [...current, clasification]
+      current.includes(classification)
+        ? current.filter((g) => g !== classification)
+        : [...current, classification]
     );
   };
 
@@ -68,12 +69,12 @@ export function ClasificationFilter({
         </Text>
         <ScrollArea.Autosize mah={250} type="auto">
           <Stack gap="xs">
-            {Object.values(MovieClasification).map((clasification) => (
+            {Object.values(MovieClassification).map((classification) => (
               <Checkbox
-                key={clasification}
-                label={clasification}
-                checked={tempSelected.includes(clasification)}
-                onChange={() => handleToggle(clasification)}
+                key={classification}
+                label={classification}
+                checked={tempSelected.includes(classification)}
+                onChange={() => handleToggle(classification)}
               />
             ))}
           </Stack>

@@ -7,13 +7,15 @@ import com.cinemo.api.application.exceptions.DuplicateMunicipalityException;
 import com.cinemo.api.domain.Municipality;
 import com.cinemo.api.domain.ports.in.municipality.ManageMunicipalityUseCase;
 import com.cinemo.api.domain.ports.in.municipality.RetrieveMunicipalityUseCase;
+import com.cinemo.api.domain.ports.in.municipality.SearchMunicipalitiesUseCase;
 import com.cinemo.api.domain.ports.out.MunicipalityRepositoryPort;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 // Puerto de Entrada --> Servicio --> Puerto de Salida
-public class MunicipalityService implements ManageMunicipalityUseCase, RetrieveMunicipalityUseCase {
+public class MunicipalityService
+    implements ManageMunicipalityUseCase, RetrieveMunicipalityUseCase, SearchMunicipalitiesUseCase {
   private final MunicipalityRepositoryPort municipalityRepositoryPort;
 
   @Override
@@ -45,6 +47,11 @@ public class MunicipalityService implements ManageMunicipalityUseCase, RetrieveM
   @Override
   public void delete(Municipality municipality) {
     municipalityRepositoryPort.remove(municipality);
+  }
+
+  @Override
+  public List<Municipality> getMunicipalitiesByStateId(Long stateId) {
+    return municipalityRepositoryPort.findByStateId(stateId);
   }
 
 }

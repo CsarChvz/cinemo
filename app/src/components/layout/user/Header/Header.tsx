@@ -11,9 +11,12 @@ import {
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle/ColorSchemeToggle';
 import Link from 'next/link';
 import classes from './HeaderSearch.module.css';
-import { HeaderProps } from '@/interfaces/components.interface';
 
 
+interface HeaderProps {
+  opened: boolean;
+  onToggle: () => void;
+}
 
 const links = [
   { link: '/movie-screenings', label: 'Cartelera' },

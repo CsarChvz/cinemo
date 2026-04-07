@@ -1,11 +1,11 @@
-import { Movie } from "@/interfaces/movie.interface";
-import { Center, SimpleGrid, Stack, Text } from "@mantine/core";
-import { MovieCard } from "../MovieCard/MovieCard";
+import { Movie } from '@/schemas/movie';
+import { Center, SimpleGrid, Stack, Text } from '@mantine/core';
+import { MovieCard } from '../MovieCard/MovieCard';
 import { AdminMovieCard } from '../AdminMovieCard/AdminMovieCard';
 
 interface MovieGridProps {
   movies: Movie[];
-  adminView: boolean;
+  adminView?: boolean;
   handleDelete?: (id: number) => void;
   handleToggleStatus?: (id: number) => void;
 }
@@ -16,11 +16,16 @@ export function MovieGrid({
   handleToggleStatus,
   handleDelete,
 }: MovieGridProps) {
-  if (movies.length == 0) {
+  if (movies.length === 0) {
     return (
-      <Center py={'xl'}>
-        <Stack align="center">
-          <Text fw={700}>No encontramos resultados</Text>
+      <Center py="xl" h={200}>
+        <Stack align="center" gap="xs">
+          <Text fw={700} size="lg" c="dimmed">
+            No encontramos resultados
+          </Text>
+          <Text size="sm" c="dimmed">
+            Intenta ajustando los filtros de búsqueda.
+          </Text>
         </Stack>
       </Center>
     );
@@ -32,26 +37,12 @@ export function MovieGrid({
         adminView ? (
           <AdminMovieCard
             key={movie.id}
-            id={movie.id ?? 0}
-            title={movie.title}
-            posterUrl={movie.posterUrl}
-            // @TODO; Cambiar esto o ver que hacer en la request
-            isActive={false}
+            movie={movie}
             onDelete={handleDelete}
             onToggleStatus={handleToggleStatus}
           />
         ) : (
-          <MovieCard
-            key={movie.id}
-            id={movie.id ?? 0}
-            title={movie.title}
-            genre={movie.genre}
-            clasification={movie.clasification}
-            duration={movie.duration}
-            description={movie.description}
-            posterUrl={movie.posterUrl}
-            onViewDetails={() => console.log('Ver:', movie.title)}
-          />
+          <MovieCard key={movie.id} movie={movie} />
         )
       )}
     </SimpleGrid>

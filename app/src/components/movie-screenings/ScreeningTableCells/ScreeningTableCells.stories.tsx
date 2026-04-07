@@ -52,7 +52,7 @@ export const Acciones: StoryObj<typeof ActionButtons> = {
     <Table.Tr>
       <Table.Td>Iconos de control</Table.Td>
       <Table.Td>
-        <ActionButtons />
+        <ActionButtons id={''} basePath={''} />
       </Table.Td>
     </Table.Tr>
   ),

@@ -38,9 +38,9 @@ export const MobileOpened: Story = {
 
 
 export const Interactive: Story = {
-    render: (args) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [opened, { toggle }] = useDisclosure(false);
-      return <Header {...args} opened={opened} onToggle={toggle} />;
-    }
-}
+  render: (args: any) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [opened, { toggle }] = useDisclosure(false);
+    return <Header {...args} opened={opened} onToggle={toggle} />;
+  },
+};

@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinemo.api.domain.Cinema;
 import com.cinemo.api.domain.ports.in.cinema.ManageCinemaUseCase;
 import com.cinemo.api.domain.ports.in.cinema.RetrieveCinemaUseCase;
+import com.cinemo.api.domain.ports.in.cinema.SearchCinemaUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema.CinemaUpdateRequestDto;
+import com.cinemo.api.infrastructure.web.controller.dto.cinema.SimpleCinemaResponseDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +29,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/v1/cinema")
+@RequestMapping("/api/v1/cinemas")
 @RequiredArgsConstructor
 public class CinemaController {
     private final ManageCinemaUseCase manageCinemaUseCase;
     private final RetrieveCinemaUseCase retrieveCinemaUseCase;
+    private final SearchCinemaUseCase searchCinemaUseCase;
     private final CinemaDtoMapper cinemaDtoMapper;
 
     @PostMapping
@@ -48,6 +51,15 @@ public class CinemaController {
         List<CinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
+    }
+
+    @GetMapping("/by-municipality/{municipalityId}")
+    public ResponseEntity<List<SimpleCinemaResponseDto>> getByMunicipality(
+            @PathVariable Long municipalityId) {
+        List<Cinema> cinemas = searchCinemaUseCase.getCinemasByMunicipalityId(municipalityId);
+        List<SimpleCinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponseSimple).toList();
+
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")

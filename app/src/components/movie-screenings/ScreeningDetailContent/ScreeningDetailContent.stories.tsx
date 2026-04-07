@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ScreeningDetailContent } from './ScreeningDetailContent';
 import { MantineProvider, Container } from '@mantine/core';
-import { MovieGenre, MovieClasification } from '@/interfaces/movie.interface';
-// Asegúrate de tener esta interfaz o cámbiala por la ruta correcta
-import { MovieScreening } from '@/interfaces/movie_screening.interface';
+import { MovieClassification, MovieGenre } from '@/schemas/movie';
+import { MovieScreening } from '@/schemas/movie-screening';
 
 const meta: Meta<typeof ScreeningDetailContent> = {
   title: 'Components/Movie Screenings/ScreeningDetailContent',
@@ -22,6 +21,7 @@ const meta: Meta<typeof ScreeningDetailContent> = {
 export default meta;
 type Story = StoryObj<typeof ScreeningDetailContent>;
 
+// 🔥 Mock actualizado a la estructura anidada y camelCase real
 const mockScreening: MovieScreening = {
   id: 5520,
   movie: {
@@ -29,22 +29,41 @@ const mockScreening: MovieScreening = {
     title: 'Interstellar',
     posterUrl: '',
     genre: MovieGenre.CIENCIA_FICCION,
-    duration: '169 min',
+    durationMin: 169,
     description: '',
     director: 'Christopher Nolan',
     producer: '',
-    clasification: MovieClasification.B,
+    classification: MovieClassification.B,
     releaseYear: 2014,
+    isActive: false,
   },
-  status: 'Activa',
-  start: new Date(2026, 2, 26, 18, 30), // 26 de Marzo, 2026 6:30 PM
-  end: new Date(2026, 2, 26, 21, 20),
-  cinema: 'Cinépolis Gran Plaza',
-  municipality: 'Guadalajara, Jalisco',
-  location: 'Sala 04 - IMAX',
-  total_capacity: 150,
-  tickets_remaining: 45,
-  state: 'Jalisco',
+  status: 'Activo', // Ajustado a 'Activo' según lo que vimos en el componente original
+  start: new Date(2026, 2, 26, 18, 30).toISOString(), // 26 de Marzo, 2026 6:30 PM
+  end: new Date(2026, 2, 26, 21, 20).toISOString(),
+  totalCapacity: 150,
+  ticketsRemaining: 45,
+  // 🔥 Recreamos la jerarquía relacional de la BD
+  room: {
+    id: 1,
+    name: 'Sala 04',
+    capacity: 150,
+    roomType: 'IMAX',
+    cinema: {
+      id: 1,
+      name: 'Cinépolis Gran Plaza',
+      address: 'Av. Vallarta 3959',
+      municipality: {
+        id: 1,
+        name: 'Guadalajara',
+        state: {
+          id: 1,
+          name: 'Jalisco',
+          code: 'JAL',
+        },
+      },
+    },
+    isActive: true,
+  },
 };
 
 // 1. Estado normal (Buena disponibilidad)
@@ -59,8 +78,8 @@ export const PocosAsientos: Story = {
   args: {
     screening: {
       ...mockScreening,
-      tickets_remaining: 12,
-      status: 'Activa',
+      ticketsRemaining: 12, // 🔥 Cambiado a camelCase
+      status: 'Activo',
     },
   },
 };
@@ -70,7 +89,7 @@ export const SalaLlena: Story = {
   args: {
     screening: {
       ...mockScreening,
-      tickets_remaining: 0,
+      ticketsRemaining: 0, // 🔥 Cambiado a camelCase
       status: 'Finalizada',
     },
   },

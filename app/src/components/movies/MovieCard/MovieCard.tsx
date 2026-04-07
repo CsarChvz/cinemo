@@ -6,83 +6,88 @@ import {
   Group,
   Button,
   ActionIcon,
+  AspectRatio,
 } from '@mantine/core';
 import { IconHeart, IconClock } from '@tabler/icons-react';
 import classes from './MovieCard.module.css';
-import { MovieClasification, MovieGenre } from '@/interfaces/movie.interface';
 import Link from 'next/link';
+import { Movie } from '@/schemas/movie';
 
 export interface MovieCardProps {
-  id: number;
-  title: string;
-  posterUrl: string;
-  genre: MovieGenre;
-  duration: string;
-  description: string;
-  clasification: MovieClasification;
-  onViewDetails?: () => void;
+  movie: Movie;
+  onViewDetails?: (id: number) => void;
 }
 
-export function MovieCard({
-  id,
-  title,
-  posterUrl,
-  genre,
-  duration,
-  description, // Se agregó coma
-  clasification,
-  onViewDetails,
-}: MovieCardProps) {
+export function MovieCard({ movie, onViewDetails }: MovieCardProps) {
+  const hours = Math.floor(movie.durationMin / 60);
+  const minutes = movie.durationMin % 60;
+  const durationFormatted = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
   return (
-    <Card withBorder radius="md" p="md" className={classes.card}>
+    <Card
+      withBorder
+      radius="md"
+      p="md"
+      className={classes.card}
+      shadow="sm"
+      h="100%"
+      style={{ display: 'flex', flexDirection: 'column' }}
+    >
       <Card.Section>
-        <Image
-          src={posterUrl}
-          alt={title}
-          height={220}
-          fallbackSrc="https://placehold.co/600x400?text=No+Poster"
-        />
+        <AspectRatio ratio={4 / 4}>
+          <Image
+            src={movie.posterUrl}
+            alt={movie.title}
+            fallbackSrc="https://placehold.co/400x600?text=Sin+Poster"
+          />
+        </AspectRatio>
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md">
-        <Group justify="space-between">
-          <Text fz="lg" fw={700} lineClamp={1} style={{ flex: 1 }}>
-            {title}
+      <Card.Section
+        className={classes.section}
+        mt="md"
+        p="md"
+        style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+      >
+        <Group justify="space-between" align="start" wrap="nowrap">
+          <Text fz="lg" fw={700} lineClamp={2} style={{ flex: 1 }}>
+            {movie.title}
           </Text>
           <Badge size="sm" variant="filled" color="blue">
-            {clasification}
+            {movie.classification}
           </Badge>
         </Group>
 
-        <Group gap={10} mt={5}>
-          <Text fz="xs" c="dimmed" fw={500}>
-            {genre}
+        <Group gap={10} mt={8}>
+          <Text fz="xs" c="dimmed" fw={600}>
+            {movie.genre}
           </Text>
           <Text fz="xs" c="dimmed">
             •
           </Text>
           <Group gap={4}>
-            <IconClock size={14} stroke={1.5} />
+            <IconClock size={14} stroke={1.5} color="gray" />
             <Text fz="xs" c="dimmed">
-              {duration}
+              {durationFormatted}
             </Text>
           </Group>
         </Group>
 
-        <Text fz="sm" mt="sm" lineClamp={3}>
-          {description}
+        <Text fz="sm" mt="sm" lineClamp={3} c="dimmed">
+          {movie.description}
         </Text>
       </Card.Section>
 
-      <Group mt="md">
+      {/* 🔥 4. mt="auto" empuja este grupo de botones al fondo de la tarjeta siempre */}
+      <Group mt="auto" pt="md">
         <Button
           radius="md"
           component={Link}
-          href={'/movies/' + id}
+          href={`/movies/${movie.id}`}
           style={{ flex: 1 }}
           variant="gradient"
           gradient={{ from: 'blue', to: 'cyan' }}
-          onClick={onViewDetails} // Se conectó la función al evento click
+          onClick={() => onViewDetails?.(movie.id!)}
         >
           Ver detalles
         </Button>
@@ -90,7 +95,7 @@ export function MovieCard({
           variant="default"
           radius="md"
           size={36}
-          aria-label="Add to favorites"
+          aria-label="Agregar a favoritos"
         >
           <IconHeart className={classes.like} stroke={1.5} />
         </ActionIcon>

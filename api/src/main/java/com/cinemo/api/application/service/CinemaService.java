@@ -6,12 +6,13 @@ import java.util.Optional;
 import com.cinemo.api.domain.Cinema;
 import com.cinemo.api.domain.ports.in.cinema.ManageCinemaUseCase;
 import com.cinemo.api.domain.ports.in.cinema.RetrieveCinemaUseCase;
+import com.cinemo.api.domain.ports.in.cinema.SearchCinemaUseCase;
 import com.cinemo.api.domain.ports.out.CinemaRepositoryPort;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CinemaService implements ManageCinemaUseCase, RetrieveCinemaUseCase {
+public class CinemaService implements ManageCinemaUseCase, RetrieveCinemaUseCase, SearchCinemaUseCase {
     private final CinemaRepositoryPort cinemaRepositoryPort;
 
     @Override
@@ -37,6 +38,11 @@ public class CinemaService implements ManageCinemaUseCase, RetrieveCinemaUseCase
     @Override
     public Cinema update(Cinema cinema) {
         return cinemaRepositoryPort.modify(cinema);
+    }
+
+    @Override
+    public List<Cinema> getCinemasByMunicipalityId(Long municipalityId) {
+        return cinemaRepositoryPort.findByMunicipalityId(municipalityId);
     }
 
 }

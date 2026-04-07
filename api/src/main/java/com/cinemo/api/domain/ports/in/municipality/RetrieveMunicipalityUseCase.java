@@ -8,5 +8,6 @@ import com.cinemo.api.domain.Municipality;
 public interface RetrieveMunicipalityUseCase {
     List<Municipality> getMunicipalities();
 
-    Optional<Municipality> getById(Long id);
+    Optional<Municipality> getById(Long stateId);
+
 }

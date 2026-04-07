@@ -52,4 +52,9 @@ public class CinemaJpaAdapter implements CinemaRepositoryPort {
         return mapper.toDomain(savedEntity);
     }
 
+    @Override
+    public List<Cinema> findByMunicipalityId(Long municipalityId) {
+        return jpaRepository.findByMunicipalityId(municipalityId).stream().map(mapper::toDomain).toList();
+    }
+
 }

@@ -40,4 +40,9 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
         return movieScreeningRepositoryPort.findAll();
     }
 
+    @Override
+    public List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId) {
+        return movieScreeningRepositoryPort.search(movieId, stateId, municipalityId, cinemaId);
+    }
+
 }

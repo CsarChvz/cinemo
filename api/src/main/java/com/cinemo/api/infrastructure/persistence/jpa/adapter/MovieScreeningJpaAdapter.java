@@ -51,4 +51,12 @@ public class MovieScreeningJpaAdapter implements MovieScreeningRepositoryPort {
         jpaRepository.delete(entity);
     }
 
+    @Override
+    public List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId) {
+        List<MovieScreeningEntity> entities = jpaRepository.searchScreenings(movieId, stateId, municipalityId,
+                cinemaId);
+        return entities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

@@ -1,66 +1,34 @@
-'use client';
+// app/admin/locations/cinemas/edit/[id]/page.tsx
+import { Container, Stack } from '@mantine/core';
+import { notFound } from 'next/navigation';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
+import { BackButtonCinemas } from '@/components/locations/BackButtonCinemas'; // El botón que creamos antes
+import { EditCinemaForm } from '@/components/locations/EditCinemaForm';
 
-import { Button, Container, Stack, Loader, Center } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import {
-  CinemaForm,
-  CinemaFormValues,
-} from '@/components/locations/CinemaForm';
+interface EditCinemaPageProps {
+  params: Promise<{ id: string }>;
+}
 
-export default function EditCinemaPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default async function EditCinemaPage({ params }: EditCinemaPageProps) {
+  const { id } = await params;
+  const cinemaId = Number(id);
 
-  const [initialData, setInitialData] = useState<CinemaFormValues | null>(null);
-  const [loading, setLoading] = useState(true);
+  if (isNaN(cinemaId) || cinemaId <= 0) {
+    notFound();
+  }
 
-  useEffect(() => {
-    // Simulación de fetch a tu API para obtener el cine a editar
-    setTimeout(() => {
-      setInitialData({
-        id: id,
-        name: 'Cinemo Andares',
-        address: 'Blvd. Puerta de Hierro 4965',
-        stateId: '1', // Jalisco
-        municipalityId: '101', // Zapopan
-      });
-      setLoading(false);
-    }, 500);
-  }, [id]);
+  // Obtenemos los datos actuales del cine desde el servidor
+  const cinema = await api.cinema.getById({ id: cinemaId });
 
-  const handleSubmit = (values: CinemaFormValues) => {
-    console.log(`Enviando a la API para ACTUALIZAR cine ${id}:`, values);
-    // Fetch PUT /api/cinemas/{id}
-  };
+  if (!cinema) {
+    notFound();
+  }
 
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <Button
-          component={Link}
-          href="/admin/locations/cinemas"
-          variant="subtle"
-          color="gray"
-          leftSection={<IconArrowLeft size={16} />}
-          w="fit-content"
-        >
-          Volver a la lista
-        </Button>
-
-        {loading ? (
-          <Center h={200}>
-            <Loader color="violet" />
-          </Center>
-        ) : (
-          <CinemaForm
-            initialValues={initialData!}
-            onSubmit={handleSubmit}
-            isEditing
-          />
-        )}
+        <BackButtonCinemas />
+        <EditCinemaForm cinema={cinema} />
       </Stack>
     </Container>
   );

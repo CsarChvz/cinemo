@@ -1,78 +1,92 @@
+// components/movie-screenings/ProgramGuideContent.tsx
 'use client';
 import { useState, useMemo } from 'react';
-import { 
-  Stack, Title, Text, Badge, Group, Paper, ActionIcon, 
-  Tooltip, Divider, ThemeIcon, ScrollArea, Button, SegmentedControl
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
+import {
+  Stack,
+  Title,
+  Text,
+  Badge,
+  Group,
+  Paper,
+  ActionIcon,
+  Tooltip,
+  Divider,
+  ThemeIcon,
+  ScrollArea,
+  Button,
+  Center,
+  Loader,
 } from '@mantine/core';
-import { 
-  IconSortAscendingNumbers, 
-  IconSortDescendingNumbers, 
-  IconClock, 
-  IconArmchair,
+import {
+  IconSortAscendingNumbers,
+  IconSortDescendingNumbers,
+  IconClock,
   IconMovie,
   IconChevronLeft,
   IconChevronRight,
-  IconCalendar
+  IconCalendar,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 
 dayjs.locale('es');
 
-interface MovieEvent {
-  id: number;
-  title: string;
-  start: string; 
-  end: string;
-  sala: string;
-  color: string;
+interface ProgramGuideContentProps {
+  cinemaId: number;
+  movieId?: number; // Es opcional
 }
 
-export function ProgramGuideContent({ cine }: { cine: string }) {
-  // --- ESTADOS ---
+export function ProgramGuideContent({
+  cinemaId,
+  movieId, // 🔥 1. Tienes que extraer el movieId aquí
+}: ProgramGuideContentProps) {
   const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
-  const [selectedDate, setSelectedDate] = useState(dayjs()); // Día seleccionado
+  const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  // --- DUMMY DATA (Diferentes días) ---
-  const movieEvents: MovieEvent[] = [
-    {
-      id: 1, title: 'Interstellar',
-      start: dayjs().hour(13).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-      end: dayjs().hour(15).minute(49).format('YYYY-MM-DD HH:mm:ss'),
-      sala: 'Sala 1', color: 'blue',
-    },
-    {
-      id: 2, title: 'Inception',
-      start: dayjs().hour(10).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-      end: dayjs().hour(12).minute(30).format('YYYY-MM-DD HH:mm:ss'),
-      sala: 'Sala 1', color: 'cyan',
-    },
-    {
-      id: 3, title: 'Spider-Man',
-      start: dayjs().add(1, 'day').hour(16).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-      end: dayjs().add(1, 'day').hour(18).minute(0).format('YYYY-MM-DD HH:mm:ss'),
-      sala: 'Sala 2', color: 'red',
-    }
-  ];
+  // 1. OBTENER LAS FUNCIONES DEL CINE SELECCIONADO (Y PELÍCULA SI APLICA)
+  const { data: screenings, isLoading } = api.movieScreening.search.useQuery(
+    { cinemaId, movieId }, // 🔥 2. Se lo pasamos a la query de tRPC. Si es undefined, tRPC lo ignora.
+    { enabled: !!cinemaId }
+  );
 
-  // --- LÓGICA DE FILTRADO Y ORDENAMIENTO ---
+  // 2. FILTRAR POR FECHA Y ORDENAR
   const processedEvents = useMemo(() => {
-    // 1. Primero filtramos por el día seleccionado
-    const filtered = movieEvents.filter(event => 
+    if (!screenings || !Array.isArray(screenings)) return [];
+
+    // Filtramos las funciones que coincidan con el día seleccionado
+    const filtered = screenings.filter((event) =>
       dayjs(event.start).isSame(selectedDate, 'day')
     );
 
-    // 2. Luego ordenamos por hora
+    // Ordenamos por hora de inicio
     return filtered.sort((a, b) => {
       const diff = dayjs(a.start).diff(dayjs(b.start));
       return order === 'ASC' ? diff : -diff;
     });
-  }, [order, selectedDate]);
+  }, [screenings, order, selectedDate]);
 
   // Manejadores de Fecha
-  const nextDay = () => setSelectedDate(prev => prev.add(1, 'day'));
-  const prevDay = () => setSelectedDate(prev => prev.subtract(1, 'day'));
+  const nextDay = () => setSelectedDate((prev) => prev.add(1, 'day'));
+  const prevDay = () => setSelectedDate((prev) => prev.subtract(1, 'day'));
   const setToday = () => setSelectedDate(dayjs());
+
+  // Extraemos el nombre del cine desde el primer screening para ponerlo de título
+  const cinemaName =
+    screenings && screenings.length > 0
+      ? screenings[0].room.cinema.name
+      : 'Cartelera del Cine';
+
+  if (isLoading) {
+    return (
+      <Center h={400}>
+        <Stack align="center">
+          <Loader type="bars" color="blue" />
+          <Text c="dimmed">Buscando funciones...</Text>
+        </Stack>
+      </Center>
+    );
+  }
 
   return (
     <Stack gap="lg">
@@ -80,29 +94,30 @@ export function ProgramGuideContent({ cine }: { cine: string }) {
         <Stack gap="md">
           <Group justify="space-between">
             <Stack gap={0}>
-              <Title order={3}>{cine}</Title>
+              <Title order={3}>{cinemaName}</Title>
               <Text size="sm" c="dimmed" fw={500}>
                 {selectedDate.format('dddd, D [de] MMMM [de] YYYY')}
               </Text>
             </Stack>
 
-            {/* CONTROLES DE ORDEN (POR HORA) */}
             <Group gap="xs">
-              <Text size="xs" fw={700} c="dimmed" visibleFrom="xs">ORDENAR HORA:</Text>
+              <Text size="xs" fw={700} c="dimmed" visibleFrom="xs">
+                ORDENAR HORA:
+              </Text>
               <ActionIcon.Group>
                 <Tooltip label="Más temprano primero">
-                  <ActionIcon 
-                    variant={order === 'ASC' ? 'filled' : 'light'} 
-                    onClick={() => setOrder('ASC')} 
+                  <ActionIcon
+                    variant={order === 'ASC' ? 'filled' : 'light'}
+                    onClick={() => setOrder('ASC')}
                     size="lg"
                   >
                     <IconSortAscendingNumbers size={20} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Más tarde primero">
-                  <ActionIcon 
-                    variant={order === 'DESC' ? 'filled' : 'light'} 
-                    onClick={() => setOrder('DESC')} 
+                  <ActionIcon
+                    variant={order === 'DESC' ? 'filled' : 'light'}
+                    onClick={() => setOrder('DESC')}
                     size="lg"
                   >
                     <IconSortDescendingNumbers size={20} />
@@ -114,16 +129,27 @@ export function ProgramGuideContent({ cine }: { cine: string }) {
 
           <Divider />
 
-          {/* NAVEGACIÓN POR DÍAS (ORDENAR/CAMBIAR DÍA) */}
           <Group justify="center">
             <Button.Group>
-              <Button variant="default" onClick={prevDay} leftSection={<IconChevronLeft size={16}/>}>
+              <Button
+                variant="default"
+                onClick={prevDay}
+                leftSection={<IconChevronLeft size={16} />}
+              >
                 Anterior
               </Button>
-              <Button variant="default" onClick={setToday} leftSection={<IconCalendar size={16}/>}>
+              <Button
+                variant="default"
+                onClick={setToday}
+                leftSection={<IconCalendar size={16} />}
+              >
                 Hoy
               </Button>
-              <Button variant="default" onClick={nextDay} rightSection={<IconChevronRight size={16}/>}>
+              <Button
+                variant="default"
+                onClick={nextDay}
+                rightSection={<IconChevronRight size={16} />}
+              >
                 Siguiente
               </Button>
             </Button.Group>
@@ -131,46 +157,68 @@ export function ProgramGuideContent({ cine }: { cine: string }) {
         </Stack>
       </Paper>
 
-      {/* LISTA FILTRADA Y ORDENADA */}
-      <ScrollArea h={450} offsetScrollbars>
+      <ScrollArea h={500} offsetScrollbars>
         <Stack gap="md" pr="md">
           {processedEvents.length > 0 ? (
-            processedEvents.map((event) => (
-              <Paper 
-                key={event.id} 
-                withBorder 
-                p="sm" 
-                radius="md" 
-                style={{ borderLeft: `6px solid var(--mantine-color-${event.color}-filled)` }}
-              >
-                <Group justify="space-between">
-                  <Group gap="md">
-                    <ThemeIcon variant="light" size="xl" color={event.color}>
-                      <IconMovie size={24} />
-                    </ThemeIcon>
-                    <Stack gap={0}>
-                      <Title order={4}>{event.title}</Title>
-                      <Group gap="xs">
-                        <Badge size="xs" variant="outline">{event.sala}</Badge>
-                        <Group gap={4}>
-                          <IconClock size={14} />
-                          <Text size="sm" fw={700}>
-                            {dayjs(event.start).format('h:mm A')}
-                          </Text>
+            processedEvents.map((event) => {
+              // Determinamos color de la película basándonos en su ID para que sea consistente
+              const colors = ['blue', 'cyan', 'grape', 'indigo', 'teal'];
+              // 🔥 3. Pequeña corrección matemática con paréntesis para evitar bugs si el ID no existe
+              const colorTheme =
+                colors[(event?.movie?.id ?? 0) % colors.length];
+
+              return (
+                <Paper
+                  key={event.id}
+                  withBorder
+                  p="sm"
+                  radius="md"
+                  style={{
+                    borderLeft: `6px solid var(--mantine-color-${colorTheme}-filled)`,
+                  }}
+                >
+                  <Group justify="space-between" align="center">
+                    <Group gap="md">
+                      <ThemeIcon variant="light" size="xl" color={colorTheme}>
+                        <IconMovie size={24} />
+                      </ThemeIcon>
+                      <Stack gap={0}>
+                        <Title order={4}>{event.movie.title}</Title>
+                        <Group gap="xs">
+                          <Badge size="xs" variant="outline" color={colorTheme}>
+                            {event.room.name}
+                          </Badge>
+                          <Group gap={4}>
+                            <IconClock size={14} color="dimmed" />
+                            <Text size="sm" fw={700}>
+                              {dayjs(event.start).format('h:mm A')}
+                            </Text>
+                          </Group>
                         </Group>
-                      </Group>
-                    </Stack>
+                      </Stack>
+                    </Group>
+                    <Button variant="light" color={colorTheme} radius="xl">
+                      Boletos ({event.ticketsRemaining})
+                    </Button>
                   </Group>
-                  <Button variant="light" color={event.color} radius="xl">Boletos</Button>
-                </Group>
-              </Paper>
-            ))
+                </Paper>
+              );
+            })
           ) : (
-            <Paper p="xl" withBorder radius="md" style={{ borderStyle: 'dashed' }}>
+            <Paper
+              p="xl"
+              withBorder
+              radius="md"
+              style={{ borderStyle: 'dashed' }}
+            >
               <Stack align="center" gap="xs">
                 <IconCalendar size={40} color="gray" />
-                <Text c="dimmed">No hay funciones programadas para este día.</Text>
-                <Button variant="subtle" size="xs" onClick={setToday}>Volver a hoy</Button>
+                <Text c="dimmed">
+                  No hay funciones programadas para este día.
+                </Text>
+                <Button variant="subtle" size="xs" onClick={setToday}>
+                  Volver a hoy
+                </Button>
               </Stack>
             </Paper>
           )}

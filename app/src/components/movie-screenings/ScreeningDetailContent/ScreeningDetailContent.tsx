@@ -1,4 +1,4 @@
-// components/screenings/ScreeningDetail/ScreeningDetailContent.tsx
+// components/movie-screenings/ScreeningDetailContent/ScreeningDetailContent.tsx
 import {
   Paper,
   Group,
@@ -16,18 +16,21 @@ import {
   IconArmchair,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { MovieScreening } from '@/interfaces/movie_screening.interface';
+import 'dayjs/locale/es'; // Importante si quieres que los meses salgan en español
 import { InfoSection } from '../InfoSection/InfoSection';
+import { MovieScreening } from '@/schemas/movie-screening';
+
+interface ScreeningDetailContentProps {
+  screening: MovieScreening;
+}
 
 export function ScreeningDetailContent({
   screening,
-}: {
-  screening: MovieScreening;
-}) {
+}: ScreeningDetailContentProps) {
+  // Calculamos la ocupación de forma segura (evitando división por cero por si acaso)
+  const capacity = screening.totalCapacity > 0 ? screening.totalCapacity : 1;
   const occupancyRate = Math.round(
-    ((screening.total_capacity - screening.tickets_remaining) /
-      screening.total_capacity) *
-      100
+    ((capacity - screening.ticketsRemaining) / capacity) * 100
   );
 
   return (
@@ -36,7 +39,7 @@ export function ScreeningDetailContent({
         <Stack gap={4}>
           <Group gap="xs">
             <Title order={2}>{screening.movie.title}</Title>
-            <Badge color={screening.status === 'Activa' ? 'green' : 'gray'}>
+            <Badge color={screening.status === 'Activo' ? 'green' : 'gray'}>
               {screening.status}
             </Badge>
           </Group>
@@ -60,7 +63,8 @@ export function ScreeningDetailContent({
       <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
         <InfoSection icon={IconCalendar} title="Fecha y Horario">
           <Text size="sm" fw={500}>
-            {dayjs(screening.start).format('DD [de] MMMM, YYYY')}
+            {/* Formateamos la fecha */}
+            {dayjs(screening.start).locale('es').format('DD [de] MMMM, YYYY')}
           </Text>
           <Group gap={5} mt={4}>
             <IconClock size={14} color="gray" />
@@ -73,13 +77,14 @@ export function ScreeningDetailContent({
 
         <InfoSection icon={IconMapPin} color="teal" title="Ubicación">
           <Text size="sm" fw={500}>
-            {screening.cinema}
+            {/* Rutas anidadas de Zod */}
+            {screening.room.cinema.name}
           </Text>
           <Text size="sm" c="dimmed">
-            {screening.municipality}
+            {screening.room.cinema.municipality.name}
           </Text>
           <Badge variant="outline" mt={8}>
-            {screening.location}
+            {screening.room.name} ({screening.room.roomType})
           </Badge>
         </InfoSection>
 
@@ -87,12 +92,12 @@ export function ScreeningDetailContent({
           <Text
             size="lg"
             fw={800}
-            c={screening.tickets_remaining < 20 ? 'red' : 'green'}
+            c={screening.ticketsRemaining < 20 ? 'red' : 'green'}
           >
-            {screening.tickets_remaining}
+            {screening.ticketsRemaining}
             <Text span fw={400} size="sm" c="dimmed">
               {' '}
-              / {screening.total_capacity} asientos
+              / {screening.totalCapacity} asientos
             </Text>
           </Text>
         </InfoSection>

@@ -1,5 +1,6 @@
 'use client';
 
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Paper,
   Title,
@@ -11,6 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export interface StateFormValues {
   id?: string | number;
@@ -19,18 +21,13 @@ export interface StateFormValues {
 }
 
 interface StateFormProps {
-  onSubmit: (values: StateFormValues) => void;
-  initialValues?: StateFormValues;
   isEditing?: boolean;
 }
 
-export function StateForm({
-  onSubmit,
-  initialValues,
-  isEditing = false,
-}: StateFormProps) {
+export function StateForm({ isEditing = false }: StateFormProps) {
+  const router = useRouter();
   const form = useForm<StateFormValues>({
-    initialValues: initialValues || {
+    initialValues: {
       name: '',
       code: '',
     },
@@ -43,6 +40,12 @@ export function StateForm({
         value.trim().length < 2
           ? 'Ingresa una abreviatura válida (ej. JAL)'
           : null,
+    },
+  });
+
+  const createState = api.state.create.useMutation({
+    onSuccess: () => {
+      router.push('/admin/locations/states');
     },
   });
 
@@ -59,7 +62,11 @@ export function StateForm({
         </Text>
       </Stack>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form
+        onSubmit={form.onSubmit((values) => {
+          createState.mutate({ ...values });
+        })}
+      >
         <Stack gap="md">
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <TextInput

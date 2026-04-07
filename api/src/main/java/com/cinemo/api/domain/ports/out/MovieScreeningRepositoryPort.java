@@ -16,4 +16,5 @@ public interface MovieScreeningRepositoryPort {
 
     void remove(MovieScreening movieScreening);
 
+    List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId);
 }

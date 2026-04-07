@@ -1,64 +1,33 @@
-'use client';
+import { Container, Stack } from '@mantine/core';
+import { notFound } from 'next/navigation';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
+import { BackButtonRooms } from '@/components/locations/BackButtonRooms';
+import { EditRoomForm } from '@/components/locations/EditRoomForm';
 
-import { Button, Container, Stack, Loader, Center } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { RoomForm, RoomFormValues } from '@/components/locations/RoomForm';
+interface EditRoomPageProps {
+  params: Promise<{ id: string }>;
+}
 
-export default function EditRoomPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default async function EditRoomPage({ params }: EditRoomPageProps) {
+  const { id } = await params;
+  const roomId = Number(id);
 
-  const [initialData, setInitialData] = useState<RoomFormValues | null>(null);
-  const [loading, setLoading] = useState(true);
+  if (isNaN(roomId) || roomId <= 0) {
+    notFound();
+  }
 
-  useEffect(() => {
-    // Simulación de fetch a tu API para obtener los datos de la sala
-    setTimeout(() => {
-      setInitialData({
-        id: id,
-        name: 'Sala 01',
-        roomType: 'Estándar',
-        capacity: 150,
-        cinemaId: '1', // Cinemo Andares
-        isActive: true,
-      });
-      setLoading(false);
-    }, 500);
-  }, [id]);
+  // Obtenemos los datos actuales de la sala
+  const room = await api.room.getById({ id: roomId });
 
-  const handleSubmit = (values: RoomFormValues) => {
-    console.log(`Enviando a la API para ACTUALIZAR sala ${id}:`, values);
-    // Aquí harías tu fetch PUT /api/rooms/{id}
-  };
+  if (!room) {
+    notFound();
+  }
 
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <Button
-          component={Link}
-          href="/admin/locations/rooms"
-          variant="subtle"
-          color="gray"
-          leftSection={<IconArrowLeft size={16} />}
-          w="fit-content"
-        >
-          Volver a la lista
-        </Button>
-
-        {loading ? (
-          <Center h={200}>
-            <Loader color="teal" />
-          </Center>
-        ) : (
-          <RoomForm
-            initialValues={initialData!}
-            onSubmit={handleSubmit}
-            isEditing
-          />
-        )}
+        <BackButtonRooms />
+        <EditRoomForm room={room} />
       </Stack>
     </Container>
   );

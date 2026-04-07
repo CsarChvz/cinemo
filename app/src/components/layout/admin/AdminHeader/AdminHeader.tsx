@@ -1,8 +1,11 @@
-import { HeaderProps } from "@/interfaces/components.interface";
-import { Group, Burger, Text } from "@mantine/core";
+import { Group, Burger, Text } from '@mantine/core';
 
+interface HeaderProps {
+  opened: boolean;
+  onToggle: () => void;
+}
 
-export function AdminHeader({onToggle, opened}: HeaderProps) {
+export function AdminHeader({ onToggle, opened }: HeaderProps) {
   return (
     <Group h="100%" px="md">
       <Burger opened={opened} onClick={onToggle} hiddenFrom="sm" size="sm" />

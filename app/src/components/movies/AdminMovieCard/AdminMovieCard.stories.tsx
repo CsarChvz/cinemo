@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AdminMovieCard } from './AdminMovieCard';
 import { MantineProvider, SimpleGrid, Container } from '@mantine/core';
+import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
 
 const meta: Meta<typeof AdminMovieCard> = {
   title: 'Components/Movies/Admin/AdminMovieCard',
@@ -22,13 +23,32 @@ const meta: Meta<typeof AdminMovieCard> = {
 export default meta;
 type Story = StoryObj<typeof AdminMovieCard>;
 
+// Creamos una película base para satisfacer la interfaz de TypeScript
+const baseMovie: Movie = {
+  id: 0,
+  title: 'Título por defecto',
+  posterUrl: '',
+  genre: MovieGenre.ACCION,
+  durationMin: 120,
+  description: 'Descripción genérica',
+  director: 'Director genérico',
+  producer: 'Productora genérica',
+  classification: MovieClassification.B,
+  releaseYear: 2023,
+  isActive: true,
+};
+
 export const Activa: Story = {
   args: {
-    id: 1,
-    title: 'Spider-Man: Across the Spider-Verse',
-    posterUrl:
-      'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
-    isActive: true,
+    // Empaquetamos todo dentro de la propiedad "movie"
+    movie: {
+      ...baseMovie,
+      id: 1,
+      title: 'Spider-Man: Across the Spider-Verse',
+      posterUrl:
+        'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
+      isActive: true,
+    },
     onDelete: (id) => console.log('Eliminar ID:', id),
     onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
@@ -36,30 +56,45 @@ export const Activa: Story = {
 
 export const Inactiva: Story = {
   args: {
-    id: 2,
-    title: 'The Dark Knight',
-    posterUrl:
-      'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
-    isActive: false,
+    movie: {
+      ...baseMovie,
+      id: 2,
+      title: 'The Dark Knight',
+      posterUrl:
+        'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
+      isActive: false,
+    },
+    onDelete: (id) => console.log('Eliminar ID:', id),
+    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };
 
 export const SinImagen: Story = {
   args: {
-    id: 3,
-    title: 'Película sin Poster',
-    posterUrl: '',
-    isActive: true,
+    movie: {
+      ...baseMovie,
+      id: 3,
+      title: 'Película sin Poster',
+      posterUrl: '',
+      isActive: true,
+    },
+    onDelete: (id) => console.log('Eliminar ID:', id),
+    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };
 
 export const TituloLargo: Story = {
   args: {
-    id: 4,
-    title:
-      'El Señor de los Anillos: El Retorno del Rey - Edición Extendida con Comentarios del Director',
-    posterUrl:
-      'https://images.unsplash.com/photo-1506466010722-395aa2bef877?w=800',
-    isActive: true,
+    movie: {
+      ...baseMovie,
+      id: 4,
+      title:
+        'El Señor de los Anillos: El Retorno del Rey - Edición Extendida con Comentarios del Director',
+      posterUrl:
+        'https://images.unsplash.com/photo-1506466010722-395aa2bef877?w=800',
+      isActive: true,
+    },
+    onDelete: (id) => console.log('Eliminar ID:', id),
+    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };

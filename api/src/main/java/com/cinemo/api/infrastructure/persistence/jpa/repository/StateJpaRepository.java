@@ -12,4 +12,5 @@ public interface StateJpaRepository extends JpaRepository<StateEntity, Long> {
     Optional<StateEntity> findByName(String name);
 
     List<StateEntity> findAll();
+
 }
