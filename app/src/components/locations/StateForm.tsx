@@ -1,6 +1,6 @@
 'use client';
 
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Paper,
   Title,

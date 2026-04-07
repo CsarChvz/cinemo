@@ -1,6 +1,6 @@
 // app/admin/locations/cinemas/page.tsx
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import CinemasTable from '@/components/locations/CinemasTable';
 import { ButtonNewCinema } from '@/components/locations/ButtonNewCinema';
 
@@ -21,7 +21,6 @@ export default async function CinemasListPage() {
           <ButtonNewCinema />
         </Group>
 
-        {/* Componente que maneja filtrado, búsqueda, paginación y tabla */}
         <CinemasTable initialData={cinemas} />
       </Stack>
     </Container>

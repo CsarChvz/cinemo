@@ -22,25 +22,12 @@ type Story = StoryObj<typeof MovieScreeningForm>;
 
 // Estado inicial limpio para crear
 export const Crear: Story = {
-  args: {
-    onSubmit: (values) => {
-      console.log('Formulario enviado:', values);
-      alert('Función creada (ver consola)');
-    },
-  },
+
 };
 
 // Estado con valores iniciales (Modo Edición)
 export const Editar: Story = {
   args: {
-    onSubmit: (values) => console.log('Editado:', values),
-    initialValues: {
-      peliculaId: 'Interstellar',
-      estadoId: 'Jalisco',
-      municipioId: 'Zapopan',
-      cineId: 'Andares',
-      salaId: 'VIP',
-      horario: new Date(2026, 2, 26, 18, 30), // 26 de Marzo, 2026
-    },
+
   },
 };

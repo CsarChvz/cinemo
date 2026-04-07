@@ -1,7 +1,7 @@
 // components/movies/MovieForm.tsx
 'use client';
 
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import { MovieGenre, MovieClassification } from '@/schemas/movie';
 import {
   TextInput,
@@ -40,13 +40,12 @@ interface MovieFormProps {
 export function MovieForm({ isEditing = false }: MovieFormProps) {
   const router = useRouter();
 
-  // 1. Configuración del formulario
   const form = useForm<MovieFormValues>({
     initialValues: {
       title: '',
       posterUrl: '',
       genre: '',
-      durationMin: 120, // Valor por defecto razonable
+      durationMin: 120,
       description: '',
       director: '',
       producer: '',
@@ -68,10 +67,8 @@ export function MovieForm({ isEditing = false }: MovieFormProps) {
     },
   });
 
-  // 2. Mutación de tRPC para CREAR la película
   const createMovie = api.movie.create.useMutation({
     onSuccess: () => {
-      // Si todo sale bien, regresamos a la tabla de películas
       router.push('/admin/movies');
     },
     onError: (error) => {
@@ -95,11 +92,9 @@ export function MovieForm({ isEditing = false }: MovieFormProps) {
 
       <form
         onSubmit={form.onSubmit((values) => {
-          // 3. Ejecutamos la mutación pasando los valores del formulario
           createMovie.mutate({
             title: values.title,
             posterUrl: values.posterUrl,
-            // Casteamos a los Enums de TypeScript para satisfacer a Zod
             genre: values.genre as MovieGenre,
             classification: values.classification as MovieClassification,
             durationMin: values.durationMin,

@@ -1,6 +1,5 @@
-// app/admin/locations/rooms/page.tsx
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import RoomsTable from '@/components/locations/RoomsTable';
 import { ButtonNewRoom } from '@/components/locations/ButtonNewRoom';
 

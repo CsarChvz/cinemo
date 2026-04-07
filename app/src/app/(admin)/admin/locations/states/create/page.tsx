@@ -1,6 +1,6 @@
 import { Container, Stack } from '@mantine/core';
 import { StateForm } from '@/components/locations/StateForm';
-import { BackButtonStates } from './BackButtonStates';
+import { BackButtonStates } from '@/components/locations/BackButtonStates';
 
 export default function CreateStatePage() {
   return (

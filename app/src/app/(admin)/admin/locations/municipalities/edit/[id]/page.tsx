@@ -1,9 +1,8 @@
-// app/admin/locations/municipalities/edit/[id]/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server';
-import { BackButtonMunicipalities } from '../../create/BackButtonMunicipalities';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { EditMunicipalityForm } from '@/components/locations/EditMunicipalityForm';
+import { BackButtonMunicipalities } from '@/components/locations/BackButtonMunicipalities';
 
 interface EditMunicipalityPageProps {
   params: Promise<{ id: string }>;

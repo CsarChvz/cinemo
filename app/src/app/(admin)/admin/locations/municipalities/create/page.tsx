@@ -1,7 +1,6 @@
-// app/admin/locations/municipalities/create/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { MunicipalityForm } from '@/components/locations/MunicipalityForm';
-import { BackButtonMunicipalities } from './BackButtonMunicipalities';
+import { BackButtonMunicipalities } from '@/components/locations/BackButtonMunicipalities';
 
 export default function CreateMunicipalityPage() {
   return (

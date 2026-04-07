@@ -1,7 +1,6 @@
-// app/admin/locations/rooms/edit/[id]/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButtonRooms } from '@/components/locations/BackButtonRooms';
 import { EditRoomForm } from '@/components/locations/EditRoomForm';
 

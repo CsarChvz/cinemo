@@ -1,8 +1,8 @@
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { BackButtonStates } from '../../create/BackButtonStates';
 import { EditStateForm } from '@/components/locations/EditStateForm';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
+import { BackButtonStates } from '@/components/locations/BackButtonStates';
 
 interface EditStatePageProps {
   params: Promise<{ id: string }>;

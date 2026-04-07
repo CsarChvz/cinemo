@@ -11,7 +11,7 @@ import 'mantine-datatable/styles.layer.css';
 
 import { theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
-import { TRPCReactProvider } from '@/trpc/react';
+import { TRPCReactProvider } from '@/trpc-folder/trpc-adaptadores/react';
 
 export const metadata = {
   title: 'Mantine Next.js template',

@@ -1,7 +1,7 @@
 // components/movie-screenings/ProgramGuideContent.tsx
 'use client';
 import { useState, useMemo } from 'react';
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Stack,
   Title,
@@ -34,15 +34,19 @@ dayjs.locale('es');
 
 interface ProgramGuideContentProps {
   cinemaId: number;
+  movieId?: number; // Es opcional
 }
 
-export function ProgramGuideContent({ cinemaId }: ProgramGuideContentProps) {
+export function ProgramGuideContent({
+  cinemaId,
+  movieId, // 🔥 1. Tienes que extraer el movieId aquí
+}: ProgramGuideContentProps) {
   const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  // 1. OBTENER LAS FUNCIONES DEL CINE SELECCIONADO
+  // 1. OBTENER LAS FUNCIONES DEL CINE SELECCIONADO (Y PELÍCULA SI APLICA)
   const { data: screenings, isLoading } = api.movieScreening.search.useQuery(
-    { cinemaId },
+    { cinemaId, movieId }, // 🔥 2. Se lo pasamos a la query de tRPC. Si es undefined, tRPC lo ignora.
     { enabled: !!cinemaId }
   );
 
@@ -67,7 +71,7 @@ export function ProgramGuideContent({ cinemaId }: ProgramGuideContentProps) {
   const prevDay = () => setSelectedDate((prev) => prev.subtract(1, 'day'));
   const setToday = () => setSelectedDate(dayjs());
 
-  // Extremos el nombre del cine desde el primer screening para ponerlo de título
+  // Extraemos el nombre del cine desde el primer screening para ponerlo de título
   const cinemaName =
     screenings && screenings.length > 0
       ? screenings[0].room.cinema.name
@@ -159,7 +163,9 @@ export function ProgramGuideContent({ cinemaId }: ProgramGuideContentProps) {
             processedEvents.map((event) => {
               // Determinamos color de la película basándonos en su ID para que sea consistente
               const colors = ['blue', 'cyan', 'grape', 'indigo', 'teal'];
-              const colorTheme = colors[event?.movie?.id ?? 0 % colors.length];
+              // 🔥 3. Pequeña corrección matemática con paréntesis para evitar bugs si el ID no existe
+              const colorTheme =
+                colors[(event?.movie?.id ?? 0) % colors.length];
 
               return (
                 <Paper

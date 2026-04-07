@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MantineProvider } from '@mantine/core';
-import MovieScreening from './MovieScreenings';
 import { Movie, MovieClassification, MovieGenre } from '@/schemas/movie';
-
+import { MovieScreening } from './MovieScreenings';
 
 const meta: Meta<typeof MovieScreening> = {
   title: 'Components/Movie Screenings/MovieScreening',
@@ -44,18 +43,18 @@ const mockMovie: Movie = {
   isActive: false,
 };
 
-// 1. Estado inicial: Sin cine seleccionado
+// 1. Estado inicial: Sin cine seleccionado (cinemaId es undefined)
 export const SinSeleccion: Story = {
   args: {
     movie: mockMovie,
   },
 };
 
-// 2. Estado con cine seleccionado
+// 2. Estado con cine seleccionado (🔥 Corregido a cinemaId numérico)
 export const ConCineSeleccionado: Story = {
   args: {
     movie: mockMovie,
-    cinema: 'Cinépolis Gran Plaza',
+    cinemaId: 1, // Simulamos que seleccionó el cine con ID 1
   },
 };
 

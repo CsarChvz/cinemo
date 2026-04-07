@@ -1,7 +1,6 @@
-// app/admin/movie-screenings/edit/[id]/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
 import { EditMovieScreeningForm } from '@/components/movie-screenings/EditMovieScreeningForm';
 
@@ -19,7 +18,6 @@ export default async function EditarFuncionPage({
     notFound();
   }
 
-  // Obtenemos los datos actuales de la función
   const screening = await api.movieScreening.getById({ id: screeningId });
 
   if (!screening) {

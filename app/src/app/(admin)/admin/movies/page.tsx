@@ -1,8 +1,7 @@
 import { Container } from '@mantine/core';
 import { Metadata } from 'next';
-import { api, HydrateClient } from '@/trpc/server';
-import { AdminMoviesClientWrapper } from '../../../../components/movies/AdminMoviesClientWrapper';
-// ^ Ajusta esta ruta a donde guardes el componente de abajo
+import { api, HydrateClient } from '@/trpc-folder/trpc-adaptadores/server';
+import { AdminMoviesClientWrapper } from '@/components/movies/AdminMoviesClientWrapper';
 
 export const metadata: Metadata = {
   title: 'Administración de Películas | Cinemo',
@@ -10,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminMoviesPage() {
-  // Obtenemos los datos reales en el servidor en lugar del DUMMY_MOVIES
   const movies = await api.movie.getAll();
 
   return (

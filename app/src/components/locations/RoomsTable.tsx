@@ -16,7 +16,7 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { useLocationTableManagement } from '@/hooks/useLocationTablesManagement';
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import { Room } from '@/schemas/room'; // Tu nuevo esquema Zod
 
 interface RoomsTableProps {

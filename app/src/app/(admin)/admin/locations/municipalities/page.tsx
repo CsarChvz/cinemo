@@ -1,6 +1,6 @@
 // app/admin/locations/municipalities/page.tsx
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { ButtonNewMunicipality } from '@/components/locations/ButtonNewMunicipality';
 import MunicipalitiesTable from '@/components/locations/MunicipalitiesTable';
 
@@ -21,7 +21,6 @@ export default async function MunicipalitiesListPage() {
           <ButtonNewMunicipality />
         </Group>
 
-        {/* Componente que maneja filtrado, búsqueda, paginación y tabla */}
         <MunicipalitiesTable initialData={municipalities} />
       </Stack>
     </Container>

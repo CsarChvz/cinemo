@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { FeaturedMoviesSection } from '@/components/Welcome/FeaturedMoviesSection';
 import { CtaSection } from '@/components/Welcome/CtaSection';
 import { HeroSection } from '@/components/Welcome/HeroSection';
-import { api, HydrateClient } from '@/trpc/server';
+import { api, HydrateClient } from '@/trpc-folder/trpc-adaptadores/server';
 
 export const metadata: Metadata = {
   title: 'Cinemo | Tu cine, tu momento',

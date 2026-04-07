@@ -1,7 +1,7 @@
 // components/locations/EditRoomForm.tsx
 'use client';
 
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import { Room } from '@/schemas/room'; // Asegúrate de tener esta ruta correcta
 import {
   Paper,

@@ -1,4 +1,3 @@
-// app/admin/movie-screenings/create/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { BackButtonScreenings } from '@/components/movie-screenings/BackButtonScreenings';
 import { MovieScreeningForm } from '@/components/movie-screenings/MovieScreeningForm/MovieScreeningForm';

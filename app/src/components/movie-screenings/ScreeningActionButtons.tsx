@@ -4,7 +4,7 @@ import { Group, ActionIcon, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 
 interface ScreeningActionButtonsProps {
   id: number;

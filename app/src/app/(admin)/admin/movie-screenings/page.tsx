@@ -1,5 +1,5 @@
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { ButtonNewScreening } from '@/components/movie-screenings/ButtonNewScreening';
 import ScreeningsTable from '@/components/movie-screenings/ScreeningsTable';
 
@@ -9,7 +9,6 @@ export default async function GestionFuncionesPage() {
   return (
     <Container size="xl" py="xl">
       <Stack gap="lg">
-        {/* HEADER SECTION */}
         <Group justify="space-between">
           <Stack gap={0}>
             <Title order={2}>Gestión de Funciones</Title>
@@ -20,7 +19,6 @@ export default async function GestionFuncionesPage() {
           <ButtonNewScreening />
         </Group>
 
-        {/* TABLE SECTION */}
         <ScreeningsTable initialData={screenings} />
       </Stack>
     </Container>

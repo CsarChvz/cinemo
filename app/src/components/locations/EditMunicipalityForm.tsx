@@ -2,7 +2,7 @@
 'use client';
 
 import { Municipality } from '@/schemas/municipality'; // Ajusta la ruta a tu esquema
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Paper,
   Title,

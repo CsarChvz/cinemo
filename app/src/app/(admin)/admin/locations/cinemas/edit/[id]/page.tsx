@@ -1,7 +1,7 @@
 // app/admin/locations/cinemas/edit/[id]/page.tsx
 import { Container, Stack } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButtonCinemas } from '@/components/locations/BackButtonCinemas'; // El botón que creamos antes
 import { EditCinemaForm } from '@/components/locations/EditCinemaForm';
 

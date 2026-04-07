@@ -1,5 +1,5 @@
 import { Container, Stack, Group, Title, Text, Button } from '@mantine/core';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import StatesTable from '@/components/locations/StatesTable';
 import { ButtonNewState } from '@/components/locations/ButtonNewState';
 
@@ -19,7 +19,6 @@ export default async function StatesListPage() {
           <ButtonNewState />
         </Group>
 
-        {/* Componente que maneja filtrado, búsqueda, paginación y tabla */}
         <StatesTable initialData={states} />
       </Stack>
     </Container>

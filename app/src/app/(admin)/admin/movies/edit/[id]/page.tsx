@@ -1,7 +1,6 @@
-// app/admin/movies/edit/[id]/page.tsx
 import { Container, Stack, Title, Text } from '@mantine/core';
 import { notFound } from 'next/navigation';
-import { api } from '@/trpc/server';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButtonMovies } from '@/components/movies/BackButtonMovies';
 import { EditMovieForm } from '@/components/movies/EditMovieForm';
 
@@ -41,7 +40,6 @@ export default async function EditarPeliculaPage({
           </Text>
         </div>
 
-        {/* Le pasamos la data real al formulario de edición */}
         <EditMovieForm movie={movie} />
       </Stack>
     </Container>

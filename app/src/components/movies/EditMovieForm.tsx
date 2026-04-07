@@ -1,7 +1,7 @@
 // components/movies/EditMovieForm.tsx
 'use client';
 
-import { api } from '@/trpc/react';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import { Movie, MovieGenre, MovieClassification } from '@/schemas/movie';
 import {
   TextInput,
