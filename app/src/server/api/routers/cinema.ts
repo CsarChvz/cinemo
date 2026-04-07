@@ -2,6 +2,7 @@ import {
   CreateCinemaSchema,
   CinemaListSchema,
   CinemaSchema,
+  CinemaSimpleListSchema,
 } from '@/schemas/cinema'; 
 import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
@@ -47,8 +48,8 @@ export const cinemaRouter = createTRPCRouter({
     .input(z.object({ municipalityId: z.number().int().positive() }))
     .query(async ({ input }) => {
       const data = await apiClient(
-        `/rooms/by-municipality/${input.municipalityId}`,
-        CinemaListSchema
+        `/cinemas/by-municipality/${input.municipalityId}`,
+        CinemaSimpleListSchema
       );
 
       if (!data) {

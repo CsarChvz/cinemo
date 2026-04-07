@@ -9,7 +9,16 @@ export const CinemaSchema = z.object({
   municipality: MunicipalitySchema,
 });
 
+export const CinemaSimpleSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  address: z.string(),
+  municipalityId: z.number().int(),
+});
+
 export const CinemaListSchema = z.array(CinemaSchema);
+
+export const CinemaSimpleListSchema = z.array(CinemaSimpleSchema);
 
 export const CreateCinemaSchema = z.object({
   name: z.string().min(1, 'El nombre del cine es requerido'),

@@ -32,7 +32,7 @@ export const movieScreeningRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateMovieScreeningSchema)
     .mutation(async ({ input }) => {
-      await apiClient('/movie-screenings', MovieScreeningSchema, {
+      await apiClient('/movie-screenings', z.any(), {
         method: 'POST',
         body: input,
       });

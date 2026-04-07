@@ -20,7 +20,9 @@ export const CreateMovieScreeningSchema = z.object({
   movieId: z.number().int({ message: 'Selecciona una película' }),
   roomId: z.number().int({ message: 'Selecciona una sala' }),
   start: z.string().min(1, 'La fecha y hora de inicio es requerida'),
-  status: z.string().optional(), 
+  end: z.string(),
+  totalCapacity: z.number().int(),
+  status: z.string(),
 });
 
 export type MovieScreening = z.infer<typeof MovieScreeningSchema>;

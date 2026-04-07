@@ -1,4 +1,9 @@
-import { CreateRoomSchema, RoomListSchema, RoomSchema } from '@/schemas/room'; // Ajusta la ruta
+import {
+  CreateRoomSchema,
+  RoomListSchema,
+  RoomSchema,
+  RoomSimpleListSchema,
+} from '@/schemas/room'; // Ajusta la ruta
 import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
@@ -27,7 +32,7 @@ export const roomRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const data = await apiClient(
         `/rooms/by-cinema/${input.cinemaId}`,
-        RoomListSchema
+        RoomSimpleListSchema
       );
 
       if (!data) {
