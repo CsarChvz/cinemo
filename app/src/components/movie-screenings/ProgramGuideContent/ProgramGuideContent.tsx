@@ -1,229 +1,203 @@
-// components/movie-screenings/ProgramGuideContent.tsx
 'use client';
+
 import { useState, useMemo } from 'react';
 import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Stack,
-  Title,
   Text,
-  Badge,
   Group,
-  Paper,
-  ActionIcon,
-  Tooltip,
-  Divider,
-  ThemeIcon,
-  ScrollArea,
-  Button,
   Center,
   Loader,
+  ThemeIcon,
+  Badge,
+  Box,
+  HoverCard,
+  UnstyledButton,
 } from '@mantine/core';
 import {
-  IconSortAscendingNumbers,
-  IconSortDescendingNumbers,
-  IconClock,
-  IconMovie,
-  IconChevronLeft,
-  IconChevronRight,
-  IconCalendar,
-} from '@tabler/icons-react';
+  DayView,
+  ScheduleHeader,
+  DateStringValue,
+  ScheduleEventData,
+} from '@mantine/schedule';
+import { IconMovie, IconClock, IconArmchair } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import { EventDetails } from '../EventDetails/EventDetails';
 
 dayjs.locale('es');
 
 interface ProgramGuideContentProps {
   cinemaId: number;
-  movieId?: number; // Es opcional
+  movieId?: number;
 }
 
 export function ProgramGuideContent({
   cinemaId,
-  movieId, // 🔥 1. Tienes que extraer el movieId aquí
+  movieId,
 }: ProgramGuideContentProps) {
-  const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [date, setDate] = useState<DateStringValue>(
+    dayjs().format('YYYY-MM-DD') as DateStringValue
+  );
 
-  // 1. OBTENER LAS FUNCIONES DEL CINE SELECCIONADO (Y PELÍCULA SI APLICA)
+  // 1. Obtener datos de tRPC
   const { data: screenings, isLoading } = api.movieScreening.search.useQuery(
-    { cinemaId, movieId }, // 🔥 2. Se lo pasamos a la query de tRPC. Si es undefined, tRPC lo ignora.
+    { cinemaId, movieId },
     { enabled: !!cinemaId }
   );
 
-  // 2. FILTRAR POR FECHA Y ORDENAR
-  const processedEvents = useMemo(() => {
+  // 2. Transformar los datos de tRPC al formato de @mantine/schedule
+  const scheduleEvents = useMemo(() => {
     if (!screenings || !Array.isArray(screenings)) return [];
 
-    // Filtramos las funciones que coincidan con el día seleccionado
-    const filtered = screenings.filter((event) =>
-      dayjs(event.start).isSame(selectedDate, 'day')
-    );
+    const colors = ['blue', 'cyan', 'grape', 'indigo', 'teal'];
 
-    // Ordenamos por hora de inicio
-    return filtered.sort((a, b) => {
-      const diff = dayjs(a.start).diff(dayjs(b.start));
-      return order === 'ASC' ? diff : -diff;
+    return screenings.map((event): ScheduleEventData => {
+      const colorTheme = colors[(event?.movie?.id ?? 0) % colors.length];
+
+      // Calculamos fin (asumiendo 2h si no viene en la data, o usa la duración real)
+      const endTime = dayjs(event.start).add(2, 'hour').toISOString();
+
+      return {
+        id: event.id,
+        title: event.movie.title,
+        start: dayjs(event.start).toISOString(),
+        end: endTime,
+        color: colorTheme,
+        payload: {
+          roomName: event.room.name,
+          tickets: event.ticketsRemaining,
+          movieId: event.movie.id,
+        },
+      };
     });
-  }, [screenings, order, selectedDate]);
+  }, [screenings]);
 
-  // Manejadores de Fecha
-  const nextDay = () => setSelectedDate((prev) => prev.add(1, 'day'));
-  const prevDay = () => setSelectedDate((prev) => prev.subtract(1, 'day'));
-  const setToday = () => setSelectedDate(dayjs());
-
-  // Extraemos el nombre del cine desde el primer screening para ponerlo de título
-  const cinemaName =
-    screenings && screenings.length > 0
-      ? screenings[0].room.cinema.name
-      : 'Cartelera del Cine';
+  // 3. Manejador de Click en la función (Para reservar)
+  const handleEventClick = (event: ScheduleEventData) => {
+    console.log('Abriendo reserva para la función ID:', event.id);
+    // Aquí podrías abrir un Modal de Mantine para confirmar la compra
+    alert(`Reservar para: ${event.title}\nSala: ${event?.payload?.roomName}`);
+  };
 
   if (isLoading) {
     return (
       <Center h={400}>
         <Stack align="center">
           <Loader type="bars" color="blue" />
-          <Text c="dimmed">Buscando funciones...</Text>
+          <Text c="dimmed">Cargando cartelera...</Text>
         </Stack>
       </Center>
     );
   }
 
   return (
-    <Stack gap="lg">
-      <Paper withBorder p="md" radius="md" shadow="sm">
-        <Stack gap="md">
-          <Group justify="space-between">
-            <Stack gap={0}>
-              <Title order={3}>{cinemaName}</Title>
-              <Text size="sm" c="dimmed" fw={500}>
-                {selectedDate.format('dddd, D [de] MMMM [de] YYYY')}
-              </Text>
-            </Stack>
+    <Stack gap="md">
+      {/* HEADER PERSONALIZADO */}
+      <ScheduleHeader>
+        <ScheduleHeader.Previous
+          onClick={() =>
+            setDate(
+              dayjs(date)
+                .subtract(1, 'day')
+                .format('YYYY-MM-DD') as DateStringValue
+            )
+          }
+        />
+        <ScheduleHeader.Control interactive={false} miw={250}>
+          <Group gap="xs">
+            <IconMovie size={18} />
+            <Text fw={700} style={{ textTransform: 'capitalize' }}>
+              {dayjs(date).format('dddd, D [de] MMMM')}
+            </Text>
+          </Group>
+        </ScheduleHeader.Control>
+        <ScheduleHeader.Next
+          onClick={() =>
+            setDate(
+              dayjs(date).add(1, 'day').format('YYYY-MM-DD') as DateStringValue
+            )
+          }
+        />
+        <ScheduleHeader.Today
+          onClick={() =>
+            setDate(dayjs().format('YYYY-MM-DD') as DateStringValue)
+          }
+        />
+      </ScheduleHeader>
 
-            <Group gap="xs">
-              <Text size="xs" fw={700} c="dimmed" visibleFrom="xs">
-                ORDENAR HORA:
-              </Text>
-              <ActionIcon.Group>
-                <Tooltip label="Más temprano primero">
-                  <ActionIcon
-                    variant={order === 'ASC' ? 'filled' : 'light'}
-                    onClick={() => setOrder('ASC')}
-                    size="lg"
-                  >
-                    <IconSortAscendingNumbers size={20} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Más tarde primero">
-                  <ActionIcon
-                    variant={order === 'DESC' ? 'filled' : 'light'}
-                    onClick={() => setOrder('DESC')}
-                    size="lg"
-                  >
-                    <IconSortDescendingNumbers size={20} />
-                  </ActionIcon>
-                </Tooltip>
-              </ActionIcon.Group>
+      {/* VISTA DE CALENDARIO */}
+      <DayView
+        date={date}
+        onDateChange={setDate}
+        events={scheduleEvents}
+        startTime="11:00:00"
+        endTime="23:59:59"
+        slotLabelFormat="h:mm A"
+        locale="es"
+        scrollAreaProps={{ mah: 600, type: 'always' }}
+        onEventClick={handleEventClick}
+        withHeader={false}
+        labels={{
+          day: 'Día',
+          week: 'Semana',
+          month: 'Mes',
+          year: 'Año',
+          timeSlot: 'Franja horaria',
+          today: 'Hoy',
+          previous: 'Anterior',
+          next: 'Siguiente',
+        }}
+        renderEventBody={(event) => (
+          <Stack gap={4} p={2}>
+            <Text fz="xs" fw={700} truncate lh={1.2}>
+              {event.title}
+            </Text>
+
+            <Group gap={4} wrap="nowrap">
+              <IconClock size={10} />
+              <Text fz={9}>{dayjs(event.start).format('h:mm A')}</Text>
             </Group>
-          </Group>
 
-          <Divider />
-
-          <Group justify="center">
-            <Button.Group>
-              <Button
-                variant="default"
-                onClick={prevDay}
-                leftSection={<IconChevronLeft size={16} />}
+            <Group gap={4} wrap="nowrap">
+              <Badge
+                size="xs"
+                variant="filled"
+                color="white"
+                c={event.color}
+                p={4}
               >
-                Anterior
-              </Button>
-              <Button
-                variant="default"
-                onClick={setToday}
-                leftSection={<IconCalendar size={16} />}
-              >
-                Hoy
-              </Button>
-              <Button
-                variant="default"
-                onClick={nextDay}
-                rightSection={<IconChevronRight size={16} />}
-              >
-                Siguiente
-              </Button>
-            </Button.Group>
-          </Group>
-        </Stack>
-      </Paper>
-
-      <ScrollArea h={500} offsetScrollbars>
-        <Stack gap="md" pr="md">
-          {processedEvents.length > 0 ? (
-            processedEvents.map((event) => {
-              // Determinamos color de la película basándonos en su ID para que sea consistente
-              const colors = ['blue', 'cyan', 'grape', 'indigo', 'teal'];
-              // 🔥 3. Pequeña corrección matemática con paréntesis para evitar bugs si el ID no existe
-              const colorTheme =
-                colors[(event?.movie?.id ?? 0) % colors.length];
-
-              return (
-                <Paper
-                  key={event.id}
-                  withBorder
-                  p="sm"
-                  radius="md"
-                  style={{
-                    borderLeft: `6px solid var(--mantine-color-${colorTheme}-filled)`,
-                  }}
-                >
-                  <Group justify="space-between" align="center">
-                    <Group gap="md">
-                      <ThemeIcon variant="light" size="xl" color={colorTheme}>
-                        <IconMovie size={24} />
-                      </ThemeIcon>
-                      <Stack gap={0}>
-                        <Title order={4}>{event.movie.title}</Title>
-                        <Group gap="xs">
-                          <Badge size="xs" variant="outline" color={colorTheme}>
-                            {event.room.name}
-                          </Badge>
-                          <Group gap={4}>
-                            <IconClock size={14} color="dimmed" />
-                            <Text size="sm" fw={700}>
-                              {dayjs(event.start).format('h:mm A')}
-                            </Text>
-                          </Group>
-                        </Group>
-                      </Stack>
-                    </Group>
-                    <Button variant="light" color={colorTheme} radius="xl">
-                      Boletos ({event.ticketsRemaining})
-                    </Button>
-                  </Group>
-                </Paper>
-              );
-            })
-          ) : (
-            <Paper
-              p="xl"
-              withBorder
-              radius="md"
-              style={{ borderStyle: 'dashed' }}
-            >
-              <Stack align="center" gap="xs">
-                <IconCalendar size={40} color="gray" />
-                <Text c="dimmed">
-                  No hay funciones programadas para este día.
+                {event.payload?.roomName}
+              </Badge>
+              <Group gap={2}>
+                <IconArmchair size={10} />
+                <Text fz={9} fw={500}>
+                  {event.payload?.tickets}
                 </Text>
-                <Button variant="subtle" size="xs" onClick={setToday}>
-                  Volver a hoy
-                </Button>
-              </Stack>
-            </Paper>
-          )}
-        </Stack>
-      </ScrollArea>
+              </Group>
+            </Group>
+          </Stack>
+        )}
+        renderEvent={(event, props) => (
+          <HoverCard
+            width={280}
+            position="bottom"
+            closeDelay={0}
+            transitionProps={{ duration: 0 }}
+          >
+            <HoverCard.Target>
+              <UnstyledButton {...props} />
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <EventDetails event={event} />
+            </HoverCard.Dropdown>
+          </HoverCard>
+        )}
+      />
+
+      <Text size="xs" c="dimmed" ta="center">
+        * Haz click en una función para iniciar la reserva de boletos.
+      </Text>
     </Stack>
   );
 }
