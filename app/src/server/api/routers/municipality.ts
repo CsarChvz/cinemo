@@ -45,7 +45,7 @@ export const municipalityRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateMunicipalitySchema)
     .mutation(async ({ input }) => {
-      return await apiClient('/municipalities', MunicipalitySchema, {
+      await apiClient('/municipalities', MunicipalitySchema, {
         method: 'POST',
         body: input, // Aquí pasamos el body { name, stateId }
       });

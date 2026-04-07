@@ -1,5 +1,6 @@
 'use client';
 
+import { api } from '@/trpc/react';
 import {
   Paper,
   Title,
@@ -11,6 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export interface MunicipalityFormValues {
   id?: string | number;
@@ -19,16 +21,15 @@ export interface MunicipalityFormValues {
 }
 
 interface MunicipalityFormProps {
-  onSubmit: (values: MunicipalityFormValues) => void;
   initialValues?: MunicipalityFormValues;
   isEditing?: boolean;
 }
 
 export function MunicipalityForm({
-  onSubmit,
   initialValues,
   isEditing = false,
 }: MunicipalityFormProps) {
+  const router = useRouter();
   const form = useForm<MunicipalityFormValues>({
     initialValues: initialValues || {
       name: '',
@@ -43,12 +44,34 @@ export function MunicipalityForm({
     },
   });
 
-  // En un caso real, estos datos vendrían de tu API (ej. SWR o React Query)
-  const statesData = [
-    { value: '1', label: 'Jalisco' },
-    { value: '2', label: 'Ciudad de México' },
-    { value: '3', label: 'Nuevo León' },
-  ];
+  // 1. Obtenemos la data y el estado de carga desde tRPC
+  const {
+    data: states,
+    isLoading: isLoadingStates,
+    isError,
+  } = api.state.getAll.useQuery();
+
+  // 2. Mapeamos la data al formato de Mantine: { value: string, label: string }
+  const statesData =
+    states?.map((state) => ({
+      value: state.id.toString(),
+      label: state.name,
+    })) || [];
+
+  // 3. Definimos la mutación para crear
+  const createMunicipality = api.municipality.create.useMutation({
+    onSuccess: () => {
+      // Corregí el pequeño typo aquí ('municipalities')
+      router.push('/admin/locations/municipalities');
+    },
+  });
+
+  const handleSubmit = (values: MunicipalityFormValues) => {
+    createMunicipality.mutate({
+      name: values.name,
+      stateId: Number(values.stateId),
+    });
+  };
 
   return (
     <Paper p={40} radius="xl" withBorder shadow="md">
@@ -63,7 +86,7 @@ export function MunicipalityForm({
         </Text>
       </Stack>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <TextInput
             label="Nombre del Municipio"
@@ -74,10 +97,15 @@ export function MunicipalityForm({
 
           <Select
             label="Estado al que pertenece"
-            placeholder="Selecciona un estado..."
+            placeholder={
+              isLoadingStates
+                ? 'Cargando estados...'
+                : 'Selecciona un estado...'
+            }
             searchable
             withAsterisk
             data={statesData}
+            disabled={isLoadingStates || isError}
             {...form.getInputProps('stateId')}
           />
 
@@ -89,6 +117,10 @@ export function MunicipalityForm({
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'blue', to: 'cyan' }}
+            // Agregamos el loading spinner conectado a la mutación de guardado
+            loading={createMunicipality.isPending}
+            // Deshabilitamos si los estados aún no cargan
+            disabled={isLoadingStates}
           >
             {isEditing ? 'Guardar Cambios' : 'Crear Municipio'}
           </Button>

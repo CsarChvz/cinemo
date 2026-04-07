@@ -106,7 +106,7 @@ export default function MunicipalitiesTable({
                     <IconEdit size={16} />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="Eliminar">
+                {/* <Tooltip label="Eliminar">
                   <ActionIcon
                     size="sm"
                     variant="subtle"
@@ -115,7 +115,7 @@ export default function MunicipalitiesTable({
                   >
                     <IconTrash size={16} />
                   </ActionIcon>
-                </Tooltip>
+                </Tooltip> */}
               </Group>
             ),
           },
