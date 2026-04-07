@@ -87,7 +87,6 @@ export default function RoomsTable({ initialData }: RoomsTableProps) {
       <Paper withBorder radius="md" shadow="xs">
         <DataTable
           idAccessor="id"
-          height={550}
           withTableBorder
           records={records}
           sortStatus={sortStatus}
@@ -112,7 +111,6 @@ export default function RoomsTable({ initialData }: RoomsTableProps) {
               accessor: 'roomType',
               title: 'Tipo',
               sortable: true,
-
             },
             {
               accessor: 'capacity',
@@ -124,7 +122,6 @@ export default function RoomsTable({ initialData }: RoomsTableProps) {
               accessor: 'isActive',
               title: 'Estado',
               textAlign: 'center',
-
             },
             {
               accessor: 'actions',
@@ -143,11 +140,11 @@ export default function RoomsTable({ initialData }: RoomsTableProps) {
                       <IconEdit size={16} />
                     </ActionIcon>
                   </Tooltip>
-                  <Tooltip label="Eliminar">
+                  {/* <Tooltip label="Eliminar">
                     <ActionIcon size="sm" variant="subtle" color="red">
                       <IconTrash size={16} />
                     </ActionIcon>
-                  </Tooltip>
+                  </Tooltip> */}
                 </Group>
               ),
             },
