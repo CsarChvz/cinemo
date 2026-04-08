@@ -8,6 +8,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/schedule/styles.css';
 import '@mantine/charts/styles.css';
 import 'mantine-datatable/styles.layer.css';
+import 'leaflet/dist/leaflet.css';
 
 import { theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
