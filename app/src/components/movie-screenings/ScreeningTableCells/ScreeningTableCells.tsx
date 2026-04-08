@@ -47,7 +47,7 @@ export const ActionButtons = ({ id, basePath, onDelete }: ActionButtonsProps) =>
     <Tooltip label="Editar">
       <ActionIcon
         component={Link}
-        href={`${basePath}/${id}/edit`}
+        href={`${basePath}/edit/${id}`}
         size="sm"
         variant="subtle"
         color="blue"

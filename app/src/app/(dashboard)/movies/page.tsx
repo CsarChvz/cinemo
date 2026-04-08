@@ -1,8 +1,7 @@
 import { Container } from '@mantine/core';
 import { Metadata } from 'next';
 import { api, HydrateClient } from '@/trpc-folder/trpc-adaptadores/server';
-import { MoviesClientWrapper } from '@/components/movies/MoviesClientWrapper';
-// Importamos el wrapper que acabamos de crear
+import { MoviesClientWrapper } from '@/components/movies/MoviesClientWrapper/MoviesClientWrapper';
 
 // 1. Metadatos para SEO
 export const metadata: Metadata = {

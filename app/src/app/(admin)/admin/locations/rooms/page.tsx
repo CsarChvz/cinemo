@@ -1,7 +1,15 @@
 import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import RoomsTable from '@/components/locations/RoomsTable';
-import { ButtonNewRoom } from '@/components/locations/ButtonNewRoom';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import RoomsTable from '@/components/locations/Room/RoomsTable';
+import { IconPlus } from '@tabler/icons-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gestión de Salas | Cinemo',
+  description:
+    'Administra el aforo, tipo de pantalla y disponibilidad de las salas en cada sucursal.',
+};
 
 export default async function RoomsListPage() {
   const rooms = await api.room.getAll();
@@ -16,7 +24,12 @@ export default async function RoomsListPage() {
               Administra el aforo, tipo y disponibilidad de cada sala.
             </Text>
           </Stack>
-          <ButtonNewRoom />
+          <BackButton
+            href="/admin/locations/rooms/create"
+            label="Agregar nuevo"
+            color="blue"
+            icon={<IconPlus size={16} stroke={2.5} />}
+          />
         </Group>
 
         <RoomsTable initialData={rooms} />

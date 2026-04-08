@@ -1,8 +1,10 @@
 package com.cinemo.api.infrastructure.web.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cinemo.api.application.dto.CinemaResponseDTO;
 import com.cinemo.api.domain.Cinema;
 import com.cinemo.api.domain.ports.in.cinema.ManageCinemaUseCase;
 import com.cinemo.api.domain.ports.in.cinema.RetrieveCinemaUseCase;
@@ -51,6 +53,20 @@ public class CinemaController {
         List<CinemaResponseDto> responseDtos = cinemas.stream().map(cinemaDtoMapper::toResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<CinemaResponseDTO>> getNearestCinemas(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(defaultValue = "10.0") double radius) {
+        List<CinemaResponseDTO> nearbyCinemas = searchCinemaUseCase.getNearest(lat, lng, radius);
+
+        if (nearbyCinemas.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(nearbyCinemas);
     }
 
     @GetMapping("/by-municipality/{municipalityId}")

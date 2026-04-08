@@ -1,12 +1,19 @@
 import { Container, Stack } from '@mantine/core';
-import { MunicipalityForm } from '@/components/locations/MunicipalityForm';
-import { BackButtonMunicipalities } from '@/components/locations/BackButtonMunicipalities';
+import { BackButton } from '@/components/common/BackButton/BackButton';
+import { MunicipalityForm } from '@/components/locations/Municipality/MunicipalityForm';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Registrar Nuevo Municipio | Cinemo',
+  description:
+    'Añade un nuevo municipio al catálogo del sistema y asígnalo a un estado correspondiente.',
+};
 
 export default function CreateMunicipalityPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonMunicipalities />
+        <BackButton href="/admin/locations/municipalities" />
         <MunicipalityForm />
       </Stack>
     </Container>

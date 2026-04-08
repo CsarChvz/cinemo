@@ -60,6 +60,45 @@ export const cinemaRouter = createTRPCRouter({
       }
       return data;
     }),
+
+  /**
+   * Obtiene los cines más cercanos a una ubicación geográfica
+   * GET /cinemas/nearby?lat=...&lng=...&radius=...
+   */
+  getNearby: publicProcedure
+    .input(
+      z.object({
+        lat: z.number(),
+        lng: z.number(),
+        radius: z.number().default(30),
+      })
+    )
+    .query(async ({ input }) => {
+      // Construimos los query params para la URL
+      const queryParams = new URLSearchParams({
+        lat: input.lat.toString(),
+        lng: input.lng.toString(),
+        radius: input.radius.toString(),
+      });
+
+      // Llamamos a tu endpoint de Java /api/v1/cinemas/nearby
+      // Usamos z.array(z.any()) o un esquema específico si ya lo tienes
+      const data = await apiClient(
+        `/cinemas/nearby?${queryParams.toString()}`,
+        z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            latitude: z.number(),
+            longitude: z.number(),
+            distance: z.number(),
+          })
+        )
+      );
+
+      return data;
+    }),
+
   /**
    * Crea un nuevo cine enviando name, address y municipalityId en el body
    * POST /cinemas

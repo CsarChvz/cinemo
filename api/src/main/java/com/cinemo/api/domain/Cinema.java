@@ -9,4 +9,6 @@ public class Cinema {
     private String name;
     private String address;
     private Municipality municipality;
+    private Double latitude;
+    private Double longitude;
 }

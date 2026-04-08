@@ -20,8 +20,11 @@ export async function apiClient<TResponse>(
   options: FetchOptions<unknown> = {}
 ): Promise<TResponse> {
   const { method = 'GET', body, headers, cache = 'default' } = options;
-  const url = `${env.NEXT_PUBLIC_API_URL}${endpoint}`;
+  const baseUrl =
+    typeof window !== 'undefined' ? env.NEXT_PUBLIC_API_URL : env.API_URL;
 
+  const url = `${baseUrl}${endpoint}`;
+  
   try {
     const response = await fetch(url, {
       method,

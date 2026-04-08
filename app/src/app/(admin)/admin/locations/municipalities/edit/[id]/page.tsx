@@ -1,11 +1,38 @@
-import { Container, Stack } from '@mantine/core';
+import { Metadata } from 'next';
+import { Container, Stack, Title, Text } from '@mantine/core';
 import { notFound } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { EditMunicipalityForm } from '@/components/locations/EditMunicipalityForm';
-import { BackButtonMunicipalities } from '@/components/locations/BackButtonMunicipalities';
+import { EditMunicipalityForm } from '@/components/locations/Municipality/EditMunicipalityForm';
+import { BackButton } from '@/components/common/BackButton/BackButton';
 
 interface EditMunicipalityPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: EditMunicipalityPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const municipalityId = Number(id);
+
+  if (isNaN(municipalityId) || municipalityId <= 0) {
+    return { title: 'Editar Municipio | Cinemo' };
+  }
+
+  try {
+    const municipality = await api.municipality.getById({ id: municipalityId });
+
+    if (!municipality) {
+      return { title: 'Municipio no encontrado | Cinemo' };
+    }
+
+    return {
+      title: `Editar: ${municipality.name} | Cinemo`,
+      description: `Actualiza la información y el estado al que pertenece el municipio de ${municipality.name}.`,
+    };
+  } catch (error) {
+    return { title: 'Editar Municipio | Cinemo' };
+  }
 }
 
 export default async function EditMunicipalityPage({
@@ -14,7 +41,6 @@ export default async function EditMunicipalityPage({
   const { id } = await params;
 
   const municipalityId = Number(id);
-  // Validamos que sea un ID válido
   if (isNaN(municipalityId) || municipalityId <= 0) {
     notFound();
   }
@@ -22,7 +48,6 @@ export default async function EditMunicipalityPage({
   // Obtenemos los datos del municipio desde el servidor
   const municipality = await api.municipality.getById({ id: municipalityId });
 
-  // Si no existe, tRPC probablemente lance un error, pero si devuelve null:
   if (!municipality) {
     notFound();
   }
@@ -30,7 +55,18 @@ export default async function EditMunicipalityPage({
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButtonMunicipalities />
+        <BackButton href="/admin/locations/municipalities" />
+        <div>
+          <Title order={2}>Editar Municipio</Title>
+          <Text c="dimmed">
+            Municipio:{' '}
+            <Text span fw={700} c="blue">
+              {municipality.name}
+            </Text>{' '}
+            (ID: #{municipality.id})
+          </Text>
+        </div>
+
         <EditMunicipalityForm municipality={municipality} />
       </Stack>
     </Container>

@@ -88,30 +88,29 @@ export function LocationSidebar() {
 
         <Select
           clearable
-          placeholder={isLoadingStates ? 'Cargando...' : 'Estado'}
+          placeholder="Estado"
           data={stateOptions}
           value={currentStateId}
           onChange={(val) => updateUrl('stateId', val)}
           disabled={isLoadingStates}
           size="sm"
           mx="sm"
+          searchable // ✨ Agregué esto por si tienes muchos estados
         />
 
         <Select
           clearable
-          placeholder={
-            isFetchingMunicipalities
-              ? 'Cargando...'
-              : currentStateId
-                ? 'Municipio'
-                : 'Selecciona un estado'
-          }
+          placeholder={currentStateId ? 'Municipio' : 'Selecciona un estado'}
           data={muniOptions}
           value={currentMuniId}
           onChange={(val) => updateUrl('municipalityId', val)}
-          disabled={!currentStateId || isFetchingMunicipalities}
+          // ✨ Cambié disabled para que no se bloquee mientras 'isFetching'
+          // si ya tenemos un ID (útil en la redirección)
+          disabled={!currentStateId}
+          rightSection={isFetchingMunicipalities ? <Loader size={14} /> : null}
           size="sm"
           mx="sm"
+          searchable
         />
 
         <Divider

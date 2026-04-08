@@ -1,15 +1,37 @@
 services:
+  postgres:
+    image: 'postgres:16'
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME:-mydatabase}
+      POSTGRES_USER: ${DB_USER:-myuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     build: ./api
+    profiles: ["fullstack"]
     ports:
-      - "${API_PORT}:8080"
+      - "${API_PORT:-8080}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-mydatabase}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-myuser}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-secret}
+    depends_on:
+      - postgres
 
   app:
     build: ./app
+    profiles: ["fullstack"]
     ports:
-      - "${APP_PORT}:3000"
+      - "${APP_PORT:-3000}:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}
+      API_URL: http://api:8080/api/v1
+      NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8080}/api/v1
     depends_on:
       - api
 

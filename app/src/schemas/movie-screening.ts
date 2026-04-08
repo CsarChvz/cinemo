@@ -1,6 +1,6 @@
-
+// schemas/movie-screening.ts
 import { z } from 'zod';
-import { RoomSchema } from './room'; 
+import { RoomSchema } from './room';
 import { MovieSchema } from './movie';
 
 export const MovieScreeningSchema = z.object({
@@ -22,6 +22,7 @@ export const CreateMovieScreeningSchema = z.object({
   start: z.string().min(1, 'La fecha y hora de inicio es requerida'),
   end: z.string(),
   totalCapacity: z.number().int(),
+  ticketsRemaining: z.number().int(),
   status: z.string(),
 });
 

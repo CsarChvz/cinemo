@@ -22,6 +22,7 @@ const links = [
   { link: '/', label: 'Inicio' },
   { link: '/movies', label: 'Películas' },
   { link: '/movie-screenings', label: 'Cartelera' },
+  { link: '/cinemas', label: 'Cines' },
 ];
 
 export function MainLayout({ children }: MainLayoutProps) {
