@@ -15,5 +15,11 @@ public class CinemaRequestDto {
   private String address;
 
   @NotNull(message = "El ID del municipio es obligatorio")
+  private Double latitude;
+
+  @NotNull(message = "El ID del municipio es obligatorio")
+  private Double longitude;
+
+  @NotNull(message = "El ID del municipio es obligatorio")
   private Long municipalityId;
 }

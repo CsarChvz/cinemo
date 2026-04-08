@@ -28,6 +28,12 @@ public class CinemaEntity {
     @Column(name = "address", nullable = true, length = 200)
     private String address;
 
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "municipality_id", nullable = false)
     private MunicipalityEntity municipality;

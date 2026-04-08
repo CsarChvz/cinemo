@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.cinemo.api.domain.Cinema;
+import com.cinemo.api.domain.Location;
 
 public interface CinemaRepositoryPort {
 
@@ -18,4 +19,5 @@ public interface CinemaRepositoryPort {
     void delete(Cinema cinema);
 
     List<Cinema> findByMunicipalityId(Long municipalityId);
+
 }
