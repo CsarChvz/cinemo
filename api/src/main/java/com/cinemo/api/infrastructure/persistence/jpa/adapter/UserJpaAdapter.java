@@ -3,6 +3,9 @@ package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.cinemo.api.domain.User;
@@ -15,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class UserJpaAdapter implements UserRepositoryPort {
+public class UserJpaAdapter implements UserRepositoryPort, UserDetailsService {
 
     private final UserJpaRepository jpaRepository;
     private final UserMapper mapper;
@@ -42,6 +45,22 @@ public class UserJpaAdapter implements UserRepositoryPort {
     @Override
     public Optional<User> findById(Long id) {
         return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return jpaRepository.findByUsername(username)
+                .map(userEntity -> org.springframework.security.core.userdetails.User // Usamos el de Spring
+                        .withUsername(userEntity.getUsername())
+                        .password(userEntity.getPassword())
+                        .authorities(userEntity.getRole())
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return jpaRepository.findByUsername(username).map(mapper::toDomain);
     }
 
 }

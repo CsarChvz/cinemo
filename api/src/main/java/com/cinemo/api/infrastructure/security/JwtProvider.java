@@ -1,11 +1,15 @@
 package com.cinemo.api.infrastructure.security;
 
 import com.cinemo.api.domain.User;
+import com.cinemo.api.domain.ports.out.JwtPort;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -14,22 +18,38 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
-public class JwtProvider {
+public class JwtProvider implements JwtPort {
 
   @Value("${jwt.secret}")
   private String secret;
 
-  // Generar el Token
-  public String generateToken(User user) {
+  public String generateTokenFromAuthentication(Authentication auth) {
+    String username = auth.getName();
+
+    String role = auth.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .findFirst()
+        .orElse("USER");
+
+    return buildToken(username, role);
+  }
+
+  // Modifica tu método original o crea este privado para no repetir lógica
+  private String buildToken(String username, String role) {
     return Jwts.builder()
-        .setSubject(user.getUsername())
-        .claim("role", user.getRole().getName())
+        .setSubject(username)
+        .claim("role", role)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
         .signWith(getSignInKey(), SignatureAlgorithm.HS256)
         .compact();
   }
 
+  // Puedes refactorizar el de dominio para que use el builder también
+  @Override
+  public String generateToken(User user) {
+    return buildToken(user.getUsername(), user.getRole());
+  }
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
   }

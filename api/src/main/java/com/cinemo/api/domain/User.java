@@ -13,8 +13,7 @@ public class User {
     private String username;
     private String email;
     private String password;
-
-    private Role role;
+    private String role;
 
     public boolean hasValidName() {
         return this.name != null && this.name.trim().length() >= 5;

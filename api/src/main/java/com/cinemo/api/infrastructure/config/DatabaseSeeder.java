@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.config;
 
+import com.cinemo.api.domain.ports.out.PasswordEncoderPort;
 import com.cinemo.api.infrastructure.persistence.jpa.entity.*;
 import com.cinemo.api.infrastructure.persistence.jpa.repository.*;
 import org.springframework.boot.CommandLineRunner;
@@ -19,7 +20,9 @@ public class DatabaseSeeder {
             CinemaJpaRepository cinemaRepo,
             CinemaRoomJpaRepository roomRepo,
             MovieJpaRepository movieRepo,
-            MovieScreeningJpaRepostory screeningRepo) {
+            MovieScreeningJpaRepostory screeningRepo,
+            UserJpaRepository userRepo,
+            PasswordEncoderPort passwordEncoder) {
 
         return args -> {
             if (stateRepo.count() > 0) {
@@ -168,6 +171,30 @@ public class DatabaseSeeder {
                 screeningRepo.save(screening);
             }
             System.out.println("✅ 80 Funciones programadas.");
+            if (userRepo.count() == 0) {
+                System.out.println("👤 Creando usuarios de prueba...");
+
+                // Usuario Administrador
+                UserEntity admin = new UserEntity();
+                admin.setName("César Chávez");
+                admin.setUsername("admin");
+                admin.setEmail("admin@cinemo.com");
+                // Usamos el puerto para que se guarde el hash real
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole("ADMIN");
+                userRepo.save(admin);
+
+                // Usuario Cliente estándar
+                UserEntity user = new UserEntity();
+                user.setName("Usuario de Prueba");
+                user.setUsername("user");
+                user.setEmail("user@example.com");
+                user.setPassword(passwordEncoder.encode("user123"));
+                user.setRole("USER");
+                userRepo.save(user);
+
+                System.out.println("✅ Usuarios creados: admin/admin123 y user/user123");
+            }
             System.out.println("🚀 Seed masivo completado con éxito.");
         };
     }
