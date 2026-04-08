@@ -13,7 +13,6 @@ import com.cinemo.api.infrastructure.persistence.jpa.repository.UserJpaRepositor
 
 import lombok.RequiredArgsConstructor;
 
-
 @Component
 @RequiredArgsConstructor
 public class UserJpaAdapter implements UserRepositoryPort {
@@ -22,7 +21,7 @@ public class UserJpaAdapter implements UserRepositoryPort {
     private final UserMapper mapper;
 
     @Override
-    public User saveUser(User user) {
+    public User save(User user) {
         UserEntity userEntity = mapper.toEntity(user);
 
         UserEntity userSavedEntity = jpaRepository.save(userEntity);

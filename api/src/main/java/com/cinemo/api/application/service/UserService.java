@@ -19,15 +19,14 @@ public class UserService implements CreateUserUseCase, RetriveUsersUseCase {
     public User createUser(User user) {
 
         userRepositoryPort.findByName(user.getName()).ifPresent(
-            existing -> {
-                throw new DuplicateUserException(user.getName());
-            }
-        );
+                existing -> {
+                    throw new DuplicateUserException(user.getName());
+                });
 
-        if(!user.hasValidName()){
+        if (!user.hasValidName()) {
             throw new IllegalArgumentException();
         }
-        return userRepositoryPort.saveUser(user);
+        return userRepositoryPort.save(user);
     }
 
     @Override
