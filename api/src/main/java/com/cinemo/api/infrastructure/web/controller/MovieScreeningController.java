@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import com.cinemo.api.domain.ports.in.movie_screening.RetrieveMovieScreeningUseC
 import com.cinemo.api.infrastructure.web.controller.dto.movie_screening.MovieScreeningDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.movie_screening.MovieScreeningRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.movie_screening.MovieScreeningResponseDto;
+import com.cinemo.api.infrastructure.web.controller.dto.movie_screening.MovieScreeningUpdateRequestDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,17 @@ public class MovieScreeningController {
                 .map(movieScreeningDtoMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<MovieScreeningResponseDto> update(@PathVariable Long id,
+            @Valid @RequestBody MovieScreeningUpdateRequestDto requestDto) {
+        return retrieveMovieScreeningUseCase.getById(id).map(
+                existingMovieScreening -> {
+                    movieScreeningDtoMapper.updateDomainFromDto(requestDto, existingMovieScreening);
+                    MovieScreening movieScreening = manageMovieScreeningUseCase.update(existingMovieScreening);
+                    return ResponseEntity.ok(movieScreeningDtoMapper.toResponse(existingMovieScreening));
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

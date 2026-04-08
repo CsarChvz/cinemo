@@ -14,6 +14,8 @@ public class MovieScreeningRequestDto {
 
     @NotNull(message = "La capacidad total es obligatoria")
     private Integer totalCapacity;
+    @NotNull(message = "Los boletos restantes son obligatorios")
+    private Integer ticketsRemaining;
 
     private String status = "SCHEDULED";
 

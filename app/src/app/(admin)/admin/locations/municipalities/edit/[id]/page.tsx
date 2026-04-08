@@ -30,7 +30,7 @@ export default async function EditMunicipalityPage({
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButton href="/dashboard/users" />
+        <BackButton href="/admin/locations/municipalities" />
         <EditMunicipalityForm municipality={municipality} />
       </Stack>
     </Container>

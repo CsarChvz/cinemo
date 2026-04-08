@@ -6,7 +6,7 @@ export default function NuevaFuncionPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButton href="/dashboard/users" />
+        <BackButton href="/admin/movie-screenings" />
         <MovieScreeningForm />
       </Stack>
     </Container>

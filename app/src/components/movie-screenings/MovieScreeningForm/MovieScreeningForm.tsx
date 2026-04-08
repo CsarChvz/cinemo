@@ -178,20 +178,25 @@ export function MovieScreeningForm({
             const startDate = dayjs(values.start!);
             const endDate = startDate.add(durationMin, 'minute');
 
+
+            const formattedStart = startDate.format('YYYY-MM-DDTHH:mm:ss');
+            const formattedEnd = endDate.format('YYYY-MM-DDTHH:mm:ss');
+
             // 3. Buscamos la sala seleccionada para sacar su capacidad
             const selectedRoom = rooms?.find(
               (r) => r.id.toString() === values.roomId
             );
             const capacity = selectedRoom?.capacity || 0;
 
-            const payload = {
-              movieId: Number(values.movieId),
-              roomId: Number(values.roomId),
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
-              totalCapacity: capacity,
-              status: 'Activo', // o el status que requieras
-            };
+          const payload = {
+            movieId: Number(values.movieId),
+            roomId: Number(values.roomId),
+            start: formattedStart,
+            end: formattedEnd,
+            totalCapacity: capacity,
+            ticketsRemaining: capacity,
+            status: 'SCHEDULED',
+          };
 
             console.log('Enviando al backend:', payload);
             createScreening.mutate(payload);

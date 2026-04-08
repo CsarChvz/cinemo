@@ -163,6 +163,9 @@ export function EditMovieScreeningForm({
           const startDate = dayjs(values.start!);
           const endDate = startDate.add(durationMin, 'minute');
 
+          const formattedStart = startDate.format('YYYY-MM-DDTHH:mm:ss');
+          const formattedEnd = endDate.format('YYYY-MM-DDTHH:mm:ss');
+
           const selectedRoom = rooms?.find(
             (r) => r.id.toString() === values.roomId
           );
@@ -171,10 +174,11 @@ export function EditMovieScreeningForm({
           const payload = {
             movieId: Number(values.movieId),
             roomId: Number(values.roomId),
-            start: startDate.toISOString(),
-            end: endDate.toISOString(),
+            start: formattedStart,
+            end: formattedEnd,
             totalCapacity: capacity,
-            status: screening.status, // Mantenemos el estatus original
+            ticketsRemaining: capacity,
+            status: 'SCHEDULED',
           };
 
           // 🔥 Ejecutamos la mutación de UPDATE pasándole el ID de la función

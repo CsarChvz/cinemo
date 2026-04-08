@@ -16,7 +16,10 @@ export default async function StatesListPage() {
               Administra los estados donde tienes presencia.
             </Text>
           </Stack>
-          <BackButton href="/dashboard/users" />
+          <BackButton
+            href="/admin/locations/states/create"
+            label="Agregar nuevo"
+          />
         </Group>
 
         <StatesTable initialData={states} />

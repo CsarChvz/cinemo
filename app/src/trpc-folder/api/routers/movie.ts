@@ -66,7 +66,7 @@ export const movieRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       return await apiClient(`/movies/${input.id}`, z.any(), {
-        method: 'PUT', // Usamos PUT como descubrimos con las funciones
+        method: 'PATCH', // Usamos PUT como descubrimos con las funciones
         body: input.data,
       });
     }),

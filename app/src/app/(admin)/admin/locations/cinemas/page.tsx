@@ -17,7 +17,10 @@ export default async function CinemasListPage() {
               Administra las sucursales y sus ubicaciones.
             </Text>
           </Stack>
-          <BackButton href="/dashboard/users" />
+          <BackButton
+            href="/admin/locations/cinemas/create"
+            label="Agregar nuevo"
+          />
         </Group>
 
         <CinemasTable initialData={cinemas} />

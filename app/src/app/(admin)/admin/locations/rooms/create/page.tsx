@@ -6,7 +6,7 @@ export default function CreateRoomPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButton href="/dashboard/users" />
+        <BackButton href="/admin/locations/rooms" />
         <RoomForm />
       </Stack>
     </Container>

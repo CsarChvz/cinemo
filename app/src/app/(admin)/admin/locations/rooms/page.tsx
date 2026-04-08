@@ -16,7 +16,10 @@ export default async function RoomsListPage() {
               Administra el aforo, tipo y disponibilidad de cada sala.
             </Text>
           </Stack>
-          <BackButton href="/dashboard/users" />
+          <BackButton
+            href="/admin/locations/rooms/create"
+            label="Agregar nuevo"
+          />
         </Group>
 
         <RoomsTable initialData={rooms} />

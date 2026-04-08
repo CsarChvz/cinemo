@@ -41,7 +41,7 @@ export default async function MovieDetailPage({
 
   return (
     <Container size="xl" py="xl">
-      <BackButton href="/dashboard/users" />
+      <BackButton href="/movies" />
 
       <DetailsOfMovie movie={movie} />
 

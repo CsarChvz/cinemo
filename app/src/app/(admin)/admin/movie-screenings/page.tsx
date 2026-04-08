@@ -16,7 +16,10 @@ export default async function GestionFuncionesPage() {
               Administra horarios, disponibilidad y complejos.
             </Text>
           </Stack>
-          <BackButton href="/dashboard/users" />
+          <BackButton
+            href="/admin/movie-screenings/create"
+            label="Agregar nueva"
+          />
         </Group>
 
         <ScreeningsTable initialData={screenings} />

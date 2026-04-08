@@ -6,7 +6,7 @@ export default function CreateCinemaPage() {
   return (
     <Container size="md" py="xl">
       <Stack gap="lg">
-        <BackButton href="/dashboard/users" />
+        <BackButton href="/admin/locations/cinemas" />
         <CinemaForm />
       </Stack>
     </Container>

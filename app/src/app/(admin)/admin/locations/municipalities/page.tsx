@@ -18,7 +18,10 @@ export default async function MunicipalitiesListPage() {
               estados.
             </Text>
           </Stack>
-          <BackButton href="/dashboard/users" />
+          <BackButton
+            href="/admin/locations/municipalities/create"
+            label="Agregar nuevo"
+          />
         </Group>
 
         <MunicipalitiesTable initialData={municipalities} />
