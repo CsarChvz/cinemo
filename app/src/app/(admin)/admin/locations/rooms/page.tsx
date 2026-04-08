@@ -3,6 +3,13 @@ import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import RoomsTable from '@/components/locations/Room/RoomsTable';
 import { IconPlus } from '@tabler/icons-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gestión de Salas | Cinemo',
+  description:
+    'Administra el aforo, tipo de pantalla y disponibilidad de las salas en cada sucursal.',
+};
 
 export default async function RoomsListPage() {
   const rooms = await api.room.getAll();

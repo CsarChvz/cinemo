@@ -4,6 +4,13 @@ import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import MunicipalitiesTable from '@/components/locations/Municipality/MunicipalitiesTable';
 import { IconPlus } from '@tabler/icons-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gestión de Municipios | Cinemo',
+  description:
+    'Administra el catálogo de municipios y su relación con los estados del país.',
+};
 
 export default async function MunicipalitiesListPage() {
   const municipalities = await api.municipality.getAll();

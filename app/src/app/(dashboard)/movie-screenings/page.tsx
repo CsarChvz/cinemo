@@ -1,17 +1,52 @@
-// app/cartelera/page.tsx
+import { Metadata } from 'next';
 import { Container, Grid, GridCol, Title, Text, Box } from '@mantine/core';
 import { ProgramGuideContent } from '@/components/movie-screenings/ProgramGuideContent/ProgramGuideContent';
 import { LocationSidebar } from '@/components/movie-screenings/LocationSidebar/LocationSidebar';
+import { api } from '@/trpc-folder/trpc-adaptadores/server';
+
+type SearchParamsProps = Promise<{
+  stateId?: string;
+  municipalityId?: string;
+  cinemaId?: string;
+}>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParamsProps;
+}): Promise<Metadata> {
+  const { cinemaId } = await searchParams;
+
+  // Metadatos por defecto (Cuando entran a la página sin seleccionar nada)
+  const defaultMetadata: Metadata = {
+    title: 'Cartelera y Horarios | Cinemo',
+    description:
+      'Encuentra las funciones, horarios y compra boletos para tus películas favoritas en tu cine más cercano.',
+  };
+
+  if (!cinemaId || isNaN(Number(cinemaId))) {
+    return defaultMetadata;
+  }
+
+  try {
+    const cinema = await api.cinema.getById({ id: Number(cinemaId) });
+
+    if (cinema) {
+      return {
+        title: `Cartelera en ${cinema.name} | Cinemo`,
+        description: `Consulta los horarios, estrenos y compra tus boletos para ${cinema.name}.`,
+      };
+    }
+    return defaultMetadata;
+  } catch (error) {
+    return defaultMetadata;
+  }
+}
 
 export default async function MovieScreeningsPage({
   searchParams,
 }: {
-  // Ahora esperamos IDs para hacer las consultas a la BD
-  searchParams: Promise<{
-    stateId?: string;
-    municipalityId?: string;
-    cinemaId?: string;
-  }>;
+  searchParams: SearchParamsProps;
 }) {
   const { stateId, municipalityId, cinemaId } = await searchParams;
 

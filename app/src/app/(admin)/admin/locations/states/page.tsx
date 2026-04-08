@@ -3,6 +3,13 @@ import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import StatesTable from '@/components/locations/State/StatesTable';
 import { IconPlus } from '@tabler/icons-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Catálogo de Estados | Cinemo',
+  description:
+    'Administra la lista de estados del país donde Cinemo tiene complejos cinematográficos.',
+};
 
 export default async function StatesListPage() {
   const states = await api.state.getAll();

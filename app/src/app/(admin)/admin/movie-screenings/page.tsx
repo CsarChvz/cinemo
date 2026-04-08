@@ -3,6 +3,13 @@ import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import ScreeningsTable from '@/components/movie-screenings/ScreeningsTable/ScreeningsTable';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import { IconPlus } from '@tabler/icons-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gestión de Funciones | Cinemo',
+  description:
+    'Administra los horarios, salas y disponibilidad de las funciones programadas.',
+};
 
 export default async function GestionFuncionesPage() {
   const screenings = await api.movieScreening.getAll();
