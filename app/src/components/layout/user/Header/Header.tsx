@@ -21,6 +21,7 @@ interface HeaderProps {
 const links = [
   { link: '/movie-screenings', label: 'Cartelera' },
   { link: '/movies', label: 'Películas' },
+  { link: '/cinemas', label: 'Cines' },
 ];
 
 export function Header({ opened, onToggle }: HeaderProps) {
