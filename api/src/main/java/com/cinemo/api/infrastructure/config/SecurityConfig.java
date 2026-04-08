@@ -3,6 +3,7 @@ package com.cinemo.api.infrastructure.config;
 import com.cinemo.api.infrastructure.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +20,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/v1/auth/**").permitAll() // Registro y Login libres
+            .requestMatchers("/api/v1/auth/**").permitAll()
             // --- AGREGA ESTAS LÍNEAS PARA SWAGGER ---
             .requestMatchers("/v3/api-docs/**").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
@@ -27,6 +28,7 @@ public class SecurityConfig {
             .requestMatchers("/swagger-resources/**").permitAll()
             .requestMatchers("/webjars/**").permitAll()
             // ---------------------------------------
+            .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
             .anyRequest().authenticated() // Todo lo demás bloqueado
         )
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
