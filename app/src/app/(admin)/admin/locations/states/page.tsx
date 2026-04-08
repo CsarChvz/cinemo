@@ -2,6 +2,7 @@ import { Container, Stack, Group, Title, Text, Button } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import StatesTable from '@/components/locations/State/StatesTable';
+import { IconPlus } from '@tabler/icons-react';
 
 export default async function StatesListPage() {
   const states = await api.state.getAll();
@@ -19,6 +20,8 @@ export default async function StatesListPage() {
           <BackButton
             href="/admin/locations/states/create"
             label="Agregar nuevo"
+            color="blue"
+            icon={<IconPlus size={16} stroke={2.5} />}
           />
         </Group>
 

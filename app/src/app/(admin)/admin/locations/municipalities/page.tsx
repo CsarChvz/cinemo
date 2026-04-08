@@ -3,6 +3,7 @@ import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import MunicipalitiesTable from '@/components/locations/Municipality/MunicipalitiesTable';
+import { IconPlus } from '@tabler/icons-react';
 
 export default async function MunicipalitiesListPage() {
   const municipalities = await api.municipality.getAll();
@@ -21,6 +22,8 @@ export default async function MunicipalitiesListPage() {
           <BackButton
             href="/admin/locations/municipalities/create"
             label="Agregar nuevo"
+            color="blue"
+            icon={<IconPlus size={16} stroke={2.5} />}
           />
         </Group>
 

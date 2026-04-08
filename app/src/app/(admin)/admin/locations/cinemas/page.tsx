@@ -2,6 +2,7 @@ import { Container, Stack, Group, Title, Text } from '@mantine/core';
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
 import { BackButton } from '@/components/common/BackButton/BackButton';
 import CinemasTable from '@/components/locations/Cinema/CinemasTable';
+import { IconPlus } from '@tabler/icons-react';
 
 export default async function CinemasListPage() {
   // Obtenemos los cines desde el servidor
@@ -19,7 +20,9 @@ export default async function CinemasListPage() {
           </Stack>
           <BackButton
             href="/admin/locations/cinemas/create"
-            label="Agregar nuevo"
+            label="Agregar nueva película"
+            color="blue"
+            icon={<IconPlus size={16} stroke={2.5} />}
           />
         </Group>
 

@@ -19,7 +19,7 @@ export function MovieNotFound() {
               el enlace es incorrecto, o ha sido removida de Cinemo.
             </Text>
 
-            <BackButton href="/movies" />
+            <BackButton href="/movies" label="Regresar a las peliculas" />
           </Stack>
         </Center>
       </Paper>
