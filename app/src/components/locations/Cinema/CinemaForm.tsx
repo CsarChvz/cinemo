@@ -10,9 +10,11 @@ import {
   Button,
   SimpleGrid,
   Select,
+  Group,
+  NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconMapSearch } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -22,6 +24,8 @@ export interface CinemaFormValues {
   address: string;
   stateId: string;
   municipalityId: string;
+  latitude: number | '';
+  longitude: number | '';
 }
 
 interface CinemaFormProps {
@@ -37,6 +41,8 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
       address: '',
       stateId: '',
       municipalityId: '',
+      latitude: '',
+      longitude: '',
     },
     validate: {
       name: (value) => (value.trim().length < 3 ? 'Nombre muy corto' : null),
@@ -44,6 +50,18 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
         value.trim().length < 5 ? 'Dirección muy corta' : null,
       stateId: (value) => (!value ? 'Selecciona un estado' : null),
       municipalityId: (value) => (!value ? 'Selecciona un municipio' : null),
+      latitude: (value) =>
+        value === ''
+          ? 'Requerido'
+          : value < -90 || value > 90
+            ? 'Latitud inválida'
+            : null,
+      longitude: (value) =>
+        value === ''
+          ? 'Requerido'
+          : value < -180 || value > 180
+            ? 'Longitud inválida'
+            : null,
     },
   });
 
@@ -107,6 +125,8 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
           createCinema.mutate({
             name: values.name,
             address: values.address,
+            latitude: Number(values.latitude),
+            longitude: Number(values.longitude),
             municipalityId: Number(values.municipalityId),
           });
         })}
@@ -162,6 +182,29 @@ export function CinemaForm({ isEditing = false }: CinemaFormProps) {
               {...form.getInputProps('municipalityId')}
             />
           </SimpleGrid>
+
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            <NumberInput
+              label="Latitud"
+              placeholder="Ej. 20.6820"
+              decimalScale={6}
+              fixedDecimalScale
+              withAsterisk
+              {...form.getInputProps('latitude')}
+            />
+            <NumberInput
+              label="Longitud"
+              placeholder="Ej. -103.4617"
+              decimalScale={6}
+              fixedDecimalScale
+              withAsterisk
+              {...form.getInputProps('longitude')}
+            />
+          </SimpleGrid>
+          <Text size="xs" c="dimmed" mt="sm">
+            Puedes obtener estos valores haciendo clic derecho en Google Maps
+            sobre la ubicación del cine.
+          </Text>
 
           <Button
             type="submit"

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.cinemo.api.domain.Cinema;
-import com.cinemo.api.domain.Location;
 import com.cinemo.api.domain.ports.out.CinemaRepositoryPort;
 import com.cinemo.api.infrastructure.persistence.jpa.entity.CinemaEntity;
 import com.cinemo.api.infrastructure.persistence.jpa.mapper.CinemaMapper;
