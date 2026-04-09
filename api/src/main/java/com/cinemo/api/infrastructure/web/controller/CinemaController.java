@@ -88,6 +88,7 @@ public class CinemaController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<CinemaResponseDto> update(@PathVariable Long id,
             @Valid @RequestBody CinemaUpdateRequestDto requestDto) {
@@ -99,6 +100,7 @@ public class CinemaController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
 
