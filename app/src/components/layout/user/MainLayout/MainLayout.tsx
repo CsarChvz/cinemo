@@ -94,7 +94,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 </UnstyledButton>
               )}
 
-              <UnstyledButton
+              {/* <UnstyledButton
                 component={Link}
                 href="/settings"
                 className={classes.control}
@@ -104,7 +104,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                   <IconSettings size={16} />
                   Configuración
                 </Group>
-              </UnstyledButton>
+              </UnstyledButton> */}
 
               <Button
                 variant="subtle"

@@ -115,13 +115,13 @@ export function Header({ opened, onToggle }: HeaderProps) {
                     </Menu.Item>
                   )}
 
-                  <Menu.Item
+                  {/* <Menu.Item
                     leftSection={<IconSettings size={14} />}
                     component={Link}
                     href="/settings"
                   >
                     Configuración
-                  </Menu.Item>
+                  </Menu.Item> */}
 
                   <Menu.Divider />
 
