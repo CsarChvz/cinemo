@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,6 +40,7 @@ public class CinemaController {
     private final SearchCinemaUseCase searchCinemaUseCase;
     private final CinemaDtoMapper cinemaDtoMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CinemaResponseDto> createCinema(@Valid @RequestBody CinemaRequestDto requestDto) {
         Cinema cinema = cinemaDtoMapper.toDomain(requestDto);

@@ -63,7 +63,7 @@ public class MovieScreeningController {
                 existingMovieScreening -> {
                     movieScreeningDtoMapper.updateDomainFromDto(requestDto, existingMovieScreening);
                     MovieScreening movieScreening = manageMovieScreeningUseCase.update(existingMovieScreening);
-                    return ResponseEntity.ok(movieScreeningDtoMapper.toResponse(existingMovieScreening));
+                    return ResponseEntity.ok(movieScreeningDtoMapper.toResponse(movieScreening));
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

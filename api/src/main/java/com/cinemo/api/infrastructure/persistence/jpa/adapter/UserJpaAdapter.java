@@ -53,7 +53,7 @@ public class UserJpaAdapter implements UserRepositoryPort, UserDetailsService {
                 .map(userEntity -> org.springframework.security.core.userdetails.User // Usamos el de Spring
                         .withUsername(userEntity.getUsername())
                         .password(userEntity.getPassword())
-                        .authorities(userEntity.getRole())
+                        .authorities("ROLE_" + userEntity.getRole())
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
