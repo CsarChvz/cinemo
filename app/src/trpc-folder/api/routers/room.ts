@@ -50,7 +50,7 @@ export const roomRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const session = await auth();
       const token = session?.accessToken;
-      await apiClient('/rooms', RoomSchema, {
+      await apiClient('/rooms', z.any(), {
         method: 'POST',
         body: input,
         token,

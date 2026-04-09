@@ -71,10 +71,9 @@ export async function apiClient<TResponse>(
     }
 
     const data = await response.json();
-
     const result = schema.safeParse(data);
     if (!result.success) {
-      console.error('Zod Validation Error:', result.error.format());
+      console.error('❌ ZOD VALIDATION ERROR:', result.error.flatten());
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message:

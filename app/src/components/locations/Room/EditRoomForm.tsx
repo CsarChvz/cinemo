@@ -1,8 +1,7 @@
-// components/locations/EditRoomForm.tsx
 'use client';
 
 import { api } from '@/trpc-folder/trpc-adaptadores/react';
-import { Room } from '@/schemas/room'; // Asegúrate de tener esta ruta correcta
+import { Room } from '@/schemas/room';
 import {
   Paper,
   Title,
@@ -23,6 +22,7 @@ export interface EditRoomFormValues {
   name: string;
   roomType: string;
   capacity: number;
+  columnsPerRow: number;
   cinemaId: string;
   isActive: boolean;
 }
@@ -35,13 +35,12 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
   const router = useRouter();
 
   const form = useForm<EditRoomFormValues>({
-    // Llenamos el formulario con los datos que llegaron del servidor
     initialValues: {
       name: room.name,
       roomType: room.roomType,
       capacity: room.capacity,
+      columnsPerRow: room.columnsPerRow,
       isActive: room.isActive,
-      // Extraemos el ID del cine de la relación anidada de Zod
       cinemaId: room.cinema.id.toString(),
     },
     validate: {
@@ -49,6 +48,8 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
       roomType: (value) => (!value ? 'Selecciona un tipo de sala' : null),
       capacity: (value) =>
         value <= 0 ? 'La capacidad debe ser mayor a 0' : null,
+      columnsPerRow: (value) =>
+        value <= 0 ? 'Mínimo 1 columna por fila' : null, // 🔥 Validación agregada
       cinemaId: (value) => (!value ? 'Selecciona un cine' : null),
     },
   });
@@ -62,7 +63,6 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
       label: cinema.name,
     })) || [];
 
-  // Mutación para ACTUALIZAR
   const editRoom = api.room.update.useMutation({
     onSuccess: () => {
       router.push('/admin/locations/rooms');
@@ -74,7 +74,7 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
       <Stack gap={5} mb="xl">
         <Title order={2}>Editar Sala</Title>
         <Text c="dimmed" size="sm">
-          Modifica el aforo, tipo o disponibilidad de la sala.
+          Modifica el aforo, la distribución o disponibilidad de la sala.
         </Text>
       </Stack>
 
@@ -86,6 +86,7 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
               name: values.name,
               roomType: values.roomType,
               capacity: values.capacity,
+              columnsPerRow: values.columnsPerRow, // 🔥 Enviamos el valor actualizado
               isActive: values.isActive,
               cinemaId: Number(values.cinemaId),
             },
@@ -121,13 +122,23 @@ export function EditRoomForm({ room }: EditRoomFormProps) {
               data={['Estándar', 'VIP', 'IMAX', '4DX', 'MacroXE']}
               {...form.getInputProps('roomType')}
             />
-            <NumberInput
-              label="Aforo (Capacidad)"
-              placeholder="Ej. 150"
-              withAsterisk
-              min={1}
-              {...form.getInputProps('capacity')}
-            />
+            {/* Agrupamos Aforo y Asientos por fila en un sub-grid */}
+            <SimpleGrid cols={2}>
+              <NumberInput
+                label="Aforo"
+                placeholder="Ej. 150"
+                withAsterisk
+                min={1}
+                {...form.getInputProps('capacity')}
+              />
+              <NumberInput
+                label="Asientos por fila"
+                placeholder="10"
+                withAsterisk
+                min={1}
+                {...form.getInputProps('columnsPerRow')}
+              />
+            </SimpleGrid>
           </SimpleGrid>
 
           <Switch

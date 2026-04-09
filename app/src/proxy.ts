@@ -5,36 +5,32 @@ import { NextResponse } from 'next/server';
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+
+  // 1. Lógica de expiración manual o limpieza
+  // Si intentas entrar a una ruta protegida y no hay sesión,
+  // nos aseguramos de limpiar cualquier rastro de cookies viejas
+  if (
+    !isLoggedIn &&
+    (nextUrl.pathname.startsWith('/admin') ||
+      nextUrl.pathname.startsWith('/dashboard'))
+  ) {
+    const response = NextResponse.redirect(new URL('/login', nextUrl));
+
+    // Borramos la cookie de NextAuth (ajusta el nombre si la cambiaste en la config)
+    response.cookies.delete('authjs.session-token');
+    // Si usas una cookie propia para el token de Java:
+    response.cookies.delete('access_token');
+
+    return response;
+  }
+
+  // --- Tu lógica de roles actual ---
   const userRole = req.auth?.user?.role;
-
-  const isApiAuthRoute = nextUrl.pathname.startsWith('/api/auth');
-  const isAdminRoute = nextUrl.pathname.startsWith('/admin');
-  const isProtectedRoute =
-    nextUrl.pathname.startsWith('/dashboard') ||
-    nextUrl.pathname.startsWith('/profile');
-
-  // 1. Permitir siempre las rutas de API de Auth
-  if (isApiAuthRoute) return;
-
-  // 2. Protección de rutas de Administrador
-  if (isAdminRoute) {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL('/login', nextUrl));
-    }
+  if (nextUrl.pathname.startsWith('/admin')) {
     if (userRole !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/', nextUrl)); // O a una página /unauthorized
+      return NextResponse.redirect(new URL('/', nextUrl));
     }
   }
 
-  // 3. Protección de rutas de Usuario General
-  if (isProtectedRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL('/login', nextUrl));
-  }
-
-  return;
+  return NextResponse.next();
 });
-
-// Matcher optimizado para excluir archivos estáticos y favicons
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};

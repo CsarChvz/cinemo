@@ -112,6 +112,9 @@ public class DatabaseSeeder {
                     room.setName("Sala " + j + (j == 1 ? " IMAX" : " 2D"));
                     room.setRoomType(j == 1 ? "IMAX" : "2D");
                     room.setCapacity(j == 1 ? 80 : 150);
+
+                    room.setColumnsPerRow(j == 1 ? 8 : 15);
+
                     room.setCinema(cinema);
                     room.setIsActive(true);
                     allSavedRooms.add(roomRepo.save(room));
@@ -154,46 +157,83 @@ public class DatabaseSeeder {
             // ==========================================
             // 6. FUNCIONES (SCREENINGS) - Poblado denso
             // ==========================================
-            LocalDateTime baseTime = LocalDateTime.now().plusDays(1).withHour(10).withMinute(0);
+            System.out.println("📅 Programando funciones variadas para la semana...");
+
+            // Lista de horas de inicio sugeridas para dar variedad (10am, 1pm, 4pm, 7pm,
+            // 10pm)
+            int[] preferredHours = { 10, 13, 16, 19, 22 };
 
             for (int i = 0; i < 80; i++) {
                 CinemaRoomEntity room = allSavedRooms.get(i % allSavedRooms.size());
                 MovieEntity movie = allSavedMovies.get(i % allSavedMovies.size());
 
+                // 1. Distribuir en los próximos 7 días
+                int dayOffset = i % 7;
+
+                // 2. Variedad de horario: seleccionamos una hora del arreglo basado en el
+                // índice
+                // Usamos el índice de la sala para que no todas las salas del mismo cine tengan
+                // el mismo horario
+                int hourIndex = (i + (i / allSavedRooms.size())) % preferredHours.length;
+                int startHour = preferredHours[hourIndex];
+
+                // 3. Construir la fecha y hora de inicio
+                LocalDateTime startTime = LocalDateTime.now()
+                        .plusDays(dayOffset + 1) // Empezamos desde mañana (+1)
+                        .withHour(startHour)
+                        .withMinute(0)
+                        .withSecond(0)
+                        .withNano(0);
+
+                // 4. Calcular el fin (Duración de película)
+                LocalDateTime endTime = startTime.plusMinutes(movie.getDurationMin());
+
                 MovieScreeningEntity screening = new MovieScreeningEntity();
                 screening.setMovie(movie);
                 screening.setRoom(room);
-                screening.setStart(baseTime.plusHours(i % 12));
-                screening.setEnd(screening.getStart().plusMinutes(movie.getDurationMin()));
+                screening.setStart(startTime);
+                screening.setEnd(endTime);
                 screening.setTotalCapacity(room.getCapacity());
                 screening.setTicketsRemaining(room.getCapacity());
                 screening.setStatus("SCHEDULED");
+
                 screeningRepo.save(screening);
             }
-            System.out.println("✅ 80 Funciones programadas.");
+
             if (userRepo.count() == 0) {
                 System.out.println("👤 Creando usuarios de prueba...");
 
-                // Usuario Administrador
-                UserEntity admin = new UserEntity();
-                admin.setName("César Chávez");
-                admin.setUsername("admin");
-                admin.setEmail("admin@cinemo.com");
-                // Usamos el puerto para que se guarde el hash real
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setRole("ADMIN");
-                userRepo.save(admin);
+                // Admin 1 - César
+                UserEntity admin1 = new UserEntity();
+                admin1.setName("César Chávez");
+                admin1.setUsername("admin");
+                admin1.setEmail("admin@cinemo.com");
+                admin1.setPassword(passwordEncoder.encode("admin123"));
+                admin1.setRole("ADMIN");
+                userRepo.save(admin1);
 
-                // Usuario Cliente estándar
-                UserEntity user = new UserEntity();
-                user.setName("Usuario de Prueba");
-                user.setUsername("user");
-                user.setEmail("user@example.com");
-                user.setPassword(passwordEncoder.encode("user123"));
-                user.setRole("USER");
-                userRepo.save(user);
+                // Admin 2 - Staff
+                UserEntity admin2 = new UserEntity();
+                admin2.setName("Staff Cinemo");
+                admin2.setUsername("staff");
+                admin2.setEmail("staff@cinemo.com");
+                admin2.setPassword(passwordEncoder.encode("staff123"));
+                admin2.setRole("ADMIN");
+                userRepo.save(admin2);
 
-                System.out.println("✅ Usuarios creados: admin/admin123 y user/user123");
+                // Usuario Normal - Cliente
+                UserEntity cliente = new UserEntity();
+                cliente.setName("Juan Pérez");
+                cliente.setUsername("user");
+                cliente.setEmail("cliente@gmail.com");
+                cliente.setPassword(passwordEncoder.encode("user123"));
+                cliente.setRole("USER");
+                userRepo.save(cliente);
+
+                System.out.println("✅ Usuarios creados:");
+                System.out.println("   - Admin: admin / admin123");
+                System.out.println("   - Admin: staff / staff123");
+                System.out.println("   - User:  user / user123");
             }
             System.out.println("🚀 Seed masivo completado con éxito.");
         };

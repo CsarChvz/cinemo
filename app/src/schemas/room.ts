@@ -7,7 +7,7 @@ export const RoomSchema = z.object({
   name: z.string(),
   roomType: z.string(),
   capacity: z.number().int(),
-  columnsPerRow: z.number().int().positive(), // 🔥 Agregado
+  columnsPerRow: z.number().int().positive(),
   isActive: z.boolean(),
   cinema: CinemaSchema,
 });
