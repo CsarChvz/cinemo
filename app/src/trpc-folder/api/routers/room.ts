@@ -8,6 +8,7 @@ import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { auth } from '@/app/auth';
 
 export const roomRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
@@ -47,9 +48,12 @@ export const roomRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateRoomSchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       await apiClient('/rooms', RoomSchema, {
         method: 'POST',
         body: input,
+        token,
       });
     }),
 
@@ -61,17 +65,23 @@ export const roomRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/rooms/${input.id}`, RoomSchema, {
         method: 'PATCH', // O 'PUT'
         body: input.data,
+        token: token,
       });
     }),
 
   delete: publicProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/rooms/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });

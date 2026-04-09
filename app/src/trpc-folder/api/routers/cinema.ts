@@ -8,6 +8,7 @@ import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { auth } from '@/app/auth';
 
 export const cinemaRouter = createTRPCRouter({
   /**
@@ -106,9 +107,12 @@ export const cinemaRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateCinemaSchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       await apiClient('/cinemas', CinemaSchema, {
         method: 'POST',
-        body: input, // Aquí pasamos el body { name, address, municipalityId }
+        body: input,
+        token: token, // Aquí pasamos el body { name, address, municipalityId }
       });
     }),
 
@@ -124,9 +128,12 @@ export const cinemaRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/cinemas/${input.id}`, CinemaSchema, {
         method: 'PATCH', // O 'PUT', dependiendo de tu backend en Java
         body: input.data, // El body actualizado
+        token: token,
       });
     }),
 
@@ -137,8 +144,11 @@ export const cinemaRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/cinemas/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });

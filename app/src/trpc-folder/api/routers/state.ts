@@ -4,6 +4,8 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 
+import { auth } from '@/app/auth';
+
 export const stateRouter = createTRPCRouter({
   /**
    * Obtiene todos los estados desde el backend de Java
@@ -41,9 +43,12 @@ export const stateRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateStateSchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient('/states', StateSchema, {
         method: 'POST',
-        body: input, // Aquí pasamos el body { name, code }
+        body: input,
+        token: token,
       });
     }),
 
@@ -59,9 +64,12 @@ export const stateRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/states/${input.id}`, StateSchema, {
         method: 'PATCH',
-        body: input.data, // El body actualizado
+        body: input.data,
+        token: token, // El body actualizado
       });
     }),
 
@@ -73,8 +81,11 @@ export const stateRouter = createTRPCRouter({
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
       // Usamos z.any() si no esperamos un cuerpo de respuesta específico
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/states/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });

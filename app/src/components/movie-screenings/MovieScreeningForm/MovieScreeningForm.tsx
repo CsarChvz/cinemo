@@ -13,7 +13,8 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconDeviceFloppy, IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -137,10 +138,15 @@ export function MovieScreeningForm({
       console.log('Success');
       router.push('/admin/movie-screenings');
     },
-    // 🔥 NUEVO: Manejo de errores para saber si falló el backend
     onError: (error) => {
-      console.error('Error desde el backend/tRPC:', error.message);
-      alert(`Ocurrió un error al guardar: ${error.message}`);
+      console.log('Error completo de tRPC:', JSON.stringify(error, null, 2));
+      notifications.show({
+        title: 'Conflicto de Horario',
+        message: error.message, 
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 8000, 
+      });
     },
   });
 

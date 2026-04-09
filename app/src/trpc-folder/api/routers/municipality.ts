@@ -7,6 +7,7 @@ import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { auth } from '@/app/auth';
 
 export const municipalityRouter = createTRPCRouter({
   /**
@@ -67,9 +68,12 @@ export const municipalityRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateMunicipalitySchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       await apiClient('/municipalities', MunicipalitySchema, {
         method: 'POST',
         body: input, // Aquí pasamos el body { name, stateId }
+        token: token,
       });
     }),
 
@@ -85,12 +89,15 @@ export const municipalityRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(
         `/municipalities/${input.id}`,
         MunicipalitySchema,
         {
           method: 'PATCH', // O 'PUT', dependiendo de tu backend
           body: input.data, // El body actualizado con { name, stateId }
+          token: token,
         }
       );
     }),
@@ -102,9 +109,12 @@ export const municipalityRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       // Usamos z.any() si no esperamos un cuerpo de respuesta específico
       return await apiClient(`/municipalities/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });
