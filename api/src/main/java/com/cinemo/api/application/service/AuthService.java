@@ -27,7 +27,8 @@ public class AuthService implements LoginUseCase, RegisterUserUseCase {
     // 1. Buscamos al usuario por su username
     return userRepositoryPort.findByUsername(username)
         .filter(user -> passwordEncoderPort.matches(password, user.getPassword()))
-        .map(user -> jwtPort.generateToken(user)) // 2. Si la clave coincide, generamos token
-        .orElseThrow(() -> new RuntimeException("Credenciales inválidas")); // 3. Si no, error
+        .map(user -> jwtPort.generateToken(user))
+        .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
   }
+
 }

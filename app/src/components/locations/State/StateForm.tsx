@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export interface StateFormValues {
@@ -61,7 +62,6 @@ export function StateForm({ isEditing = false }: StateFormProps) {
             : 'Registra un nuevo estado en el catálogo.'}
         </Text>
       </Stack>
-
       <form
         onSubmit={form.onSubmit((values) => {
           createState.mutate({ ...values });
