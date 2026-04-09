@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.web.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,11 @@ public class AuthController {
     private final UserDtoMapper userDtoMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody UserRequestDto requestDto) {
         User user = userDtoMapper.toDomain(requestDto);
         registerUserUseCase.register(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return new ResponseEntity<>(Map.of("message", "Usuario creado"), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
