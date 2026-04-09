@@ -9,6 +9,7 @@ public class CinemaRoom {
     private String name;
     private String roomType;
     private Integer capacity;
+    private Integer columnsPerRow;
     private Boolean isActive = true;
     private Cinema cinema;
 
