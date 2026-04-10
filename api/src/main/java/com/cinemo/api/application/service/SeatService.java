@@ -23,12 +23,15 @@ public class SeatService implements ManageSeatUseCase, RetrieveSeatUseCase {
     @Override
     public List<Seat> getSeatsByRoom(Long roomId) {
         if (listasPorSala.containsKey(roomId)) {
+            System.out.println("📦 [CACHÉ] Recuperando lista de asientos para Sala ID: " + roomId);
             return listasPorSala.get(roomId).toList();
         }
 
+        System.out.println("🔍 [DB] Cargando asientos desde BD para Sala ID: " + roomId);
         List<Seat> seatsFromDb = seatRepositoryPort.findByRoomId(roomId);
 
         ListaAsientos nuevaLista = new ListaAsientos();
+        System.out.println("🏗️ [STRUCT] Insertando asientos en ListaAsientos personalizada...");
         for (Seat s : seatsFromDb) {
             nuevaLista.insertar(s);
         }
@@ -40,6 +43,7 @@ public class SeatService implements ManageSeatUseCase, RetrieveSeatUseCase {
     @Override
     public Seat createSeat(Seat seat) {
         Seat saved = seatRepositoryPort.save(seat);
+        System.out.println("🆕 [CREATE] Asiento guardado. Actualizando estructura de datos en memoria...");
 
         listasPorSala.computeIfAbsent(saved.getRoomId(), k -> new ListaAsientos())
                 .insertar(saved);

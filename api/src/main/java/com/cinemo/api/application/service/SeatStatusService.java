@@ -29,28 +29,6 @@ public class SeatStatusService implements SeatStatusUseCase{
         return seatStatusRepositoryPort.findByMovieScreeningId(functionId);
     }
 
-    @Override
-    public SeatStatus selectSeat(Long functionId, Long seatId, Long userId) {
-        // 1. Buscamos el estado. Si no existe, lo creamos "al vuelo"
-        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
-                .orElseGet(() -> createInitialStatus(functionId, seatId));
-
-        // 2. Validamos disponibilidad
-        if (!"AVAILABLE".equals(seatStatus.getStatus())) {
-            throw new RuntimeException("Asiento no disponible");
-        }
-
-        String keyStack = userId + "-" + functionId;
-        selectionStack.computeIfAbsent(keyStack, k -> new SelectionStack()).push(seatId);
-
-        // 4. Actualizamos el estado a RESERVADO_TEMP
-        seatStatus.setStatus("RESERVED_TEMP");
-        seatStatus.setReservedAt(LocalDateTime.now());
-
-        // 5. Guardamos (esto insertará si es nuevo o actualizará si ya existía)
-        return seatStatusRepositoryPort.save(seatStatus);
-    }
-
     // Método privado para inicializar el objeto de dominio
     private SeatStatus createInitialStatus(Long functionId, Long seatId) {
         SeatStatus newStatus = new SeatStatus();
@@ -61,45 +39,76 @@ public class SeatStatusService implements SeatStatusUseCase{
     }
 
     @Override
+    public SeatStatus selectSeat(Long functionId, Long seatId, Long userId) {
+        System.out.println("\n--- 🖱️ OPERACIÓN: SELECCIONAR ASIENTO ---");
+        System.out.println("Contexto: Usuario " + userId + " | Función " + functionId + " | Asiento " + seatId);
+
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseGet(() -> {
+                    System.out.println("✨ [LAZY] El estado no existía en DB, creando uno nuevo como AVAILABLE...");
+                    return createInitialStatus(functionId, seatId);
+                });
+
+        if (!"AVAILABLE".equals(seatStatus.getStatus())) {
+            System.out.println("❌ [ERROR] Intento de selección fallido: Asiento ocupado.");
+            throw new RuntimeException("Asiento no disponible");
+        }
+
+        // Pila
+        String keyStack = userId + "-" + functionId;
+        SelectionStack stack = selectionStack.computeIfAbsent(keyStack, k -> new SelectionStack());
+        stack.push(seatId);
+        System.out.println("📥 [STACK] Asiento " + seatId + " agregado a la pila del usuario. Tamaño actual: "
+                + (selectionStack.get(keyStack).isEmpty() ? 0 : "n"));
+
+        seatStatus.setStatus("RESERVED_TEMP");
+        seatStatus.setReservedAt(LocalDateTime.now());
+
+        return seatStatusRepositoryPort.save(seatStatus);
+    }
+
+    @Override
     public Long undoLastSelection(Long functionId, Long userId) {
-        // Obtenemos la pila de la función
+        System.out.println("\n--- ⏪ OPERACIÓN: UNDO (DESHACER) ---");
         String keyStack = userId + "-" + functionId;
         SelectionStack stack = selectionStack.get(keyStack);
 
-        if(stack == null || stack.isEmpty()){
+        if (stack == null || stack.isEmpty()) {
+            System.out.println("⚠️ [STACK] Nada que deshacer para el usuario " + userId);
             throw new RuntimeException("No hay selecciones para deshacer");
         }
 
-
-        // Sacamos el ultimo asiento seleccionado
         Long seatId = stack.pop();
+        System.out.println("📤 [STACK] Pop realizado. Asiento liberado: " + seatId);
 
-        // Liberamos el asiento que estaba ocupado
-        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId).orElseThrow();
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseThrow();
         seatStatus.setStatus("AVAILABLE");
         seatStatusRepositoryPort.save(seatStatus);
 
         return seatId;
     }
 
-
-    // Metemos el usuario a la cola de espera
     @Override
     public void joinWaitlist(Long functionId, Long seatId, Long userId) {
+        System.out.println("\n--- 👥 OPERACIÓN: JOIN WAITLIST ---");
         String queueKey = seatId + "-" + functionId;
+
+        System.out.println("⏳ [QUEUE] Usuario " + userId + " entrando a la cola del asiento " + seatId);
         waitingQueue.computeIfAbsent(queueKey, q -> new WaitingQueue()).encolar(userId);
-        
     }
 
     @Override
     public Long getWaitlistPosition(Long functionId, Long seatId, Long userId) {
         String queueKey = seatId + "-" + functionId;
-
         WaitingQueue queue = waitingQueue.get(queueKey);
-        if(queue == null || queue.isEmpty()){
+
+        if (queue == null || queue.isEmpty()) {
             return null;
         }
 
-        return queue.desencolar(); // retorna userId del siguiente en espera
+        Long nextUser = queue.desencolar();
+        System.out.println("🔔 [QUEUE] Turno otorgado. Siguiente usuario en fila: " + nextUser);
+        return nextUser;
     }
 }   
