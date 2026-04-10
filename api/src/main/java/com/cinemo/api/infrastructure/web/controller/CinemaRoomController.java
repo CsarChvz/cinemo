@@ -7,6 +7,7 @@ import com.cinemo.api.domain.CinemaRoom;
 import com.cinemo.api.domain.ports.in.cinema_room.ManageCinemaRoomUseCase;
 import com.cinemo.api.domain.ports.in.cinema_room.RetrieveCinemaRoomUseCase;
 import com.cinemo.api.domain.ports.in.cinema_room.SearchRoomUseCase;
+import com.cinemo.api.domain.ports.in.seat.ManageSeatUseCase;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.cinema_room.CinemaRoomResponseDto;
