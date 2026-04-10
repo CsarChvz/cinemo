@@ -40,7 +40,7 @@ public class JwtProvider implements JwtPort {
         .setSubject(username)
         .claim("role", role)
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
+        .setExpiration(new Date(System.currentTimeMillis() + 604800000L)) // 7 días (en ms)
         .signWith(getSignInKey(), SignatureAlgorithm.HS256)
         .compact();
   }
