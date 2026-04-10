@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.SeatStatus;
 import com.cinemo.api.domain.ports.in.seat_status.SeatStatusUseCase;
+import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SeatStatusDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SeatStatusResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SelectSeatRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.WaitlistResponseDto;
@@ -20,33 +21,29 @@ import com.cinemo.api.infrastructure.web.controller.dto.seat_status.WaitlistResp
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/seat-status")
+@RequestMapping("/api/v1/seat-status")
 @RequiredArgsConstructor
 public class SeatStatusController {
     private final SeatStatusUseCase seatStatusUseCase;
-
+    private final SeatStatusDtoMapper mapper;
 
     // Asientos con el status de una función
-    public ResponseEntity<List<SeatStatusResponseDto>> getByFunction(@RequestParam Long functionId){
+    @GetMapping
+    public ResponseEntity<List<SeatStatusResponseDto>> getByFunction(@RequestParam Long functionId) {
         List<SeatStatus> statuses = seatStatusUseCase.getStatusByFunction(functionId);
 
-        // @TODO: Si es necesario, mandar a llamar el seat y mapearlo en la respuesta para hacer s.seat.getRow()
-        return ResponseEntity.ok(statuses.stream()
-            .map(s -> new SeatStatusResponseDto(
-                s.getSeatId(), null, null, s.getStatus()))
-            .toList());
+        // 🔥 Usamos el mapper en lugar del new manual
+        return ResponseEntity.ok(mapper.toResponseList(statuses));
     }
 
-    // El usuario selecciona un asiento — push en su pila
     @PostMapping("/select")
-    public ResponseEntity<SeatStatusResponseDto> select(
-            @RequestBody SelectSeatRequestDto req) {
+    public ResponseEntity<SeatStatusResponseDto> select(@RequestBody SelectSeatRequestDto req) {
         SeatStatus updated = seatStatusUseCase.selectSeat(
-            req.getMovieScreeningId(), req.getSeatId(), req.getUserId());
-        return ResponseEntity.ok(
-            new SeatStatusResponseDto(updated.getSeatId(), null, null, updated.getStatus()));
-    }
+                req.getMovieScreeningId(), req.getSeatId(), req.getUserId());
 
+        // 🔥 Usamos el mapper aquí también
+        return ResponseEntity.ok(mapper.toResponse(updated));
+    }
     // Deshacer último asiento seleccionado — pop de la pila
     // Front desmarca el asiento cuyo id retorna este endpoint
     @PostMapping("/undo")

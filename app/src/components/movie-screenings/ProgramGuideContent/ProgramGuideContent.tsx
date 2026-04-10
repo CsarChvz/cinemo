@@ -24,6 +24,7 @@ import { IconMovie, IconClock, IconArmchair } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { EventDetails } from '../EventDetails/EventDetails';
+import { useRouter } from 'next/navigation';
 
 dayjs.locale('es');
 
@@ -46,6 +47,7 @@ export function ProgramGuideContent({
     { enabled: !!cinemaId }
   );
 
+
   // 2. Transformar los datos de tRPC al formato de @mantine/schedule
   const scheduleEvents = useMemo(() => {
     if (!screenings || !Array.isArray(screenings)) return [];
@@ -65,6 +67,7 @@ export function ProgramGuideContent({
         end: endTime,
         color: colorTheme,
         payload: {
+          roomId: event.room.id,
           roomName: event.room.name,
           tickets: event.ticketsRemaining,
           movieId: event.movie.id,
@@ -73,11 +76,22 @@ export function ProgramGuideContent({
     });
   }, [screenings]);
 
-  // 3. Manejador de Click en la función (Para reservar)
+  const router = useRouter();
   const handleEventClick = (event: ScheduleEventData) => {
     console.log('Abriendo reserva para la función ID:', event.id);
-    // Aquí podrías abrir un Modal de Mantine para confirmar la compra
-    alert(`Reservar para: ${event.title}\nSala: ${event?.payload?.roomName}`);
+
+    const movieScreeningId = event.id;
+    const roomId = event.payload?.roomId;
+
+    console.log(event);
+
+    if (!roomId) {
+      console.error('No se encontró el ID de la sala en el evento');
+      return;
+    }
+
+    // Redirigimos a la ruta: /funciones/[id]/asientos?roomId=[room]
+    router.push(`/movie-screenings/${movieScreeningId}/seats?roomId=${roomId}`);
   };
 
   if (isLoading) {

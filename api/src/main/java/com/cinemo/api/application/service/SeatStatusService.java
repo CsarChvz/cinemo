@@ -31,17 +31,33 @@ public class SeatStatusService implements SeatStatusUseCase{
 
     @Override
     public SeatStatus selectSeat(Long functionId, Long seatId, Long userId) {
-        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId).orElseThrow();
-        if (!"AVAILABLE".equals(seatStatus.getStatus()))
-            throw new RuntimeException("Asiento no disponible");
+        // 1. Buscamos el estado. Si no existe, lo creamos "al vuelo"
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseGet(() -> createInitialStatus(functionId, seatId));
 
-        // Pusheamos a la pila del usuario
+        // 2. Validamos disponibilidad
+        if (!"AVAILABLE".equals(seatStatus.getStatus())) {
+            throw new RuntimeException("Asiento no disponible");
+        }
+
         String keyStack = userId + "-" + functionId;
         selectionStack.computeIfAbsent(keyStack, k -> new SelectionStack()).push(seatId);
 
+        // 4. Actualizamos el estado a RESERVADO_TEMP
         seatStatus.setStatus("RESERVED_TEMP");
         seatStatus.setReservedAt(LocalDateTime.now());
+
+        // 5. Guardamos (esto insertará si es nuevo o actualizará si ya existía)
         return seatStatusRepositoryPort.save(seatStatus);
+    }
+
+    // Método privado para inicializar el objeto de dominio
+    private SeatStatus createInitialStatus(Long functionId, Long seatId) {
+        SeatStatus newStatus = new SeatStatus();
+        newStatus.setSeatId(seatId);
+        newStatus.setMovieScreeningId(functionId);
+        newStatus.setStatus("AVAILABLE");
+        return newStatus;
     }
 
     @Override

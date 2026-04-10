@@ -20,9 +20,8 @@ import com.cinemo.api.infrastructure.web.controller.dto.seat.SeatResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
-// infrastructure/web/SeatController.java
 @RestController
-@RequestMapping("/api/seats")
+@RequestMapping("/api/v1/seats")
 @RequiredArgsConstructor
 public class SeatController {
 
