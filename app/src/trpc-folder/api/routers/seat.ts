@@ -1,5 +1,6 @@
 import { SeatListSchema } from '@/schemas/seat';
 import {
+  ReleaseSessionInputSchema,
   SeatStatusListSchema,
   SeatStatusResponseSchema,
   SelectSeatInputSchema,
@@ -28,7 +29,7 @@ export const seatRouter = createTRPCRouter({
         SeatListSchema,
         {
           method: 'GET',
-          token: token, 
+          token: token,
         }
       );
 
@@ -56,7 +57,7 @@ export const seatRouter = createTRPCRouter({
         SeatStatusListSchema,
         {
           method: 'GET',
-          token: token, 
+          token: token,
         }
       );
 
@@ -102,7 +103,7 @@ export const seatRouter = createTRPCRouter({
       // Retorna el ID del asiento liberado
       return await apiClient(
         `/seat-status/undo?${queryParams.toString()}`,
-        z.number(), 
+        z.number(),
         {
           method: 'POST',
           token: token,
@@ -159,5 +160,39 @@ export const seatRouter = createTRPCRouter({
         });
       }
       return data;
+    }),
+
+  /**
+   * Libera todos los asientos reservados temporalmente por el usuario
+   * POST /seat-status/release-session
+   */
+  releaseSession: publicProcedure
+    .input(ReleaseSessionInputSchema)
+    .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
+
+      return await apiClient('/seat-status/release-session', z.any(), {
+        method: 'POST',
+        body: input,
+        token: token,
+      });
+    }),
+
+  /**
+   * Quita la selección de un asiento específico
+   * POST /seat-status/deselect
+   */
+  deselectSeat: publicProcedure
+    .input(SelectSeatInputSchema) // Usamos el mismo schema de Select
+    .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
+
+      return await apiClient('/seat-status/deselect', z.any(), {
+        method: 'POST',
+        body: input,
+        token: token,
+      });
     }),
 });

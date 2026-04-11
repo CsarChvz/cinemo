@@ -40,6 +40,8 @@ public class SecurityConfig {
             // Aquí puedes usar .hasRole("USER") o dejar que @PreAuthorize en el Controller
             // lo maneje
             .requestMatchers(HttpMethod.POST, "/api/v1/seat-status/**").authenticated()
+            .requestMatchers(HttpMethod.POST, "/api/v1/bookings/**").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/bookings/**").permitAll()
 
             // 5. Cualquier otra ruta no especificada requiere autenticación
             .anyRequest().authenticated())

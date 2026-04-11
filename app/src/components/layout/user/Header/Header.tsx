@@ -16,6 +16,7 @@ import {
   IconLogout,
   IconChevronDown,
   IconShieldLock,
+  IconTicket,
 } from '@tabler/icons-react';
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle/ColorSchemeToggle';
 import { useSession, signOut } from 'next-auth/react';
@@ -105,6 +106,13 @@ export function Header({ opened, onToggle }: HeaderProps) {
                 <Menu.Dropdown>
                   <Menu.Label>{session.user?.name}</Menu.Label>
 
+                  <Menu.Item
+                    leftSection={<IconTicket size={14} />}
+                    component={Link}
+                    href="/bookings"
+                  >
+                    Mis Tickets
+                  </Menu.Item>
                   {isAdmin && (
                     <Menu.Item
                       leftSection={<IconShieldLock size={14} />}

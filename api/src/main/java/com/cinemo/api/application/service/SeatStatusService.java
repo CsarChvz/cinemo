@@ -111,4 +111,147 @@ public class SeatStatusService implements SeatStatusUseCase{
         System.out.println("🔔 [QUEUE] Turno otorgado. Siguiente usuario en fila: " + nextUser);
         return nextUser;
     }
+
+    @Override
+    public void releaseSeat(Long functionId, Long seatId) {
+        seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .ifPresent(status -> {
+                    status.setStatus("AVAILABLE");
+                    status.setReservedAt(null); // Limpiamos la fecha de reserva
+                    seatStatusRepositoryPort.save(status);
+                });
+    }
+
+    @Override
+    public void notifyNext(Long functionId, Long seatId) {
+        System.out.println("\n--- 🔔 [WAITLIST] PROCESANDO SIGUIENTE EN COLA ---");
+        String queueKey = seatId + "-" + functionId;
+
+        WaitingQueue queue = waitingQueue.get(queueKey);
+
+        if (queue != null && !queue.isEmpty()) {
+            Long nextUserId = queue.desencolar();
+
+            System.out.println("👤 [FIFO] Usuario " + nextUserId + " es el siguiente para el asiento " + seatId);
+
+            try {
+                this.selectSeat(functionId, seatId, nextUserId);
+
+                System.out.println("✅ [AUTO-SELECT] Asiento asignado exitosamente al usuario en espera.");
+
+            } catch (Exception e) {
+
+                System.err.println("⚠️ [ERROR] No se pudo asignar al usuario " + nextUserId
+                        + ". Reintentando con el siguiente...");
+                notifyNext(functionId, seatId); // Recursión para el siguiente en fila
+            }
+        } else {
+            System.out.println(
+                    "🍃 [QUEUE] La cola está vacía. El asiento " + seatId + " queda disponible para el público.");
+
+            SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                    .orElseThrow();
+
+            seatStatus.setStatus("AVAILABLE");
+            seatStatus.setReservedAt(null);
+            seatStatusRepositoryPort.save(seatStatus);
+        }
+    }
+
+    @Override
+    public void releaseUserSession(Long functionId, Long userId) {
+        System.out.println("\n--- 🧹 OPERACIÓN: RELEASE SESSION ---");
+        System.out.println("Limpiando asientos del usuario " + userId + " en la función " + functionId);
+
+        String keyStack = userId + "-" + functionId;
+        SelectionStack stack = selectionStack.get(keyStack);
+
+        if (stack == null || stack.isEmpty()) {
+            System.out.println("🍃 [CLEANUP] El usuario " + userId + " no tenía asientos reservados.");
+            return;
+        }
+
+        // Vaciamos la pila por completo (haciendo "pop" hasta que quede vacía)
+        while (!stack.isEmpty()) {
+            Long seatId = stack.pop();
+
+            System.out.println("📤 [CLEANUP-POP] Liberando asiento: " + seatId);
+
+            // Reutilizamos tu lógica existente para notificar a la cola (FIFO) o liberarlo
+            this.notifyNext(functionId, seatId);
+        }
+
+        // Removemos la pila del mapa para liberar memoria
+        selectionStack.remove(keyStack);
+        System.out.println("✅ [CLEANUP] Sesión del usuario " + userId + " limpiada con éxito.");
+    }
+
+    @Override
+    public void deselectSeat(Long functionId, Long seatId, Long userId) {
+        System.out.println("\n--- 🔙 OPERACIÓN: DESELECCIONAR ASIENTO ESPECÍFICO ---");
+
+        // 1. Remover el asiento de la pila/memoria del usuario
+        String keyStack = userId + "-" + functionId;
+        SelectionStack stack = selectionStack.get(keyStack);
+
+        if (stack != null) {
+            // Nota: Si tu SelectionStack es una clase personalizada, asegúrate
+            // de agregarle un método remove(Long seatId) que lo quite de su estructura
+            // interna.
+            stack.remove(seatId);
+            System.out.println("📤 [DESELECT] Asiento " + seatId + " removido de la selección del usuario.");
+        }
+
+        // 2. Liberar el estado en la base de datos
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseThrow(() -> new RuntimeException("Asiento no encontrado"));
+
+        if ("RESERVED_TEMP".equals(seatStatus.getStatus())) {
+            seatStatus.setStatus("AVAILABLE");
+            seatStatus.setReservedAt(null);
+            seatStatusRepositoryPort.save(seatStatus);
+
+            System.out.println("✅ [DESELECT] Asiento " + seatId + " liberado en BD.");
+
+            // 3. ¡Magia! Notificar a la lista de espera por si alguien lo quería
+            this.notifyNext(functionId, seatId);
+        }
+    }
+
+    @Override
+    public void confirmSeatPurchase(Long functionId, Long seatId, Long userId) {
+        System.out.println("\n--- 💳 OPERACIÓN: CONFIRMAR COMPRA DE ASIENTO ---");
+
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseThrow(() -> new RuntimeException("Asiento no encontrado"));
+
+        if (!"RESERVED_TEMP".equals(seatStatus.getStatus())) {
+            throw new RuntimeException("El asiento expiró o ya no está disponible.");
+        }
+
+        seatStatus.setStatus("OCCUPIED");
+        seatStatusRepositoryPort.save(seatStatus);
+
+        // Lo quitamos de la pila temporal del usuario (ya que ahora es una compra
+        // firme)
+        String keyStack = userId + "-" + functionId;
+        SelectionStack stack = selectionStack.get(keyStack);
+        if (stack != null && !stack.isEmpty()) {
+            stack.remove(seatId);
+        }
+    }
+
+    @Override
+    public void revertToReservedTemp(Long functionId, Long seatId, Long userId) {
+        SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .orElseThrow();
+
+        seatStatus.setStatus("RESERVED_TEMP");
+        seatStatusRepositoryPort.save(seatStatus);
+
+        // Lo volvemos a meter a la pila temporal por si el usuario corrige su método de
+        // pago y reintenta
+        String keyStack = userId + "-" + functionId;
+        selectionStack.computeIfAbsent(keyStack, k -> new SelectionStack()).push(seatId);
+    }
 }   

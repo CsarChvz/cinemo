@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { api } from '@/trpc-folder/trpc-adaptadores/react';
 import {
   Box,
@@ -30,24 +31,27 @@ interface Props {
 }
 
 export function SeatSelectionView({ roomId, movieScreeningId, userId }: Props) {
+  const router = useRouter();
   const utils = api.useUtils();
+
+  // 🔥 Bandera para saber si el usuario avanzó al checkout intencionalmente
+  const isProceedingToCheckout = useRef(false);
+
   const [loadingAction, setLoadingAction] = useState(false);
   const [mySelections, setMySelections] = useState<
     { id: number; label: string }[]
   >([]);
 
+  // --- QUERIES ---
   const { data: seats = [], isLoading: loadingSeats } =
     api.seat.getRoomSeats.useQuery({ roomId });
+
   const { data: statuses = [] } = api.seat.getStatuses.useQuery(
     { movieScreeningId },
-    { refetchInterval: 5000 }
+    { refetchInterval: 5000 } // Polling cada 5 segundos para ver asientos de otros
   );
 
-
-  console.log(seats)
-
-  // --- LÓGICA DE BÚSQUEDA EN FRONT ---
-  // Mapa de ID -> "A5" para no pedirlo al back cada vez
+  // --- MAPAS PARA UI ---
   const seatNameMap = useMemo(() => {
     const map = new Map<number, string>();
     seats.forEach((s: Seat) => map.set(s.id, `${s.rowLetter}${s.seatNumber}`));
@@ -70,12 +74,59 @@ export function SeatSelectionView({ roomId, movieScreeningId, userId }: Props) {
   }, [seats]);
 
   // --- MUTACIONES ---
+  
   const selectMutation = api.seat.selectSeat.useMutation({
     onSuccess: () => utils.seat.getStatuses.invalidate(),
   });
+
   const undoMutation = api.seat.undoLast.useMutation({
     onSuccess: () => utils.seat.getStatuses.invalidate(),
   });
+
+  // Extraemos mutate directamente para que sea estable en los useEffects
+  const { mutate: releaseSession } = api.seat.releaseSession.useMutation();
+
+  // ==========================================
+  // 🔥 LÓGICA DE ABANDONO DE CARRITO (ANTI-INFINITE-LOOP)
+  // ==========================================
+
+  // 1. Ref para guardar las selecciones sin causar ciclos infinitos
+  const selectionsRef = useRef(mySelections);
+
+  // 2. Mantenemos el Ref actualizado silenciosamente
+  useEffect(() => {
+    selectionsRef.current = mySelections;
+  }, [mySelections]);
+
+  // 3. Efecto principal de limpieza
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (selectionsRef.current.length > 0 && !isProceedingToCheckout.current) {
+        // Cierre abrupto de pestaña (Usamos sendBeacon o fetch con keepalive)
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/seat-status/release-session`;
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, movieScreeningId }),
+          keepalive: true,
+        }).catch(console.error);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Cleanup: Se ejecuta al desmontar el componente (SPA navigation)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+
+      if (selectionsRef.current.length > 0 && !isProceedingToCheckout.current) {
+        // Liberamos usando la mutación de tRPC
+        releaseSession({ movieScreeningId, userId });
+      }
+    };
+    // Dependencias estrictas (sin mySelections)
+  }, [movieScreeningId, userId, releaseSession]);
+  // ==========================================
 
   const handleSeatClick = async (seatId: number) => {
     if (loadingAction) return;
@@ -91,7 +142,7 @@ export function SeatSelectionView({ roomId, movieScreeningId, userId }: Props) {
         const label = seatNameMap.get(seatId) || '??';
         setMySelections((prev) => [...prev, { id: seatId, label }]);
       } catch (e) {
-        alert('Asiento no disponible');
+        alert('Asiento no disponible o en proceso de compra por alguien más.');
       } finally {
         setLoadingAction(false);
       }
@@ -109,12 +160,25 @@ export function SeatSelectionView({ roomId, movieScreeningId, userId }: Props) {
     }
   };
 
-  if (loadingSeats)
+  const handleContinue = () => {
+    // 🔥 Levantamos la bandera para evitar que el cleanup borre la sesión
+    isProceedingToCheckout.current = true;
+
+    const seatIds = mySelections.map((s) => s.id).join(',');
+    const seatLabels = mySelections.map((s) => s.label).join(',');
+
+    router.push(
+      `/checkout?functionId=${movieScreeningId}&seatIds=${seatIds}&seatLabels=${seatLabels}`
+    );
+  };
+
+  if (loadingSeats) {
     return (
       <Center h={400}>
         <Loader color="blue" />
       </Center>
     );
+  }
 
   return (
     <Stack gap="xl" align="center" mt="xl" maw={800} mx="auto">
@@ -184,12 +248,15 @@ export function SeatSelectionView({ roomId, movieScreeningId, userId }: Props) {
               color="red"
               onClick={handleUndo}
               disabled={mySelections.length === 0}
+              loading={loadingAction}
             >
               <IconArrowBackUp size={18} />
             </Button>
             <Button
               rightSection={<IconArrowRight size={18} />}
               disabled={mySelections.length === 0}
+              loading={loadingAction}
+              onClick={handleContinue}
             >
               Continuar
             </Button>
