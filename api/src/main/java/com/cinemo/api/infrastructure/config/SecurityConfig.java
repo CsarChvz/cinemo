@@ -45,8 +45,7 @@ public class SecurityConfig {
 
             // 5. Cualquier otra ruta no especificada requiere autenticación
             .anyRequest().authenticated())
-        // 🔥 ESTA ES LA CLAVE: El filtro debe ir antes que el validador de usuario y
-        // contraseña
+
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }

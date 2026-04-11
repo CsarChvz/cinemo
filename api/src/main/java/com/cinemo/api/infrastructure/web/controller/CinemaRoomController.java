@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -75,12 +76,11 @@ public class CinemaRoomController {
     @PatchMapping("/{id}")
     public ResponseEntity<CinemaRoomResponseDto> update(@PathVariable Long id,
             @Valid @RequestBody CinemaRoomUpdateRequestDto requestDto) {
-        return retrieveCinemaRoomUseCase.getById(id).map(
-                existingCinemaRoom -> {
-                    cinemaDtoMapper.updateDomainFromDto(requestDto, existingCinemaRoom);
-                    CinemaRoom updated = manageCinemaRoomUseCase.update(existingCinemaRoom);
-                    return ResponseEntity.ok(cinemaDtoMapper.toResponse(updated));
-                }).orElseGet(() -> ResponseEntity.notFound().build());
+        return retrieveCinemaRoomUseCase.getById(id).map(existingDomain -> {
+            cinemaDtoMapper.updateDomainFromDto(requestDto, existingDomain);
+            CinemaRoom updated = manageCinemaRoomUseCase.update(existingDomain);
+            return ResponseEntity.ok(cinemaDtoMapper.toResponse(updated));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

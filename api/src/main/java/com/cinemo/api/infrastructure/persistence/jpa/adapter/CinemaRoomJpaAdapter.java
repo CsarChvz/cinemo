@@ -43,10 +43,9 @@ public class CinemaRoomJpaAdapter implements CinemaRoomRepositoryPort {
     }
 
     @Override
-    public CinemaRoom modify(CinemaRoom cinema) {
-        CinemaRoomEntity entity = mapper.toEntity(cinema);
+    public CinemaRoom modify(CinemaRoom cinemaRoom) {
+        CinemaRoomEntity entity = mapper.toEntity(cinemaRoom);
         CinemaRoomEntity savedEntity = jpaRepository.save(entity);
-
         return mapper.toDomain(savedEntity);
     }
 

@@ -68,7 +68,7 @@ export const roomRouter = createTRPCRouter({
       const session = await auth();
       const token = session?.accessToken;
       return await apiClient(`/rooms/${input.id}`, RoomSchema, {
-        method: 'PATCH', // O 'PUT'
+        method: 'PATCH',
         body: input.data,
         token: token,
       });

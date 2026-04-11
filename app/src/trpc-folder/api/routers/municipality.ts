@@ -70,7 +70,7 @@ export const municipalityRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const session = await auth();
       const token = session?.accessToken;
-      await apiClient('/municipalities', MunicipalitySchema, {
+      await apiClient('/municipalities', z.any(), {
         method: 'POST',
         body: input, // Aquí pasamos el body { name, stateId }
         token: token,

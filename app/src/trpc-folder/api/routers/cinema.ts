@@ -109,10 +109,10 @@ export const cinemaRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const session = await auth();
       const token = session?.accessToken;
-      await apiClient('/cinemas', CinemaSchema, {
+      await apiClient('/cinemas', z.any(), {
         method: 'POST',
         body: input,
-        token: token, // Aquí pasamos el body { name, address, municipalityId }
+        token: token,
       });
     }),
 
