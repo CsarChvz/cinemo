@@ -14,4 +14,12 @@ public interface SeatStatusUseCase {
     void releaseSeat(Long functionId, Long seatId);
 
     void notifyNext(Long functionId, Long seatId);
+
+    void releaseUserSession(Long functionId, Long userId);
+
+    void deselectSeat(Long functionId, Long seatId, Long userId);
+
+    void confirmSeatPurchase(Long functionId, Long seatId, Long userId);
+
+    void revertToReservedTemp(Long functionId, Long seatId, Long userId);
 }

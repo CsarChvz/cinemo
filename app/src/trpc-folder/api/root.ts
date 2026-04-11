@@ -1,4 +1,5 @@
 import { authRouter } from './routers/auth';
+import { bookingRouter } from './routers/booking';
 import { cinemaRouter } from './routers/cinema';
 import { movieRouter } from './routers/movie';
 import { movieScreeningRouter } from './routers/movie-screening';
@@ -24,6 +25,7 @@ export const appRouter = createTRPCRouter({
   movieScreening: movieScreeningRouter,
   auth: authRouter,
   seat: seatRouter,
+  booking: bookingRouter,
 });
 
 // export type definition of API

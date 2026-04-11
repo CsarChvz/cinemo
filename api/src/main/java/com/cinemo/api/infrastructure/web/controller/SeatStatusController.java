@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cinemo.api.domain.SeatStatus;
 import com.cinemo.api.domain.ports.in.seat_status.SeatStatusUseCase;
+import com.cinemo.api.infrastructure.web.controller.dto.seat_status.ReleaseSessionRequestDto;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SeatStatusDtoMapper;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SeatStatusResponseDto;
 import com.cinemo.api.infrastructure.web.controller.dto.seat_status.SelectSeatRequestDto;
@@ -72,5 +73,18 @@ public class SeatStatusController {
         Long pos = seatStatusUseCase.getWaitlistPosition(functionId, seatId, userId);
         return ResponseEntity.ok(new WaitlistResponseDto(
             pos, -1, "Estás en el lugar #" + pos + " de la fila"));
+    }
+
+    @PostMapping("/release-session")
+    public ResponseEntity<Void> releaseSession(@RequestBody ReleaseSessionRequestDto req) {
+        seatStatusUseCase.releaseUserSession(req.getMovieScreeningId(), req.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/deselect")
+    public ResponseEntity<Void> deselectSeat(@RequestBody SelectSeatRequestDto req) {
+        seatStatusUseCase.deselectSeat(
+                req.getMovieScreeningId(), req.getSeatId(), req.getUserId());
+        return ResponseEntity.ok().build();
     }
 }

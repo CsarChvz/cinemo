@@ -61,8 +61,11 @@ const mockScreening: MovieScreening = {
           code: 'JAL',
         },
       },
+      latitude: 0,
+      longitude: 0,
     },
     isActive: true,
+    columnsPerRow: 0,
   },
 };
 

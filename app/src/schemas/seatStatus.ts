@@ -29,6 +29,12 @@ export const WaitlistResponseSchema = z.object({
   message: z.string(),
 });
 
+export const ReleaseSessionInputSchema = z.object({
+  movieScreeningId: z.number().int(),
+  userId: z.number().int(),
+});
+
+
 export type SeatStatusResponse = z.infer<typeof SeatStatusResponseSchema>;
 export type SelectSeatInput = z.infer<typeof SelectSeatInputSchema>;
 export type UndoSeatInput = z.infer<typeof UndoSeatInputSchema>;

@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import { Container, Title, Text } from '@mantine/core';
 
 import { api } from '@/trpc-folder/trpc-adaptadores/server';
-import { SeatSelectionView } from '@/components/booking/SelectionView/SelectionView';
 import { auth } from '@/app/auth';
+import { SeatSelectionView } from '@/components/booking/SelectionView/SeatSelectionView';
 
 interface SeatsPageProps {
   params: Promise<{ id: string }>;

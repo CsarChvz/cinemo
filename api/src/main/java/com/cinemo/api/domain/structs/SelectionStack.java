@@ -45,4 +45,34 @@ public class SelectionStack {
         }
         return result;
     }
+
+    public boolean remove(Long seatId) {
+        if (isEmpty())
+            return false;
+
+        // Caso 1: El asiento a quitar es justo el que está en el tope (hasta arriba)
+        if (tope.seatId.equals(seatId)) {
+            tope = tope.siguiente;
+            tamanio--;
+            return true;
+        }
+
+        // Caso 2: El asiento está en medio o hasta abajo de la pila
+        Nodo actual = tope.siguiente;
+        Nodo anterior = tope;
+
+        while (actual != null) {
+            if (actual.seatId.equals(seatId)) {
+                // "Desconectamos" el nodo actual saltándolo
+                anterior.siguiente = actual.siguiente;
+                tamanio--;
+                return true;
+            }
+            anterior = actual;
+            actual = actual.siguiente;
+        }
+
+        // No se encontró el asiento en la pila
+        return false;
+    }
 }

@@ -49,16 +49,18 @@ public class BookingService implements BookingUseCase {
       System.out
           .println("💰 [PRICE] Precio calculado: " + total + " (" + booking.getSeatStatusIds().size() + " asientos)");
 
-      // 2. Bloquear cada asiento uno por uno
+      // 2. Confirmar cada asiento uno por uno
       for (Long seatId : booking.getSeatStatusIds()) {
-        System.out.println("💺 [SEAT] Intentando seleccionar asiento ID: " + seatId);
+        System.out.println("💺 [SEAT] Confirmando compra definitiva del asiento ID: " + seatId);
 
-        seatStatusUseCase.selectSeat(booking.getFunctionId(), seatId, booking.getUserId());
+        // 🔥 CAMBIO CLAVE: Confirmamos la compra, pasándolo a OCCUPIED
+        seatStatusUseCase.confirmSeatPurchase(booking.getFunctionId(), seatId, booking.getUserId());
 
-        // Agregamos al stack de rollback por si algo falla después
+        // Agregamos al stack de rollback por si el proceso de Booking falla más
+        // adelante
         rollbackStack.push(
-            () -> liberarAsiento(booking.getFunctionId(), seatId, booking.getUserId()),
-            "Liberar asiento " + seatId);
+            () -> rollbackAsientoAReservado(booking.getFunctionId(), seatId, booking.getUserId()),
+            "Revertir asiento " + seatId + " a estado temporal (RESERVED_TEMP)");
       }
 
       // 3. Persistir el Booking
@@ -68,7 +70,8 @@ public class BookingService implements BookingUseCase {
       Booking bookingSaved = bookingRepositoryPort.save(booking);
       System.out.println("✅ [SUCCESS] Booking guardado con ID: " + bookingSaved.getId());
 
-      // Si el guardado falla o queremos revertir el booking después
+      // Si se quisiera revertir el booking DESPUÉS de guardado (por algún error
+      // externo)
       rollbackStack.push(
           () -> bookingRepositoryPort.updateStatus(bookingSaved.getId(), "CANCELLED"),
           "Cancelar booking ID: " + bookingSaved.getId());
@@ -79,20 +82,20 @@ public class BookingService implements BookingUseCase {
       System.err.println("🔥 [ROLLBACK] Error detectado: " + e.getMessage());
       System.err.println("🛠️ [ROLLBACK] Ejecutando compensaciones del RollbackStack...");
 
-      rollbackStack.ejecutarTodo(); // LIFO: Libera el último asiento primero
+      rollbackStack.ejecutarTodo(); // LIFO: Revierte los asientos en orden inverso
 
       throw new RuntimeException("Booking fallido. El sistema revirtió los cambios: " + e.getMessage());
     }
   }
 
-  private void liberarAsiento(Long functionId, Long seatId, Long userId) {
-    seatStatusUseCase.releaseSeat(functionId, seatId);
-    System.out.println("⏪ [REVERT] Asiento " + seatId + " vuelto a poner como AVAILABLE.");
+  // Método privado para el Rollback
+  private void rollbackAsientoAReservado(Long functionId, Long seatId, Long userId) {
+    seatStatusUseCase.revertToReservedTemp(functionId, seatId, userId);
+    System.out.println("⏪ [REVERT] Asiento " + seatId + " devuelto a RESERVED_TEMP tras fallo en la compra.");
   }
 
   private BigDecimal obtenerPrecioBase(Long functionId) {
-    // En un caso real, esto vendría de
-    // movieScreeningRepository.findById(functionId).getPrice()
+    // En un caso real, esto vendría de movieScreeningRepository
     return new BigDecimal("120.00");
   }
 
@@ -106,6 +109,8 @@ public class BookingService implements BookingUseCase {
   @Override
   public void cancelBooking(Booking booking) {
     bookingRepositoryPort.updateStatus(booking.getId(), "CANCELLED");
+    // Al cancelar un booking (ej. devolución), liberas los asientos a los de la
+    // cola
     booking.getSeatStatusIds().forEach(seatId -> seatStatusUseCase.notifyNext(booking.getFunctionId(), seatId));
   }
 
@@ -118,5 +123,4 @@ public class BookingService implements BookingUseCase {
   public List<Booking> getByUser(Long userId) {
     return bookingRepositoryPort.findByUserId(userId);
   }
-
 }
