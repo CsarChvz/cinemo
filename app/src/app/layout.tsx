@@ -8,10 +8,12 @@ import '@mantine/dates/styles.css';
 import '@mantine/schedule/styles.css';
 import '@mantine/charts/styles.css';
 import 'mantine-datatable/styles.layer.css';
+import 'leaflet/dist/leaflet.css';
 
 import { theme } from '@/theme';
 import { Notifications } from '@mantine/notifications';
 import { TRPCReactProvider } from '@/trpc-folder/trpc-adaptadores/react';
+import { SessionProvider } from 'next-auth/react';
 
 export const metadata = {
   title: 'Mantine Next.js template',
@@ -35,7 +37,9 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <MantineProvider theme={theme}>
           <Notifications />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </TRPCReactProvider>
         </MantineProvider>
       </body>
     </html>

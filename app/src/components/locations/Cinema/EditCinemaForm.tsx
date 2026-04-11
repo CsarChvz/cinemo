@@ -1,4 +1,4 @@
-// components/locations/EditCinemaForm.tsx
+// components/locations/Cinema/EditCinemaForm.tsx
 'use client';
 
 import { api } from '@/trpc-folder/trpc-adaptadores/react';
@@ -12,6 +12,7 @@ import {
   Button,
   SimpleGrid,
   Select,
+  NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -23,23 +24,25 @@ export interface EditCinemaFormValues {
   address: string;
   stateId: string;
   municipalityId: string;
+  latitude: number | '';
+  longitude: number | '';
 }
 
 interface EditCinemaFormProps {
-  cinema: Cinema; // Recibimos los datos iniciales desde el servidor
+  cinema: Cinema;
 }
 
 export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
   const router = useRouter();
 
-  // Inicializamos el formulario con los datos del cine
   const form = useForm<EditCinemaFormValues>({
     initialValues: {
       name: cinema.name,
       address: cinema.address,
-      // Extraemos el ID del estado desde la relación anidada
       stateId: cinema.municipality.state.id.toString(),
       municipalityId: cinema.municipality.id.toString(),
+      latitude: cinema.latitude,
+      longitude: cinema.longitude,
     },
     validate: {
       name: (value) => (value.trim().length < 3 ? 'Nombre muy corto' : null),
@@ -47,10 +50,23 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
         value.trim().length < 5 ? 'Dirección muy corta' : null,
       stateId: (value) => (!value ? 'Selecciona un estado' : null),
       municipalityId: (value) => (!value ? 'Selecciona un municipio' : null),
+      // 🔥 Validaciones para coordenadas
+      latitude: (value) =>
+        value === ''
+          ? 'Requerido'
+          : value < -90 || value > 90
+            ? 'Latitud inválida (-90 a 90)'
+            : null,
+      longitude: (value) =>
+        value === ''
+          ? 'Requerido'
+          : value < -180 || value > 180
+            ? 'Longitud inválida (-180 a 180)'
+            : null,
     },
   });
 
-  // 1. Obtenemos TODOS los estados para el primer Select
+  // 1. Obtenemos TODOS los estados
   const { data: states, isLoading: isLoadingStates } =
     api.state.getAll.useQuery();
 
@@ -63,29 +79,23 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
     );
   }, [states]);
 
-  // 2. Obtenemos los municipios DINÁMICAMENTE según el estado seleccionado
+  // 2. Obtenemos los municipios por estado
   const stateIdNum = Number(form.values.stateId);
   const { data: municipalities, isFetching: isFetchingMunicipalities } =
     api.municipality.getByStateId.useQuery(
       { stateId: stateIdNum },
-      {
-        // Solo dispara la petición si tenemos un stateId válido.
-        // Al estar editando, esto será verdadero desde el inicio.
-        enabled: !!form.values.stateId && !isNaN(stateIdNum),
-      }
+      { enabled: !!form.values.stateId && !isNaN(stateIdNum) }
     );
 
-  // 3. Mapeamos directamente la respuesta de la API
   const availableMunicipalities = useMemo(() => {
     if (!municipalities || !Array.isArray(municipalities)) return [];
-
     return municipalities.map((m) => ({
       value: m.id.toString(),
       label: m.name,
     }));
   }, [municipalities]);
 
-  // 4. Definimos la mutación interna para ACTUALIZAR
+  // 3. Mutación para ACTUALIZAR
   const editCinema = api.cinema.update.useMutation({
     onSuccess: () => {
       router.push('/admin/locations/cinemas');
@@ -97,18 +107,21 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
       <Stack gap={5} mb="xl">
         <Title order={2}>Editar Complejo</Title>
         <Text c="dimmed" size="sm">
-          Actualiza la información del cine existente.
+          Actualiza la información técnica y la ubicación geográfica del cine.
         </Text>
       </Stack>
 
       <form
         onSubmit={form.onSubmit((values) => {
           editCinema.mutate({
-            id: cinema.id, // Pasamos el ID del cine que estamos editando
+            id: cinema.id,
             data: {
               name: values.name,
               address: values.address,
               municipalityId: Number(values.municipalityId),
+              // 🔥 Enviamos las coordenadas convertidas a Number
+              latitude: Number(values.latitude),
+              longitude: Number(values.longitude),
             },
           });
         })}
@@ -132,9 +145,7 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
             <Select
               label="Estado"
-              placeholder={
-                isLoadingStates ? 'Cargando...' : 'Selecciona el estado'
-              }
+              placeholder={isLoadingStates ? 'Cargando...' : 'Selecciona'}
               searchable
               withAsterisk
               data={statesData}
@@ -142,19 +153,12 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
               {...form.getInputProps('stateId')}
               onChange={(val) => {
                 form.setFieldValue('stateId', val || '');
-                // Si el usuario cambia de estado manualmente, borramos el municipio actual
                 form.setFieldValue('municipalityId', '');
               }}
             />
             <Select
               label="Municipio"
-              placeholder={
-                isFetchingMunicipalities
-                  ? 'Cargando municipios...'
-                  : form.values.stateId
-                    ? 'Selecciona un municipio'
-                    : 'Primero selecciona un estado'
-              }
+              placeholder="Selecciona municipio"
               searchable
               withAsterisk
               disabled={!form.values.stateId || isFetchingMunicipalities}
@@ -162,6 +166,30 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
               {...form.getInputProps('municipalityId')}
             />
           </SimpleGrid>
+
+          {/* 🔥 Sección de Coordenadas agregada */}
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            <NumberInput
+              label="Latitud"
+              placeholder="Ej. 20.6820"
+              decimalScale={6}
+              fixedDecimalScale
+              withAsterisk
+              {...form.getInputProps('latitude')}
+            />
+            <NumberInput
+              label="Longitud"
+              placeholder="Ej. -103.4617"
+              decimalScale={6}
+              fixedDecimalScale
+              withAsterisk
+              {...form.getInputProps('longitude')}
+            />
+          </SimpleGrid>
+          <Text size="xs" c="dimmed" mt="sm">
+            Asegúrate de que las coordenadas coincidan con la ubicación real
+            para el cálculo de distancias.
+          </Text>
 
           <Button
             type="submit"
@@ -171,7 +199,7 @@ export function EditCinemaForm({ cinema }: EditCinemaFormProps) {
             leftSection={<IconDeviceFloppy size={20} />}
             variant="gradient"
             gradient={{ from: 'violet', to: 'purple' }}
-            loading={editCinema.isPending} // Spinner automático durante el PATCH/PUT
+            loading={editCinema.isPending}
             disabled={isLoadingStates || isFetchingMunicipalities}
           >
             Guardar Cambios

@@ -9,4 +9,6 @@ import com.cinemo.api.infrastructure.persistence.jpa.entity.UserEntity;
 public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByName(String name);
+
+    Optional<UserEntity> findByUsername(String username);
 }

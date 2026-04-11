@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   TextInput,
   Button,
@@ -8,20 +9,55 @@ import {
   Text,
   Stack,
   Divider,
+  Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { PasswordInput } from '../PasswordInput/PasswordInput';
-import classes from '../AuthForms.module.css'; // Importamos el CSS
+import classes from '../AuthForms.module.css';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { IconAlertCircle, IconUser } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm({
-    initialValues: { email: '', password: '' },
+    // 🔥 Cambiado de email a username
+    initialValues: { username: '', password: '' },
     validate: {
-      email: (v) => (/^\S+@\S+$/.test(v) ? null : 'Email inválido'),
+      username: (v) =>
+        v.trim().length < 3 ? 'Nombre de usuario muy corto' : null,
       password: (v) => (v.length < 6 ? 'Mínimo 6 caracteres' : null),
     },
   });
+
+  const handleLogin = async (values: typeof form.values) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // 🔥 Enviamos 'username' explícitamente a NextAuth
+      const result = await signIn('credentials', {
+        username: values.username,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Usuario o contraseña incorrectos.');
+        setLoading(false);
+      } else {
+        router.push('/');
+        router.refresh();
+      }
+    } catch (err) {
+      setError('Ocurrió un error inesperado.');
+      setLoading(false);
+    }
+  };
 
   return (
     <Paper p={40} radius="xl" className={classes.glassContainer}>
@@ -35,13 +71,26 @@ export function LoginForm() {
           </Text>
         </Stack>
 
-        <form onSubmit={form.onSubmit((v) => console.log(v))}>
+        {error && (
+          <Alert
+            variant="light"
+            color="red"
+            title="Error de acceso"
+            icon={<IconAlertCircle />}
+          >
+            {error}
+          </Alert>
+        )}
+
+        <form onSubmit={form.onSubmit(handleLogin)}>
           <Stack gap="md">
             <TextInput
-              label="Correo electrónico"
-              placeholder="tu@email.com"
+              label="Nombre de usuario"
+              placeholder="Tu usuario"
               variant="filled"
-              {...form.getInputProps('email')}
+              leftSection={<IconUser size={16} />}
+              {...form.getInputProps('username')}
+              disabled={loading}
               classNames={{
                 input: classes.inputField,
                 label: classes.labelCustom,
@@ -58,6 +107,7 @@ export function LoginForm() {
               variant="gradient"
               gradient={{ from: 'blue.6', to: 'cyan.6', deg: 90 }}
               radius="md"
+              loading={loading}
             >
               Iniciar Sesión
             </Button>

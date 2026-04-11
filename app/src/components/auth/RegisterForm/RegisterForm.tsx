@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   TextInput,
   Button,
@@ -7,34 +8,71 @@ import {
   Title,
   Text,
   Stack,
-  Divider,
-  SimpleGrid,
+  Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { PasswordInput } from '../PasswordInput/PasswordInput';
 import Link from 'next/link';
 import classes from '../AuthForms.module.css';
+import {
+  IconAlertCircle,
+  IconUser,
+  IconAt,
+  IconSignature,
+} from '@tabler/icons-react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { api } from '@/trpc-folder/trpc-adaptadores/react';
 
 export function RegisterForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm({
     initialValues: {
-      firstName: '',
-      lastName: '',
+      name: '',
+      username: '',
       email: '',
       password: '',
     },
-
     validate: {
-      firstName: (v) => (v.length < 2 ? 'Nombre muy corto' : null),
-      lastName: (v) => (v.length < 2 ? 'Apellido muy corto' : null),
+      name: (v) => (v.trim().length < 3 ? 'Nombre muy corto' : null),
+      username: (v) => (v.trim().length < 3 ? 'Username muy corto' : null),
       email: (v) => (/^\S+@\S+$/.test(v) ? null : 'Email inválido'),
       password: (v) => (v.length < 6 ? 'Mínimo 6 caracteres' : null),
     },
   });
 
+  // Usamos la mutación de tRPC en lugar de fetch manual
+  const registerMutation = api.auth.register.useMutation({
+    onSuccess: async (_data, variables) => {
+      // Si el registro en Java fue exitoso, hacemos login automático en NextAuth
+      const loginResult = await signIn('credentials', {
+        username: variables.username,
+        password: variables.password,
+        redirect: false,
+      });
+
+      if (loginResult?.error) {
+        // Si falla el auto-login (raro, pero posible), mandamos a login manual
+        router.push('/login');
+      } else {
+        router.push('/');
+        router.refresh();
+      }
+    },
+    onError: (err) => {
+      setError(err.message || 'Error al crear la cuenta');
+    },
+  });
+
   const handleSubmit = (values: typeof form.values) => {
-    // Aquí conectarás con tu API de Python (FastAPI/Flask)
-    console.log('Registrando usuario en Cinemo:', values);
+    setError(null);
+    // Ejecutamos la mutación pasando los valores y el rol por defecto
+    registerMutation.mutate({
+      ...values,
+      role: 'USER',
+    });
   };
 
   const inputStyles = {
@@ -59,34 +97,50 @@ export function RegisterForm() {
           </Text>
         </Stack>
 
+        {error && (
+          <Alert
+            variant="light"
+            color="red"
+            title="Ups!"
+            icon={<IconAlertCircle />}
+          >
+            {error}
+          </Alert>
+        )}
+
+        {/* Usamos form.onSubmit de Mantine con nuestra función */}
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
-            <SimpleGrid cols={{ base: 1, sm: 2 }}>
-              <TextInput
-                label="Nombre"
-                placeholder="Tu nombre"
-                variant="filled"
-                classNames={inputStyles}
-                {...form.getInputProps('firstName')}
-              />
-              <TextInput
-                label="Apellido"
-                placeholder="Tu apellido"
-                variant="filled"
-                classNames={inputStyles}
-                {...form.getInputProps('lastName')}
-              />
-            </SimpleGrid>
+            <TextInput
+              label="Nombre completo"
+              placeholder="Ej. César Chávez"
+              variant="filled"
+              leftSection={<IconSignature size={16} />}
+              classNames={inputStyles}
+              disabled={registerMutation.isPending}
+              {...form.getInputProps('name')}
+            />
+
+            <TextInput
+              label="Nombre de usuario"
+              placeholder="TuUsuario123"
+              variant="filled"
+              leftSection={<IconUser size={16} />}
+              classNames={inputStyles}
+              disabled={registerMutation.isPending}
+              {...form.getInputProps('username')}
+            />
 
             <TextInput
               label="Correo electrónico"
               placeholder="tu@email.com"
               variant="filled"
+              leftSection={<IconAt size={16} />}
               classNames={inputStyles}
+              disabled={registerMutation.isPending}
               {...form.getInputProps('email')}
             />
 
-            {/* Ahora solo pedimos la contraseña una vez */}
             <PasswordInput {...form.getInputProps('password')} />
 
             <Button
@@ -97,11 +151,13 @@ export function RegisterForm() {
               variant="gradient"
               gradient={{ from: 'blue.6', to: 'cyan.6', deg: 90 }}
               radius="md"
+              loading={registerMutation.isPending}
             >
               Crear cuenta
             </Button>
           </Stack>
         </form>
+
         <Text ta="center" size="sm" c="gray.5">
           ¿Ya tienes una cuenta?{' '}
           <Text

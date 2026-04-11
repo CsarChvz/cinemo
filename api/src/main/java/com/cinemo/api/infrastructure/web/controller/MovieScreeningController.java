@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,6 +34,7 @@ public class MovieScreeningController {
     private final RetrieveMovieScreeningUseCase retrieveMovieScreeningUseCase;
     private final MovieScreeningDtoMapper movieScreeningDtoMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MovieScreeningResponseDto> create(@Valid @RequestBody MovieScreeningRequestDto requestDto) {
         MovieScreening domain = movieScreeningDtoMapper.toDomain(requestDto);
@@ -56,6 +58,7 @@ public class MovieScreeningController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<MovieScreeningResponseDto> update(@PathVariable Long id,
             @Valid @RequestBody MovieScreeningUpdateRequestDto requestDto) {
@@ -63,10 +66,11 @@ public class MovieScreeningController {
                 existingMovieScreening -> {
                     movieScreeningDtoMapper.updateDomainFromDto(requestDto, existingMovieScreening);
                     MovieScreening movieScreening = manageMovieScreeningUseCase.update(existingMovieScreening);
-                    return ResponseEntity.ok(movieScreeningDtoMapper.toResponse(existingMovieScreening));
+                    return ResponseEntity.ok(movieScreeningDtoMapper.toResponse(movieScreening));
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return retrieveMovieScreeningUseCase.getById(id)

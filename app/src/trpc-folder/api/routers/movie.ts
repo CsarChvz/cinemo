@@ -8,6 +8,7 @@ import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { auth } from '@/app/auth';
 
 export const movieRouter = createTRPCRouter({
   /**
@@ -46,10 +47,13 @@ export const movieRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateMovieSchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       // Usamos z.any() en la respuesta para evitar choques con el backend
       await apiClient('/movies', z.any(), {
         method: 'POST',
         body: input,
+        token: token,
       });
     }),
 
@@ -65,9 +69,12 @@ export const movieRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/movies/${input.id}`, z.any(), {
         method: 'PATCH', // Usamos PUT como descubrimos con las funciones
         body: input.data,
+        token: token,
       });
     }),
 
@@ -78,8 +85,11 @@ export const movieRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/movies/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });

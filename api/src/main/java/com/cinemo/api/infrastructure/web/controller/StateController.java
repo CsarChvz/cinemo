@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,7 +38,7 @@ public class StateController {
     private final StateDtoMapper stateDtoMapper;
 
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<StateResponseDTO> createState(@Valid @RequestBody StateRequestDTO requestDTO){
         State domainState = stateDtoMapper.toDomain(requestDTO);
@@ -81,6 +82,7 @@ public class StateController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOs);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<StateResponseDTO> updateState(@PathVariable Long id,
             @Valid @RequestBody StateUpdateRequestDTO requestDTO) {
@@ -95,6 +97,7 @@ public class StateController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteState(@PathVariable Long id) {
 

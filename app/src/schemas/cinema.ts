@@ -5,7 +5,9 @@ import { MunicipalitySchema } from './municipality'; // Ajusta la ruta si es nec
 export const CinemaSchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  address: z.string(), 
+  address: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
   municipality: MunicipalitySchema,
 });
 
@@ -23,6 +25,8 @@ export const CinemaSimpleListSchema = z.array(CinemaSimpleSchema);
 export const CreateCinemaSchema = z.object({
   name: z.string().min(1, 'El nombre del cine es requerido'),
   address: z.string().min(5, 'La dirección es muy corta'),
+  latitude: z.number(),
+  longitude: z.number(),
   municipalityId: z
     .number()
     .int({ message: 'Debes seleccionar un municipio válido' }),

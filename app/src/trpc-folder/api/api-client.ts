@@ -4,11 +4,13 @@ import { z } from 'zod';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
+// 1. Agregamos 'token' a las opciones
 interface FetchOptions<TBody> {
   method?: HttpMethod;
   body?: TBody;
   headers?: Record<string, string>;
   cache?: RequestCache;
+  token?: string; // 🔥 Nuevo campo opcional
 }
 
 /**
@@ -19,25 +21,37 @@ export async function apiClient<TResponse>(
   schema: z.ZodSchema<TResponse>,
   options: FetchOptions<unknown> = {}
 ): Promise<TResponse> {
-  const { method = 'GET', body, headers, cache = 'default' } = options;
+  const { method = 'GET', body, headers, cache = 'default', token } = options;
   const baseUrl =
     typeof window !== 'undefined' ? env.NEXT_PUBLIC_API_URL : env.API_URL;
 
   const url = `${baseUrl}${endpoint}`;
-  
+
   try {
     const response = await fetch(url, {
       method,
       cache,
       headers: {
         'Content-Type': 'application/json',
+        // 2. Inyectamos el Bearer Token si existe
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
       body: body ? JSON.stringify(body) : undefined,
     });
 
     if (!response.ok) {
-      // Mapeo de errores HTTP a códigos de tRPC
+      // 3. Intentamos leer el mensaje de error real enviado por Java
+      const errorText = await response.text();
+      let serverMessage = `API Error: ${response.statusText} (${response.status})`;
+
+      try {
+        const errorJson = JSON.parse(errorText);
+        serverMessage = errorJson.message || serverMessage;
+      } catch {
+        // Si no es JSON (ej. un error de Tomcat), nos quedamos con el mensaje por defecto
+      }
+
       const errorMap: Record<number, TRPCError['code']> = {
         400: 'BAD_REQUEST',
         401: 'UNAUTHORIZED',
@@ -48,21 +62,18 @@ export async function apiClient<TResponse>(
 
       throw new TRPCError({
         code: errorMap[response.status] ?? 'BAD_GATEWAY',
-        message: `API Error: ${response.statusText} (${response.status})`,
+        message: serverMessage, // 🔥 Ahora mostrará el mensaje de tu BusinessException
       });
     }
 
-    // Para DELETE o respuestas vacías (204 No Content)
     if (response.status === 204) {
       return {} as TResponse;
     }
 
     const data = await response.json();
-
-    // Validación estricta con Zod
     const result = schema.safeParse(data);
     if (!result.success) {
-      console.error('Zod Validation Error:', result.error.format());
+      console.error('❌ ZOD VALIDATION ERROR:', result.error.flatten());
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message:

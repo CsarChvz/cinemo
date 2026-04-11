@@ -4,6 +4,7 @@ import { FeaturedMoviesSection } from '@/components/Welcome/FeaturedMoviesSectio
 import { CtaSection } from '@/components/Welcome/CtaSection';
 import { HeroSection } from '@/components/Welcome/HeroSection';
 import { api, HydrateClient } from '@/trpc-folder/trpc-adaptadores/server';
+import { auth } from '../auth';
 
 export const metadata: Metadata = {
   title: 'Cinemo | Tu cine, tu momento',
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 // 3. El componente principal es asíncrono (RSC)
 export default async function HomePage() {
   const movies = await api.movie.getAll();
+  // const session = await auth();
+  // console.log(session);
   return (
     <HydrateClient>
       <Stack gap={0}>

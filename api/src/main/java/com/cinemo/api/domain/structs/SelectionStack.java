@@ -1,0 +1,48 @@
+package com.cinemo.api.domain.structs;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SelectionStack {
+    private static class Nodo {
+        Long seatId;
+        Nodo siguiente;
+        Nodo(Long seatId) { this.seatId = seatId; }
+    }
+
+    private Nodo tope;
+    private int tamanio;
+
+    public void push(Long seatId) {
+        Nodo nuevo = new Nodo(seatId);
+        nuevo.siguiente = tope;
+        tope = nuevo;
+        tamanio++;
+    }
+
+    public Long pop() {
+        if (isEmpty()) throw new RuntimeException("No hay asientos seleccionados");
+        Long seatId = tope.seatId;
+        tope = tope.siguiente;
+        tamanio--;
+        return seatId;
+    }
+
+    public Long peek() {
+        if (isEmpty()) throw new RuntimeException("Pila vacía");
+        return tope.seatId;
+    }
+
+    public boolean isEmpty() { return tope == null; }
+    public int getTamanio() { return tamanio; }
+
+    public List<Long> toList() {
+        List<Long> result = new ArrayList<>();
+        Nodo actual = tope;
+        while (actual != null) {
+            result.add(actual.seatId);
+            actual = actual.siguiente;
+        }
+        return result;
+    }
+}

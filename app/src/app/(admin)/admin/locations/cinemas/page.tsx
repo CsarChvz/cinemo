@@ -27,7 +27,7 @@ export default async function CinemasListPage() {
           </Stack>
           <BackButton
             href="/admin/locations/cinemas/create"
-            label="Agregar nueva película"
+            label="Agregar nuevo"
             color="blue"
             icon={<IconPlus size={16} stroke={2.5} />}
           />

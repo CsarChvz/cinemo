@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +36,7 @@ public class MovieController {
     private final RetrieveMovieUseCase retrieveMovieUseCase;
     private final MovieDtoMapper movieDtoMapper;
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MovieResponseDto> createMovie(@Valid @RequestBody MovieRequestDto requestDto){
         Movie movie = movieDtoMapper.toDomain(requestDto);
@@ -59,6 +60,7 @@ public class MovieController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<MovieResponseDto> updateMovie(@PathVariable Long id,
             @Valid @RequestBody MovieUpdateRequestDto requestDto) {
@@ -70,6 +72,7 @@ public class MovieController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         return retrieveMovieUseCase.getById(id).map(

@@ -32,6 +32,9 @@ public class CinemaRoomEntity {
     @Column(name = "capacity", nullable = false)
     private Integer capacity;
 
+    @Column(name = "columns_per_row", nullable = false)
+    private Integer columnsPerRow;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id", nullable = false)
     private CinemaEntity cinema;

@@ -34,4 +34,12 @@ public interface MovieScreeningJpaRepostory extends JpaRepository<MovieScreening
             @Param("stateId") Long stateId,
             @Param("municipalityId") Long municipalityId,
             @Param("cinemaId") Long cinemaId);
+
+    @Query("SELECT m FROM MovieScreeningEntity m " +
+                    "JOIN FETCH m.movie " +
+                    "WHERE m.room.id = :roomId " +
+                    "AND CAST(m.start AS date) = :date")
+    List<MovieScreeningEntity> findByRoomIdAndDate(
+                    @Param("roomId") Long roomId,
+                    @Param("date") java.time.LocalDate date);
 }

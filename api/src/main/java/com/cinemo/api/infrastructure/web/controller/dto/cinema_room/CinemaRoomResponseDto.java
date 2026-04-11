@@ -15,5 +15,6 @@ private Long id;
     private String roomType;
     private Integer capacity;
     private Boolean isActive;
+    private Integer columnsPerRow;
     private CinemaResponseDto cinema;
 }

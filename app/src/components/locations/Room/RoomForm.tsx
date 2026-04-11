@@ -21,6 +21,7 @@ export interface RoomFormValues {
   name: string;
   roomType: string;
   capacity: number;
+  columnsPerRow: number; // 🔥 Agregado
   cinemaId: string;
   isActive: boolean;
 }
@@ -33,6 +34,7 @@ export function RoomForm() {
       name: '',
       roomType: '',
       capacity: 0,
+      columnsPerRow: 10, // 🔥 Valor inicial sugerido
       cinemaId: '',
       isActive: true,
     },
@@ -41,6 +43,7 @@ export function RoomForm() {
       roomType: (value) => (!value ? 'Selecciona un tipo de sala' : null),
       capacity: (value) =>
         value <= 0 ? 'La capacidad debe ser mayor a 0' : null,
+      columnsPerRow: (value) => (value <= 0 ? 'Mínimo 1 columna' : null), // 🔥 Validación
       cinemaId: (value) => (!value ? 'Selecciona un cine' : null),
     },
   });
@@ -65,7 +68,7 @@ export function RoomForm() {
       <Stack gap={5} mb="xl">
         <Title order={2}>Crear Nueva Sala</Title>
         <Text c="dimmed" size="sm">
-          Registra una nueva sala y asígnala a un complejo.
+          Registra una nueva sala y define su distribución de asientos.
         </Text>
       </Stack>
 
@@ -75,6 +78,7 @@ export function RoomForm() {
             name: values.name,
             roomType: values.roomType,
             capacity: values.capacity,
+            columnsPerRow: values.columnsPerRow,
             isActive: values.isActive,
             cinemaId: Number(values.cinemaId),
           });
@@ -109,18 +113,28 @@ export function RoomForm() {
               data={['Estándar', 'VIP', 'IMAX', '4DX', 'MacroXE']}
               {...form.getInputProps('roomType')}
             />
-            <NumberInput
-              label="Aforo (Capacidad)"
-              placeholder="Ej. 150"
-              withAsterisk
-              min={1}
-              {...form.getInputProps('capacity')}
-            />
+            {/* Agrupamos Capacidad y Columnas por fila */}
+            <SimpleGrid cols={2}>
+              <NumberInput
+                label="Aforo"
+                placeholder="150"
+                withAsterisk
+                min={1}
+                {...form.getInputProps('capacity')}
+              />
+              <NumberInput
+                label="Asientos por fila"
+                placeholder="10"
+                withAsterisk
+                min={1}
+                {...form.getInputProps('columnsPerRow')}
+              />
+            </SimpleGrid>
           </SimpleGrid>
 
           <Switch
             label="Sala Activa"
-            description="Si se desactiva, se considera en mantenimiento"
+            description="Si se desactiva, no se podrán programar funciones"
             mt="sm"
             {...form.getInputProps('isActive', { type: 'checkbox' })}
           />

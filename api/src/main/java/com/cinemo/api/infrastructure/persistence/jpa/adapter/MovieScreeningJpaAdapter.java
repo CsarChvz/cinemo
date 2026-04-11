@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa.adapter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +56,15 @@ public class MovieScreeningJpaAdapter implements MovieScreeningRepositoryPort {
     public List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId) {
         List<MovieScreeningEntity> entities = jpaRepository.searchScreenings(movieId, stateId, municipalityId,
                 cinemaId);
+        return entities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<MovieScreening> findByRoomIdAndDate(Long roomId, LocalDate date) {
+        List<MovieScreeningEntity> entities = jpaRepository.findByRoomIdAndDate(roomId, date);
+
         return entities.stream()
                 .map(mapper::toDomain)
                 .toList();

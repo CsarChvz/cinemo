@@ -20,6 +20,10 @@ public class CinemaRoomRequestDto {
     @Min(value = 1, message = "La capacidad debe ser al menos de 1 persona")
     private Integer capacity;
 
+    @NotNull(message = "Las columnas por fila son obligatorias")
+    @Min(value = 1, message = "Debe haber al menos 1 columna por fila")
+    private Integer columnsPerRow;
+
     private Boolean isActive = true;
 
     @NotNull(message = "El ID del cine es obligatorio")

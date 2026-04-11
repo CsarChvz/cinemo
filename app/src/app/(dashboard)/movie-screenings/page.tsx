@@ -45,14 +45,10 @@ export default async function MovieScreeningsPage({
 }) {
   const { stateId, municipalityId, cinemaId } = await searchParams;
 
-  // 🔥 LÓGICA DE AUTO-COMPLETADO (Cascada Inversa)
-  // Si venimos de "Cines Cercanos", solo tendremos cinemaId.
-  // Buscamos los datos para que el Sidebar se autoseleccione.
   if (cinemaId && (!stateId || !municipalityId)) {
     const cinema = await api.cinema.getById({ id: Number(cinemaId) });
     if (cinema) {
-      // Redirigimos a la misma página pero con la URL completa
-      // Esto hace que el Sidebar 'despierte' con todos los selects llenos
+
       redirect(
         `/movie-screenings?stateId=${cinema.municipality.state.id}&municipalityId=${cinema.municipality.id}&cinemaId=${cinema.id}`
       );

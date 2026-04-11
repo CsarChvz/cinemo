@@ -7,6 +7,7 @@ import { apiClient } from '../api-client';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { auth } from '@/app/auth';
 
 export const movieScreeningRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
@@ -44,6 +45,7 @@ export const movieScreeningRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
+
       const data = await apiClient(
         `/movie-screenings/${input.id}`,
         MovieScreeningSchema.nullable()
@@ -60,9 +62,12 @@ export const movieScreeningRouter = createTRPCRouter({
   create: publicProcedure
     .input(CreateMovieScreeningSchema)
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       await apiClient('/movie-screenings', z.any(), {
         method: 'POST',
         body: input,
+        token: token,
       });
     }),
 
@@ -74,12 +79,15 @@ export const movieScreeningRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(
         `/movie-screenings/${input.id}`,
         MovieScreeningSchema,
         {
           method: 'PATCH', // O 'PUT'
           body: input.data,
+          token: token,
         }
       );
     }),
@@ -87,8 +95,11 @@ export const movieScreeningRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
+      const session = await auth();
+      const token = session?.accessToken;
       return await apiClient(`/movie-screenings/${input.id}`, z.any(), {
         method: 'DELETE',
+        token: token,
       });
     }),
 });

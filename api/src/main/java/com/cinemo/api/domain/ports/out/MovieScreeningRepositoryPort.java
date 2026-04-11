@@ -1,5 +1,6 @@
 package com.cinemo.api.domain.ports.out;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,6 @@ public interface MovieScreeningRepositoryPort {
     void remove(MovieScreening movieScreening);
 
     List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId);
+
+    List<MovieScreening> findByRoomIdAndDate(Long roomId, LocalDate date);
 }
