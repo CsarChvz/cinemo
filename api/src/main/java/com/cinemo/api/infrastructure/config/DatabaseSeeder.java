@@ -129,21 +129,31 @@ public class DatabaseSeeder {
                 }
             }
             System.out.println("✅ 20 Cines, 60 Salas y sus respectivos Asientos guardados.");
-
             // ==========================================
             // 5. PELÍCULAS
             // ==========================================
+            // Se agregó un 6to elemento al arreglo con la URL real del póster
             String[][] movieData = {
-                    { "Dune: Part Two", "Ciencia Ficcion", "166", "Denis Villeneuve", "B15" },
-                    { "Kung Fu Panda 4", "Animacion", "94", "Mike Mitchell", "A" },
-                    { "Godzilla x Kong", "Accion", "115", "Adam Wingard", "B" },
-                    { "Civil War", "Thriller", "109", "Alex Garland", "C" },
-                            { "Ghostbusters", "Comedia", "115", "Gil Kenan", "B" },
-                    { "Oppenheimer", "Drama", "180", "Christopher Nolan", "C" },
-                            { "Spider-Man", "Animacion", "140", "Joaquim Dos Santos", "A" },
-                    { "Barbie", "Comedia", "114", "Greta Gerwig", "B" },
-                            { "The Batman", "Accion", "176", "Matt Reeves", "B15" },
-                    { "Cinemo: The Origin", "Ciencia Ficcion", "120", "Cesar Chavez Rodriguez", "B15" }
+                    { "Dune: Part Two", "Ciencia Ficcion", "166", "Denis Villeneuve", "B15",
+                            "https://image.tmdb.org/t/p/w600_and_h900_face/6o5cJjA4srfvU52UKWaqPUuPPgl.jpg" },
+                    { "Kung Fu Panda 4", "Animacion", "94", "Mike Mitchell", "A",
+                            "https://image.tmdb.org/t/p/w500/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg" },
+                    { "Godzilla x Kong", "Accion", "115", "Adam Wingard", "B",
+                            "https://www.themoviedb.org/t/p/w600_and_h900_face/yJTk4eqQd9Yo5REpFbTSOMkbSgn.jpg" },
+                    { "Civil War", "Thriller", "109", "Alex Garland", "C",
+                            "https://image.tmdb.org/t/p/w500/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg" },
+                    { "Ghostbusters", "Comedia", "115", "Gil Kenan", "B",
+                            "https://www.themoviedb.org/t/p/w600_and_h900_face/gG8Tv060zoUwmeGEk8lGBULO9hw.jpg" },
+                    { "Oppenheimer", "Drama", "180", "Christopher Nolan", "C",
+                            "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" },
+                    { "Spider-Man", "Animacion", "140", "Joaquim Dos Santos", "A",
+                            "https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg" },
+                    { "Barbie", "Comedia", "114", "Greta Gerwig", "B",
+                            "https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg" },
+                    { "The Batman", "Accion", "176", "Matt Reeves", "B15",
+                            "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg" },
+                    { "Cinemo: The Origin", "Ciencia Ficcion", "120", "Cesar Chavez Rodriguez", "B15",
+                            "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=500&q=80" }
             };
 
             List<MovieEntity> allSavedMovies = new ArrayList<>();
@@ -154,7 +164,10 @@ public class DatabaseSeeder {
                 movie.setDurationMin(Integer.parseInt(data[2]));
                 movie.setDirector(data[3]);
                 movie.setClassification(data[4]);
-                movie.setPosterUrl("https://ejemplo.com/posters/" + data[0].toLowerCase().replace(" ", "_") + ".jpg");
+
+                // 🔥 Ahora leemos la URL del índice 5
+                movie.setPosterUrl(data[5]);
+
                 movie.setDescription("Sinopsis de " + data[0]);
                 movie.setProducer("Producciones Cinemo");
                 movie.setReleaseYear(2024);
