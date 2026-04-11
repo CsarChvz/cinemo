@@ -1,6 +1,8 @@
 package com.cinemo.api.infrastructure.web.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +30,17 @@ public class BookingController {
         Booking saved = bookingUseCase.create(booking);
         
         return ResponseEntity.ok(dtoMapper.toResponse(saved));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancel(@PathVariable Long id) {
+        Booking booking = bookingUseCase.getById(id);
+
+        if (booking == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        bookingUseCase.cancelBooking(booking);
+        return ResponseEntity.noContent().build();
     }
 }

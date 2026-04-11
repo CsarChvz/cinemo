@@ -9,4 +9,8 @@ public interface BookingUseCase {
   Booking create(Booking booking);
 
   BigDecimal calculateTotalPrice(int cantidadAsientos, BigDecimal precioUnitario);
+
+  void cancelBooking(Booking booking);
+
+  Booking getById(Long bookingId);
 }

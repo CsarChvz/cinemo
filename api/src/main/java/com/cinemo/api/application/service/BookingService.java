@@ -101,4 +101,16 @@ public class BookingService implements BookingUseCase {
       return BigDecimal.ZERO;
     return precioUnitario.multiply(new BigDecimal(cantidadAsientos));
   }
+
+  @Override
+  public void cancelBooking(Booking booking) {
+    bookingRepositoryPort.updateStatus(booking.getId(), "CANCELLED");
+    booking.getSeatStatusIds().forEach(seatId -> seatStatusUseCase.notifyNext(booking.getFunctionId(), seatId));
+  }
+
+  @Override
+  public Booking getById(Long bookingId) {
+    return bookingRepositoryPort.findById(bookingId);
+  }
+
 }

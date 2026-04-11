@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BookingJpaAdapter implements BookingRepositoryPort{
 
-private final BookingJpaRepository jpaRepository;
+    private final BookingJpaRepository jpaRepository;
     private final SeatStatusJpaRepository seatStatusJpaRepository; 
     private final BookingMapper mapper;
 
@@ -45,5 +45,11 @@ private final BookingJpaRepository jpaRepository;
         entity.setStatus(status);
         jpaRepository.save(entity);
     }
-    
+
+    @Override
+    public Booking findById(Long bookId) {
+        BookingEntity entity = jpaRepository.findById(bookId).orElseThrow();
+        return mapper.toDomain(entity);
+    }
+
 }

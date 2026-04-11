@@ -41,6 +41,7 @@ public class SecurityConfig {
             // lo maneje
             .requestMatchers(HttpMethod.POST, "/api/v1/seat-status/**").authenticated()
             .requestMatchers(HttpMethod.POST, "/api/v1/bookings/**").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/bookings/**").authenticated()
 
             // 5. Cualquier otra ruta no especificada requiere autenticación
             .anyRequest().authenticated())

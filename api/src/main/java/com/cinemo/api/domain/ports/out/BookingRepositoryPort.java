@@ -8,4 +8,6 @@ public interface BookingRepositoryPort {
 
   void updateStatus(Long bookId, String status);
 
+  Booking findById(Long bookId);
+
 }

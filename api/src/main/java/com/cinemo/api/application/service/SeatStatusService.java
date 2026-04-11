@@ -121,4 +121,40 @@ public class SeatStatusService implements SeatStatusUseCase{
                     seatStatusRepositoryPort.save(status);
                 });
     }
+
+    @Override
+    public void notifyNext(Long functionId, Long seatId) {
+        System.out.println("\n--- 🔔 [WAITLIST] PROCESANDO SIGUIENTE EN COLA ---");
+        String queueKey = seatId + "-" + functionId;
+
+        WaitingQueue queue = waitingQueue.get(queueKey);
+
+        if (queue != null && !queue.isEmpty()) {
+            Long nextUserId = queue.desencolar();
+
+            System.out.println("👤 [FIFO] Usuario " + nextUserId + " es el siguiente para el asiento " + seatId);
+
+            try {
+                this.selectSeat(functionId, seatId, nextUserId);
+
+                System.out.println("✅ [AUTO-SELECT] Asiento asignado exitosamente al usuario en espera.");
+
+            } catch (Exception e) {
+
+                System.err.println("⚠️ [ERROR] No se pudo asignar al usuario " + nextUserId
+                        + ". Reintentando con el siguiente...");
+                notifyNext(functionId, seatId); // Recursión para el siguiente en fila
+            }
+        } else {
+            System.out.println(
+                    "🍃 [QUEUE] La cola está vacía. El asiento " + seatId + " queda disponible para el público.");
+
+            SeatStatus seatStatus = seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                    .orElseThrow();
+
+            seatStatus.setStatus("AVAILABLE");
+            seatStatus.setReservedAt(null);
+            seatStatusRepositoryPort.save(seatStatus);
+        }
+    }
 }   
