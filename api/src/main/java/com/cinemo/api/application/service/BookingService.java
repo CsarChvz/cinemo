@@ -74,9 +74,12 @@ public class BookingService implements BookingUseCase {
       System.out.println("✅ [SUCCESS] Booking guardado con ID: " + bookingSaved.getId());
 
       BigDecimal precioPorAsiento = precioBase;
-      ticketUseCase.castTickets(bookingSaved.getId(), bookingSaved.getSeatStatusIds(), precioPorAsiento);
 
-      System.out.println("🎟️ [TICKETS] Tickets generados exitosamente para el booking: " + bookingSaved.getId());
+      List<Long> idsDeEstados = booking.getSeatStatusIds();
+      System.out.println("🐛 [DEBUG] IDs a procesar para tickets: " + idsDeEstados.size());
+
+      ticketUseCase.castTickets(bookingSaved.getId(), idsDeEstados, precioPorAsiento);
+
       // Si se quisiera revertir el booking DESPUÉS de guardado (por algún error
       // externo)
       rollbackStack.push(

@@ -39,6 +39,15 @@ public class BookingEntity {
   @Column(name = "created_at")
   private LocalDateTime createdAt = LocalDateTime.now();
 
+  @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<TicketEntity> tickets = new HashSet<>();
+
+  // Helper method: SIEMPRE usa esto para agregar tickets en tu servicio
+  public void addTicket(TicketEntity ticket) {
+    tickets.add(ticket);
+    ticket.setBooking(this);
+  }
+
   @PrePersist
   protected void onCreate() {
     this.createdAt = LocalDateTime.now();

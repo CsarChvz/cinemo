@@ -75,7 +75,7 @@ export function TicketModal({ opened, onClose, bookingId }: TicketModalProps) {
                 <Group grow align="flex-start">
                   <div>
                     <Text size="xs" tt="uppercase" c="dimmed" fw={700}>
-                      Asiento
+                      Asiento ID:
                     </Text>
                     <Text size="xl" fw={900}>
                       {ticket.seatId}
