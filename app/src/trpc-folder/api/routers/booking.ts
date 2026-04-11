@@ -3,6 +3,7 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 import { apiClient } from '../api-client';
 import { auth } from '@/app/auth';
 import { BookingRequestSchema, BookingResponseSchema } from '@/schemas/booking';
+import z from 'zod';
 
 export const bookingRouter = createTRPCRouter({
   /**
@@ -30,5 +31,15 @@ export const bookingRouter = createTRPCRouter({
             'Error al procesar el pago. El sistema revirtió los asientos (Rollback).',
         });
       }
+    }),
+
+  getMyBookings: publicProcedure
+    .input(z.object({ userId: z.number() }))
+    .query(async ({ input }) => {
+      // Llamada al endpoint GET /bookings?userId=...
+      return await apiClient(
+        `/bookings?userId=${input.userId}`,
+        z.array(BookingResponseSchema)
+      );
     }),
 });

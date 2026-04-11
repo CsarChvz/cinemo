@@ -7,6 +7,7 @@ import java.util.List;
 import com.cinemo.api.domain.Booking;
 import com.cinemo.api.domain.ports.in.booking.BookingUseCase;
 import com.cinemo.api.domain.ports.in.seat_status.SeatStatusUseCase;
+import com.cinemo.api.domain.ports.in.ticket.TicketUseCase;
 import com.cinemo.api.domain.ports.out.BookingRepositoryPort;
 import com.cinemo.api.domain.structs.ReservationQueue;
 import com.cinemo.api.domain.structs.RollbackStack;
@@ -18,6 +19,7 @@ public class BookingService implements BookingUseCase {
 
   private final BookingRepositoryPort bookingRepositoryPort;
   private final SeatStatusUseCase seatStatusUseCase;
+  private final TicketUseCase ticketUseCase;
 
   // Estructuras de datos personalizadas
   private final ReservationQueue reservationQueue = new ReservationQueue();
@@ -63,13 +65,16 @@ public class BookingService implements BookingUseCase {
             "Revertir asiento " + seatId + " a estado temporal (RESERVED_TEMP)");
       }
 
-      // 3. Persistir el Booking
-      booking.setStatus("CONFIRMED");
+      booking.setStatus("PAID");
       booking.setCreatedAt(LocalDateTime.now());
 
       Booking bookingSaved = bookingRepositoryPort.save(booking);
       System.out.println("✅ [SUCCESS] Booking guardado con ID: " + bookingSaved.getId());
 
+      BigDecimal precioPorAsiento = precioBase;
+      ticketUseCase.castTickets(bookingSaved.getId(), bookingSaved.getSeatStatusIds(), precioPorAsiento);
+
+      System.out.println("🎟️ [TICKETS] Tickets generados exitosamente para el booking: " + bookingSaved.getId());
       // Si se quisiera revertir el booking DESPUÉS de guardado (por algún error
       // externo)
       rollbackStack.push(

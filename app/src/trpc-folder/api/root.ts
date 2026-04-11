@@ -8,6 +8,7 @@ import { postRouter } from './routers/post';
 import { roomRouter } from './routers/room';
 import { seatRouter } from './routers/seat';
 import { stateRouter } from './routers/state';
+import { ticketRouter } from './routers/ticket';
 import { createCallerFactory, createTRPCRouter } from './trpc';
 
 /**
@@ -26,6 +27,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   seat: seatRouter,
   booking: bookingRouter,
+  ticket: ticketRouter,
 });
 
 // export type definition of API
