@@ -10,4 +10,6 @@ public interface SeatStatusUseCase {
     Long undoLastSelection(Long functionId, Long userId);
     void joinWaitlist(Long functionId, Long seatId, Long userId);
     Long getWaitlistPosition(Long functionId, Long seatId, Long userId);
+
+    void releaseSeat(Long functionId, Long seatId);
 }

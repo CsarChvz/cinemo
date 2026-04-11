@@ -32,7 +32,6 @@ public class SeatStatusController {
     public ResponseEntity<List<SeatStatusResponseDto>> getByFunction(@RequestParam Long functionId) {
         List<SeatStatus> statuses = seatStatusUseCase.getStatusByFunction(functionId);
 
-        // 🔥 Usamos el mapper en lugar del new manual
         return ResponseEntity.ok(mapper.toResponseList(statuses));
     }
 
@@ -41,7 +40,6 @@ public class SeatStatusController {
         SeatStatus updated = seatStatusUseCase.selectSeat(
                 req.getMovieScreeningId(), req.getSeatId(), req.getUserId());
 
-        // 🔥 Usamos el mapper aquí también
         return ResponseEntity.ok(mapper.toResponse(updated));
     }
     // Deshacer último asiento seleccionado — pop de la pila

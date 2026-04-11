@@ -111,4 +111,14 @@ public class SeatStatusService implements SeatStatusUseCase{
         System.out.println("🔔 [QUEUE] Turno otorgado. Siguiente usuario en fila: " + nextUser);
         return nextUser;
     }
+
+    @Override
+    public void releaseSeat(Long functionId, Long seatId) {
+        seatStatusRepositoryPort.findBySeatIdAndMovieScreeningId(seatId, functionId)
+                .ifPresent(status -> {
+                    status.setStatus("AVAILABLE");
+                    status.setReservedAt(null); // Limpiamos la fecha de reserva
+                    seatStatusRepositoryPort.save(status);
+                });
+    }
 }   
