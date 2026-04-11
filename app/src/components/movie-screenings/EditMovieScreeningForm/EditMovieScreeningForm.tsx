@@ -13,7 +13,8 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications'; // <-- Importado
+import { IconDeviceFloppy, IconX } from '@tabler/icons-react'; // <-- IconX importado
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -40,7 +41,7 @@ export function EditMovieScreeningForm({
   const form = useForm<EditMovieScreeningFormValues>({
     // 🔥 Llenamos el formulario con los datos anidados de la base de datos
     initialValues: {
-      movieId: screening?.movie?.id?.toString() ?? "",
+      movieId: screening?.movie?.id?.toString() ?? '',
       // Usamos ?. por si el backend envió el municipio/estado omitido por DTOs
       stateId: screening.room.cinema.municipality?.state?.id.toString() || '',
       municipalityId: screening.room.cinema.municipality?.id.toString() || '',
@@ -134,8 +135,16 @@ export function EditMovieScreeningForm({
       router.push('/admin/movie-screenings');
     },
     onError: (error) => {
-      console.error('Error al actualizar:', error.message);
-      alert(`Ocurrió un error al guardar: ${error.message}`);
+      console.log('Error completo de tRPC:', JSON.stringify(error, null, 2));
+
+      // 🔥 Implementación de la notificación visual
+      notifications.show({
+        title: 'Conflicto de Horario',
+        message: error.message,
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 8000,
+      });
     },
   });
 

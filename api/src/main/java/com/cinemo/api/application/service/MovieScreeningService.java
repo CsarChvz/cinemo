@@ -13,7 +13,7 @@ import com.cinemo.api.domain.ports.out.MovieScreeningRepositoryPort;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class MovieScreeningService implements ManageMovieScreeningUseCase, RetrieveMovieScreeningUseCase{
+public class MovieScreeningService implements ManageMovieScreeningUseCase, RetrieveMovieScreeningUseCase {
 
     private final MovieScreeningRepositoryPort movieScreeningRepositoryPort;
 
@@ -22,10 +22,50 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
         return movieScreeningRepositoryPort.findById(id);
     }
 
-
     @Override
     public MovieScreening update(MovieScreening movieScreening) {
+        // Ejecutamos la validación antes de modificar
+        // Pasamos el ID para ignorar la función actual en la comparación
+        validateScreeningOverlap(movieScreening, movieScreening.getId());
+
         return movieScreeningRepositoryPort.modify(movieScreening);
+    }
+
+    @Override
+    public MovieScreening create(MovieScreening newScreening) {
+        // Para crear, el ID es nulo o no importa en la comparación
+        validateScreeningOverlap(newScreening, null);
+
+        return movieScreeningRepositoryPort.create(newScreening);
+    }
+
+
+    private void validateScreeningOverlap(MovieScreening screening, Long currentId) {
+        List<MovieScreening> existingOnes = movieScreeningRepositoryPort.findByRoomIdAndDate(
+                screening.getRoom().getId(),
+                screening.getStart().toLocalDate());
+
+        LocalDateTime requestedStart = screening.getStart();
+        LocalDateTime requestedEndWithCleaning = screening.getEnd().plusMinutes(30);
+
+        for (MovieScreening existing : existingOnes) {
+            if (currentId != null && existing.getId().equals(currentId)) {
+                continue;
+            }
+
+            LocalDateTime existingStart = existing.getStart();
+            LocalDateTime existingEndWithCleaning = existing.getEnd().plusMinutes(30);
+
+
+            boolean overlaps = requestedStart.isBefore(existingEndWithCleaning)
+                    && requestedEndWithCleaning.isAfter(existingStart);
+
+            if (overlaps) {
+                throw new BusinessException(
+                        "Conflicto de horario: La sala ya tiene una función programada o en limpieza desde " +
+                                existingStart.toLocalTime() + " hasta " + existingEndWithCleaning.toLocalTime());
+            }
+        }
     }
 
     @Override
@@ -42,34 +82,4 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
     public List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId) {
         return movieScreeningRepositoryPort.search(movieId, stateId, municipalityId, cinemaId);
     }
-
-    @Override
-    public MovieScreening create(MovieScreening newScreening) {
-        // 1. Obtener funciones existentes en esa sala -> Solo por el dia
-        List<MovieScreening> existingOnes = movieScreeningRepositoryPort.findByRoomIdAndDate(
-                newScreening.getRoom().getId(),
-                newScreening.getStart().toLocalDate());
-
-        LocalDateTime requestedStart = newScreening.getStart();
-        LocalDateTime requestedEndWithCleaning = newScreening.getEnd().plusMinutes(30);
-
-        for (MovieScreening existing : existingOnes) {
-            LocalDateTime existingStart = existing.getStart();
-            LocalDateTime existingEndWithCleaning = existing.getEnd().plusMinutes(30);
-
-            // Lógica de traslape de intervalos
-            boolean overlaps = requestedStart.isBefore(existingEndWithCleaning)
-                    && requestedEndWithCleaning.isAfter(existingStart);
-
-            if (overlaps) {
-                // Lanzamos una excepción personalizada de negocio
-                throw new BusinessException(
-                        "Conflicto de horario: La sala está ocupada o en limpieza desde " +
-                                existingStart.toLocalTime() + " hasta " + existingEndWithCleaning.toLocalTime());
-            }
-        }
-
-        return movieScreeningRepositoryPort.create(newScreening);
-    }
-
 }
