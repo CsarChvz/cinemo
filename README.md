@@ -8,7 +8,6 @@ Cinemo es una plataforma full-stack para la gestión de cines y compra de boleto
 
 ## Arquitectura
 
-🏗️ Arquitectura
 El backend es un monolito modular. Toda la lógica de negocio, seguridad, persistencia y exposición HTTP viven en un único proceso JVM. Para mantener un código limpio y escalable, la aplicación sigue los principios de Arquitectura Hexagonal (Ports & Adapters), dividiendo el sistema en tres capas claramente aisladas:
 
 Capa de Dominio (Domain): Es el corazón del sistema. Aquí residen las entidades puras de negocio (Booking, Ticket), la lógica central y las estructuras de datos personalizadas (Pilas, Colas, Listas Enlazadas, Grafos). En esta capa se definen los Puertos (interfaces) de entrada (in) y salida (out). Cero dependencias de frameworks externos (no sabe qué es Spring ni JPA).
