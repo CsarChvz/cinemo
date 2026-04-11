@@ -52,4 +52,11 @@ public class BookingJpaAdapter implements BookingRepositoryPort{
         return mapper.toDomain(entity);
     }
 
+    @Override
+    public List<Booking> findByUserId(Long userId) {
+        List<BookingEntity> entities = jpaRepository.findByUserId(userId);
+
+        return entities.stream().map(mapper::toDomain).toList();
+    }
+
 }

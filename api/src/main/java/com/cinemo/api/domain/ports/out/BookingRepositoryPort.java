@@ -1,6 +1,8 @@
 package com.cinemo.api.domain.ports.out;
 
 
+import java.util.List;
+
 import com.cinemo.api.domain.Booking;
 
 public interface BookingRepositoryPort {
@@ -10,4 +12,5 @@ public interface BookingRepositoryPort {
 
   Booking findById(Long bookId);
 
+  List<Booking> findByUserId(Long userId);
 }

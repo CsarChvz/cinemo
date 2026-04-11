@@ -2,6 +2,7 @@ package com.cinemo.api.application.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.cinemo.api.domain.Booking;
 import com.cinemo.api.domain.ports.in.booking.BookingUseCase;
@@ -111,6 +112,11 @@ public class BookingService implements BookingUseCase {
   @Override
   public Booking getById(Long bookingId) {
     return bookingRepositoryPort.findById(bookingId);
+  }
+
+  @Override
+  public List<Booking> getByUser(Long userId) {
+    return bookingRepositoryPort.findByUserId(userId);
   }
 
 }
