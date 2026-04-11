@@ -24,15 +24,9 @@ import { Movie } from '@/schemas/movie';
 
 interface AdminMovieCardProps {
   movie: Movie;
-  onDelete?: (id: number) => void;
-  onToggleStatus?: (id: number) => void;
 }
 
-export function AdminMovieCard({
-  movie,
-  onDelete,
-  onToggleStatus,
-}: AdminMovieCardProps) {
+export function AdminMovieCard({ movie }: AdminMovieCardProps) {
   return (
     <Card withBorder radius="md" p="sm" shadow="sm">
       <Card.Section>
@@ -70,38 +64,6 @@ export function AdminMovieCard({
           >
             Editar
           </Button>
-
-          <Menu shadow="md" width={180} position="bottom-end">
-            <Menu.Target>
-              <ActionIcon variant="default" size="sm">
-                <IconDotsVertical size={16} />
-              </ActionIcon>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Label>Opciones rápidas</Menu.Label>
-              <Menu.Item
-                leftSection={
-                  movie.isActive ? (
-                    <IconEyeOff size={14} />
-                  ) : (
-                    <IconEye size={14} />
-                  )
-                }
-                onClick={() => onToggleStatus?.(movie.id!)}
-              >
-                {movie.isActive ? 'Desactivar' : 'Activar'}
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item
-                color="red"
-                leftSection={<IconTrash size={14} />}
-                onClick={() => onDelete?.(movie.id!)}
-              >
-                Eliminar película
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
         </Group>
       </Stack>
     </Card>

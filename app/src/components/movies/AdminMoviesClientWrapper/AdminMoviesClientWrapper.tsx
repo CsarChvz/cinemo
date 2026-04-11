@@ -16,26 +16,22 @@ interface AdminMoviesClientWrapperProps {
 export function AdminMoviesClientWrapper({
   initialMovies,
 }: AdminMoviesClientWrapperProps) {
+  // El hook useMovieFilters se encarga de la lógica de búsqueda, filtrado y ordenamiento en memoria [cite: 107, 197, 198]
   const { state, actions, filteredMovies } = useMovieFilters(initialMovies);
-
-  const handleDelete = (id: number) => console.log('Eliminando', id);
-  const handleToggleStatus = (id: number) =>
-    console.log('Cambiando status', id);
 
   return (
     <Stack gap="xl">
       <Group justify="space-between" align="flex-start">
-        {/* Llenamos el div vacío para darle contexto a la pantalla */}
-        <div>
+        <Stack gap={0}>
           <Title order={2}>Catálogo de Películas</Title>
           <Text c="dimmed" size="sm">
-            Administra la cartelera, activa o desactiva películas.
+            Administra la cartelera y visualiza el catálogo disponible.
           </Text>
-        </div>
+        </Stack>
 
         <Button
           component={Link}
-          href="/admin/movies/create" 
+          href="/admin/movies/create"
           leftSection={<IconPlus size={18} />}
           size="md"
           variant="gradient"
@@ -46,6 +42,7 @@ export function AdminMoviesClientWrapper({
       </Group>
 
       <Stack gap="xl">
+        {/* Cabecera que contiene los controles de búsqueda, ordenamiento y filtros de género/clasificación [cite: 286] */}
         <MovieCatalogHeader
           search={state.search}
           onSearchChange={actions.setSearch}
@@ -57,12 +54,7 @@ export function AdminMoviesClientWrapper({
           onClasificationsChange={actions.setClasifications}
         />
 
-        <MovieGrid
-          movies={filteredMovies}
-          adminView={true}
-          handleDelete={handleDelete}
-          handleToggleStatus={handleToggleStatus}
-        />
+        <MovieGrid movies={filteredMovies} adminView={true} />
       </Stack>
     </Stack>
   );

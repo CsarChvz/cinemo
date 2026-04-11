@@ -72,7 +72,7 @@ export const movieRouter = createTRPCRouter({
       const session = await auth();
       const token = session?.accessToken;
       return await apiClient(`/movies/${input.id}`, z.any(), {
-        method: 'PATCH', // Usamos PUT como descubrimos con las funciones
+        method: 'PATCH',
         body: input.data,
         token: token,
       });
