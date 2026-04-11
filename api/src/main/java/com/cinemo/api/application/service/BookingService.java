@@ -12,9 +12,11 @@ import com.cinemo.api.domain.ports.out.BookingRepositoryPort;
 import com.cinemo.api.domain.structs.ReservationQueue;
 import com.cinemo.api.domain.structs.RollbackStack;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Transactional
 public class BookingService implements BookingUseCase {
 
   private final BookingRepositoryPort bookingRepositoryPort;

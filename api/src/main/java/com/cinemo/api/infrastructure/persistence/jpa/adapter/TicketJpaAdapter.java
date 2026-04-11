@@ -19,20 +19,17 @@ import lombok.RequiredArgsConstructor;
 public class TicketJpaAdapter implements TicketRepositoryPort {
     private final TicketJpaRepository jpaRepository;
     private final TicketMapper mapper;
-@Override
+
+    @Override
     @Transactional
-public Ticket save(Ticket ticket) {
-    // 1. Loggea esto para ver si el ID del booking llega aquí
-    System.out.println("💾 Guardando ticket para booking: " + ticket.getBookingId());
+    public Ticket save(Ticket ticket) {
+        TicketEntity entity = mapper.toEntity(ticket);
 
-    TicketEntity entity = mapper.toEntity(ticket);
+        TicketEntity saved = jpaRepository.saveAndFlush(entity);
 
-    if (entity.getBooking() == null) {
-        System.err.println("❌ ERROR: El mapper no asignó el Booking a la entidad!");
+        return mapper.toDomain(saved);
     }
 
-    return mapper.toDomain(jpaRepository.save(entity));
-}
     @Override
     public List<Ticket> findByBookingId(Long bookingId) {
         // Buscamos las entidades y las convertimos todas a dominio usando un Stream

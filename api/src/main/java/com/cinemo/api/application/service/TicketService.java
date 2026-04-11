@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketService implements TicketUseCase {
     private final TicketRepositoryPort ticketRepositoryPort;
 
-@Override
+    @Override
     @Transactional
     public List<Ticket> castTickets(Long bookingId, List<Long> seatIds, BigDecimal precioPorAsiento) {
         return seatIds.stream().map(seatId -> {
