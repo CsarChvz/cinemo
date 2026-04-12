@@ -10,9 +10,7 @@ const protectedRoutes = [
 ];
 
 // 2. Define aquí todas las rutas DINÁMICAS que requieren inicio de sesión (Regex)
-const protectedDynamicRoutes = [
-  /^\/movie-screenings\/\d+\/seats/, // Captura /movie-screenings/[cualquier-numero]/seats
-];
+const protectedDynamicRoutes = [/^\/movie-screenings\/\d+\/seats/];
 
 export default auth((req) => {
   const { nextUrl } = req;
