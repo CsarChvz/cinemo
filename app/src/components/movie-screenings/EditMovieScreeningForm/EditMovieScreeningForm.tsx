@@ -41,7 +41,7 @@ export function EditMovieScreeningForm({
   const form = useForm<EditMovieScreeningFormValues>({
     // 🔥 Llenamos el formulario con los datos anidados de la base de datos
     initialValues: {
-      movieId: screening?.movie?.id?.toString() ?? '',
+      movieId: screening?.movie?.id?.toString() ?? "",
       // Usamos ?. por si el backend envió el municipio/estado omitido por DTOs
       stateId: screening.room.cinema.municipality?.state?.id.toString() || '',
       municipalityId: screening.room.cinema.municipality?.id.toString() || '',
@@ -136,14 +136,13 @@ export function EditMovieScreeningForm({
     },
     onError: (error) => {
       console.log('Error completo de tRPC:', JSON.stringify(error, null, 2));
-
-      // 🔥 Implementación de la notificación visual
+      
       notifications.show({
         title: 'Conflicto de Horario',
-        message: error.message,
+        message: error.message, 
         color: 'red',
         icon: <IconX size={18} />,
-        autoClose: 8000,
+        autoClose: 8000, 
       });
     },
   });
