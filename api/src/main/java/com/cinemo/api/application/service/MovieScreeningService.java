@@ -1,5 +1,6 @@
 package com.cinemo.api.application.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,8 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
 
     @Override
     public MovieScreening update(MovieScreening movieScreening) {
-        // Ejecutamos la validación antes de modificar
-        // Pasamos el ID para ignorar la función actual en la comparación
+        // Validar límite diario (excluyendo la función actual si no cambió de día)
+        validateDailyLimit(movieScreening, movieScreening.getId());
         validateScreeningOverlap(movieScreening, movieScreening.getId());
 
         return movieScreeningRepositoryPort.modify(movieScreening);
@@ -33,12 +34,31 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
 
     @Override
     public MovieScreening create(MovieScreening newScreening) {
-        // Para crear, el ID es nulo o no importa en la comparación
+        // Validar límite de 10 funciones por película y cine
+        validateDailyLimit(newScreening, null);
+        // Validar empalmes de horario
         validateScreeningOverlap(newScreening, null);
 
         return movieScreeningRepositoryPort.create(newScreening);
     }
 
+    private void validateDailyLimit(MovieScreening screening, Long currentId) {
+        Long movieId = screening.getMovie().getId();
+        Long roomId = screening.getRoom().getId(); // 🔥 Usamos roomId que SÍ existe en el request
+        LocalDate targetDate = screening.getStart().toLocalDate();
+
+        // Llamamos al método actualizado
+        long currentCount = movieScreeningRepositoryPort.countByMovieAndRoomAndDate(movieId, roomId, targetDate);
+
+        boolean isUpdateOfSameDay = (currentId != null && screening.getId() != null);
+        long limit = isUpdateOfSameDay ? 10 : 9;
+
+        if (currentCount > limit) {
+            throw new BusinessException(
+                    "Límite diario superado: La película ya alcanzó el máximo de 10 funciones para el día "
+                            + targetDate + " en este cine.");
+        }
+    }
 
     private void validateScreeningOverlap(MovieScreening screening, Long currentId) {
         List<MovieScreening> existingOnes = movieScreeningRepositoryPort.findByRoomIdAndDate(
@@ -55,7 +75,6 @@ public class MovieScreeningService implements ManageMovieScreeningUseCase, Retri
 
             LocalDateTime existingStart = existing.getStart();
             LocalDateTime existingEndWithCleaning = existing.getEnd().plusMinutes(30);
-
 
             boolean overlaps = requestedStart.isBefore(existingEndWithCleaning)
                     && requestedEndWithCleaning.isAfter(existingStart);
