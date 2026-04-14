@@ -58,7 +58,7 @@ up-db:
 
 up-full:
 	@echo "Levantando Fullstack (Postgres, API, APP)..."
-	docker compose $(DOCKER_PROFILE) up -d
+	docker compose $(DOCKER_PROFILE) up
 
 down:
 	@echo "Deteniendo contenedores..."
