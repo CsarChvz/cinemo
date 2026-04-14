@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "analyze": "ANALYZE=true next build",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "next dev",
     "format": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "lint": "next lint",
+    "start": "next start",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "analyze": "ANALYZE=true next build"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@mantine/charts": "^8.3.18",
@@ -47,6 +47,7 @@
     "react-leaflet": "^5.0.0",
     "recharts": "^3.8.0",
     "server-only": "^0.0.1",
+    "sst": "4.7.3",
     "superjson": "^2.2.6",
     "zod": "^4.3.6"
   },
