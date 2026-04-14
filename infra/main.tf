@@ -228,6 +228,7 @@ resource "aws_ssm_parameter" "jwt_secret" {
 resource "aws_ecr_repository" "api" {
   name                 = "${var.app_name}-api"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = true
