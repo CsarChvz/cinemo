@@ -42,7 +42,6 @@ public class BookingEntity {
   @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<TicketEntity> tickets = new HashSet<>();
 
-  // Helper method: SIEMPRE usa esto para agregar tickets en tu servicio
   public void addTicket(TicketEntity ticket) {
     tickets.add(ticket);
     ticket.setBooking(this);

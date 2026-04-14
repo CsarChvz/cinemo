@@ -1,5 +1,6 @@
 package com.cinemo.api.infrastructure.persistence.jpa.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,4 +43,22 @@ public interface MovieScreeningJpaRepostory extends JpaRepository<MovieScreening
     List<MovieScreeningEntity> findByRoomIdAndDate(
                     @Param("roomId") Long roomId,
                     @Param("date") java.time.LocalDate date);
+
+    @Query("SELECT COUNT(m) FROM MovieScreeningEntity m " +
+                    "WHERE m.movie.id = :movieId " +
+                    "AND m.room.cinema.id = :cinemaId " +
+                    "AND DATE(m.start) = :targetDate")
+    long countByMovieIdAndCinemaIdAndDate(
+                    @Param("movieId") Long movieId,
+                    @Param("cinemaId") Long cinemaId,
+                    @Param("targetDate") LocalDate targetDate);
+
+    @Query("SELECT COUNT(m) FROM MovieScreeningEntity m " +
+                    "WHERE m.movie.id = :movieId " +
+                    "AND m.room.cinema.id = (SELECT r.cinema.id FROM CinemaRoomEntity r WHERE r.id = :roomId) " +
+                    "AND DATE(m.start) = :targetDate")
+    long countByMovieIdAndRoomIdAndDate(
+                    @Param("movieId") Long movieId,
+                    @Param("roomId") Long roomId,
+                    @Param("targetDate") LocalDate targetDate);
 }

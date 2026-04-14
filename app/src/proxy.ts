@@ -2,35 +2,51 @@
 import { auth } from '@/app/auth';
 import { NextResponse } from 'next/server';
 
+// 1. Define aquí todas las rutas ESTÁTICAS que requieren inicio de sesión
+const protectedRoutes = [
+  '/admin',
+  '/checkout',
+  '/bookings',
+];
+
+// 2. Define aquí todas las rutas DINÁMICAS que requieren inicio de sesión (Regex)
+const protectedDynamicRoutes = [/^\/movie-screenings\/\d+\/seats/];
+
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  // 1. Lógica de expiración manual o limpieza
-  // Si intentas entrar a una ruta protegida y no hay sesión,
-  // nos aseguramos de limpiar cualquier rastro de cookies viejas
-  if (
-    !isLoggedIn &&
-    (nextUrl.pathname.startsWith('/admin') ||
-      nextUrl.pathname.startsWith('/dashboard'))
-  ) {
-    const response = NextResponse.redirect(new URL('/login', nextUrl));
+  // Verificamos si la ruta actual es protegida (buscando en estáticas y dinámicas)
+  const isProtectedRoute =
+    protectedRoutes.some((route) => nextUrl.pathname.startsWith(route)) ||
+    protectedDynamicRoutes.some((regex) => regex.test(nextUrl.pathname));
 
-    // Borramos la cookie de NextAuth (ajusta el nombre si la cambiaste en la config)
+  // Redirección si NO está logueado pero intenta acceder a ruta protegida
+  if (!isLoggedIn && isProtectedRoute) {
+    // Guardamos la URL exacta (incluyendo el ?roomId=61) para regresarlo ahí después del login
+    const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search);
+    const response = NextResponse.redirect(
+      new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl)
+    );
+
+    // Limpieza de cookies de seguridad
     response.cookies.delete('authjs.session-token');
-    // Si usas una cookie propia para el token de Java:
+    response.cookies.delete('__Secure-authjs.session-token');
     response.cookies.delete('access_token');
 
     return response;
   }
 
-  // --- Tu lógica de roles actual ---
+  // Protección por Rol para el panel de administración
   const userRole = req.auth?.user?.role;
-  if (nextUrl.pathname.startsWith('/admin')) {
-    if (userRole !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/', nextUrl));
-    }
+  if (nextUrl.pathname.startsWith('/admin') && userRole !== 'ADMIN') {
+    return NextResponse.redirect(new URL('/', nextUrl));
   }
 
   return NextResponse.next();
 });
+
+// Evitamos que el middleware se ejecute en recursos estáticos e imágenes para no saturar el servidor
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};

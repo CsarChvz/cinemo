@@ -69,4 +69,14 @@ public class MovieScreeningJpaAdapter implements MovieScreeningRepositoryPort {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public long countByMovieAndCinemaAndDate(Long movieId, Long cinemaId, LocalDate date) {
+        return jpaRepository.countByMovieIdAndCinemaIdAndDate(movieId, cinemaId, date);
+    }
+
+    @Override
+    public long countByMovieAndRoomAndDate(Long movieId, Long roomId, java.time.LocalDate date) {
+        return jpaRepository.countByMovieIdAndRoomIdAndDate(movieId, roomId, date);
+    }
 }

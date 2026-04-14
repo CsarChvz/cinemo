@@ -84,6 +84,7 @@ public class MunicipalityController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteState(@PathVariable Long id) {
     return retrieveMunicipalityUseCase.getById(id).map(existingMunicipality -> {

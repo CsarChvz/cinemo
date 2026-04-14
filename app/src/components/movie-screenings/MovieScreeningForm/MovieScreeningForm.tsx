@@ -140,12 +140,18 @@ export function MovieScreeningForm({
     },
     onError: (error) => {
       console.log('Error completo de tRPC:', JSON.stringify(error, null, 2));
+
+      // 🔥 Título dinámico basado en la palabra clave del error
+      const errorTitle = error.message.includes('Límite')
+        ? 'Límite Diario Alcanzado'
+        : 'Conflicto de Horario';
+
       notifications.show({
-        title: 'Conflicto de Horario',
-        message: error.message, 
+        title: errorTitle,
+        message: error.message,
         color: 'red',
         icon: <IconX size={18} />,
-        autoClose: 8000, 
+        autoClose: 8000,
       });
     },
   });
@@ -173,36 +179,31 @@ export function MovieScreeningForm({
           (values) => {
             console.log('Todo válido. Calculando datos extra...');
 
-            // 1. Buscamos la película seleccionada para saber cuánto dura
             const selectedMovie = movies?.find(
               (m) => m?.id?.toString() === values.movieId
             );
-            // Si por algo no tiene duración, le ponemos 120 min por defecto
             const durationMin = selectedMovie?.durationMin || 120;
 
-            // 2. Calculamos el "end" usando dayjs (que ya tenías importado)
             const startDate = dayjs(values.start!);
             const endDate = startDate.add(durationMin, 'minute');
-
 
             const formattedStart = startDate.format('YYYY-MM-DDTHH:mm:ss');
             const formattedEnd = endDate.format('YYYY-MM-DDTHH:mm:ss');
 
-            // 3. Buscamos la sala seleccionada para sacar su capacidad
             const selectedRoom = rooms?.find(
               (r) => r.id.toString() === values.roomId
             );
             const capacity = selectedRoom?.capacity || 0;
 
-          const payload = {
-            movieId: Number(values.movieId),
-            roomId: Number(values.roomId),
-            start: formattedStart,
-            end: formattedEnd,
-            totalCapacity: capacity,
-            ticketsRemaining: capacity,
-            status: 'SCHEDULED',
-          };
+            const payload = {
+              movieId: Number(values.movieId),
+              roomId: Number(values.roomId),
+              start: formattedStart,
+              end: formattedEnd,
+              totalCapacity: capacity,
+              ticketsRemaining: capacity,
+              status: 'SCHEDULED',
+            };
 
             console.log('Enviando al backend:', payload);
             createScreening.mutate(payload);
@@ -240,7 +241,7 @@ export function MovieScreeningForm({
               loading={isLoadingStates}
               {...stateProps}
               onChange={(val) => {
-                stateProps.onChange(val); // Deja que Mantine registre el cambio
+                stateProps.onChange(val);
                 form.setFieldValue('municipalityId', '');
                 form.setFieldValue('cinemaId', '');
                 form.setFieldValue('roomId', '');
@@ -263,7 +264,7 @@ export function MovieScreeningForm({
               loading={isFetchingMunicipalities}
               {...municipalityProps}
               onChange={(val) => {
-                municipalityProps.onChange(val); // Deja que Mantine registre el cambio
+                municipalityProps.onChange(val);
                 form.setFieldValue('cinemaId', '');
                 form.setFieldValue('roomId', '');
               }}
@@ -288,7 +289,7 @@ export function MovieScreeningForm({
               loading={isFetchingCinemas}
               {...cinemaProps}
               onChange={(val) => {
-                cinemaProps.onChange(val); // Deja que Mantine registre el cambio
+                cinemaProps.onChange(val);
                 form.setFieldValue('roomId', '');
               }}
             />

@@ -57,11 +57,14 @@ export function ProgramGuideContent({
     return screenings.map((event): ScheduleEventData => {
       const colorTheme = colors[(event?.movie?.id ?? 0) % colors.length];
 
-      // Calculamos fin (asumiendo 2h si no viene en la data, o usa la duración real)
-      const endTime = dayjs(event.start).add(2, 'hour').toISOString();
+      // 🔥 SOLUCIÓN: Usamos la hora de fin real enviada por el servidor
+      // Hacemos un fallback de 2 horas SOLO si el backend manda un 'end' inválido o nulo.
+      const endTime = event.end
+        ? dayjs(event.end).toISOString()
+        : dayjs(event.start).add(2, 'hour').toISOString();
 
       return {
-        id: event.id,
+        id: event.id.toString(), // Asegúrate de que el id sea string si la librería lo requiere
         title: event.movie.title,
         start: dayjs(event.start).toISOString(),
         end: endTime,
@@ -75,7 +78,6 @@ export function ProgramGuideContent({
       };
     });
   }, [screenings]);
-
   const router = useRouter();
   const handleEventClick = (event: ScheduleEventData) => {
     console.log('Abriendo reserva para la función ID:', event.id);

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -37,4 +39,12 @@ public class MovieScreeningEntity {
 
     @Column(name = "status", nullable = false, length = 50)
     private String status;
+
+    @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SeatStatusEntity> seatStatuses = new HashSet<>();
+
+    public void addSeatStatus(SeatStatusEntity seatStatus) {
+        seatStatuses.add(seatStatus);
+        seatStatus.setScreening(this);
+    }
 }

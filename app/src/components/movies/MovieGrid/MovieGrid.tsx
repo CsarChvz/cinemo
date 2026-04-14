@@ -6,16 +6,10 @@ import { AdminMovieCard } from '../AdminMovieCard/AdminMovieCard';
 interface MovieGridProps {
   movies: Movie[];
   adminView?: boolean;
-  handleDelete?: (id: number) => void;
   handleToggleStatus?: (id: number) => void;
 }
 
-export function MovieGrid({
-  movies,
-  adminView = false,
-  handleToggleStatus,
-  handleDelete,
-}: MovieGridProps) {
+export function MovieGrid({ movies, adminView = false }: MovieGridProps) {
   if (movies.length === 0) {
     return (
       <Center py="xl" h={200}>
@@ -35,12 +29,7 @@ export function MovieGrid({
     <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
       {movies.map((movie: Movie) =>
         adminView ? (
-          <AdminMovieCard
-            key={movie.id}
-            movie={movie}
-            onDelete={handleDelete}
-            onToggleStatus={handleToggleStatus}
-          />
+          <AdminMovieCard key={movie.id} movie={movie} />
         ) : (
           <MovieCard key={movie.id} movie={movie} />
         )

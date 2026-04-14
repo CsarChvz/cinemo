@@ -13,7 +13,8 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconDeviceFloppy, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -38,10 +39,8 @@ export function EditMovieScreeningForm({
   const router = useRouter();
 
   const form = useForm<EditMovieScreeningFormValues>({
-    // 🔥 Llenamos el formulario con los datos anidados de la base de datos
     initialValues: {
-      movieId: screening?.movie?.id?.toString() ?? "",
-      // Usamos ?. por si el backend envió el municipio/estado omitido por DTOs
+      movieId: screening?.movie?.id?.toString() ?? '',
       stateId: screening.room.cinema.municipality?.state?.id.toString() || '',
       municipalityId: screening.room.cinema.municipality?.id.toString() || '',
       cinemaId: screening.room.cinema.id.toString(),
@@ -82,7 +81,7 @@ export function EditMovieScreeningForm({
   }, [states]);
 
   // ==========================================
-  // 2. CASCADAS DINÁMICAS (Se activan solas gracias al initialValues)
+  // 2. CASCADAS DINÁMICAS
   // ==========================================
   const stateIdNum = Number(form.values.stateId);
   const { data: municipalities, isFetching: isFetchingMunicipalities } =
@@ -134,8 +133,20 @@ export function EditMovieScreeningForm({
       router.push('/admin/movie-screenings');
     },
     onError: (error) => {
-      console.error('Error al actualizar:', error.message);
-      alert(`Ocurrió un error al guardar: ${error.message}`);
+      console.log('Error completo de tRPC:', JSON.stringify(error, null, 2));
+
+      // 🔥 Título dinámico basado en la palabra clave del error
+      const errorTitle = error.message.includes('Límite')
+        ? 'Límite Diario Alcanzado'
+        : 'Conflicto de Horario';
+
+      notifications.show({
+        title: errorTitle,
+        message: error.message,
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 8000,
+      });
     },
   });
 
@@ -154,7 +165,6 @@ export function EditMovieScreeningForm({
 
       <form
         onSubmit={form.onSubmit((values) => {
-          // Cálculos idénticos a la creación para cumplir con tu Swagger
           const selectedMovie = movies?.find(
             (m) => m?.id?.toString() === values.movieId
           );
@@ -169,7 +179,7 @@ export function EditMovieScreeningForm({
           const selectedRoom = rooms?.find(
             (r) => r.id.toString() === values.roomId
           );
-          const capacity = selectedRoom?.capacity || screening.totalCapacity; // Fallback al original
+          const capacity = selectedRoom?.capacity || screening.totalCapacity;
 
           const payload = {
             movieId: Number(values.movieId),
@@ -181,7 +191,6 @@ export function EditMovieScreeningForm({
             status: 'SCHEDULED',
           };
 
-          // 🔥 Ejecutamos la mutación de UPDATE pasándole el ID de la función
           editScreening.mutate({
             id: screening.id,
             data: payload,

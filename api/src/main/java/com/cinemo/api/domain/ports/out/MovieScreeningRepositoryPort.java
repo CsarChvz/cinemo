@@ -20,4 +20,8 @@ public interface MovieScreeningRepositoryPort {
     List<MovieScreening> search(Long movieId, Long stateId, Long municipalityId, Long cinemaId);
 
     List<MovieScreening> findByRoomIdAndDate(Long roomId, LocalDate date);
+
+    long countByMovieAndCinemaAndDate(Long movieId, Long cinemaId, LocalDate date);
+
+    long countByMovieAndRoomAndDate(Long movieId, Long roomId, java.time.LocalDate date);
 }
