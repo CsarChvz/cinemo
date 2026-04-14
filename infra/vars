@@ -1,0 +1,12 @@
+# infra/terraform.tfvars
+app_name    = "cinemo"
+aws_region  = "us-east-1"
+aws_profile = "default"
+
+db_name     = "cinamo"
+db_user     = "cinamo_user"
+db_password = "cinamo_secret"
+
+jwt_secret  = "esta_es_una_llave_secreta_muy_larga_para_que_jjwt_no_se_queje_12345"
+
+cors_allow_origins = ["*"]   # actualiza con tu URL de CloudFront después
