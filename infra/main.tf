@@ -184,11 +184,12 @@ resource "aws_db_instance" "postgres" {
   vpc_security_group_ids = [aws_security_group.rds.id]
 
   publicly_accessible     = false
-  skip_final_snapshot     = false
   final_snapshot_identifier = "${var.app_name}-db-final-snapshot"
-  deletion_protection     = true
   backup_retention_period = 7
   multi_az                = false
+
+  deletion_protection       = false  # <--- Debe estar en false
+  skip_final_snapshot       = true   # <--- DEBE estar en true (si está en false, AWS bloquea el borrado)
 
   tags = { Name = "${var.app_name}-postgres" }
 }
