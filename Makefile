@@ -10,60 +10,62 @@ endif
 API_DIR := ./api
 APP_DIR := ./app
 
-.PHONY: help build-api build-app build-all up up-build down logs logs-api logs-app clean-db install run-api run-app run-all stop-all
+# Perfil de Docker Compose
+DOCKER_PROFILE := --profile fullstack
+
+.PHONY: help build-api build-app build-all up up-db up-full down logs logs-api logs-app clean-db install run-api run-app run-all stop-all
 
 help:
 	@echo "Comandos disponibles:"
 	@echo "  -------------------------------------------------------"
 	@echo "  🐳 DOCKER (Contenedores)"
 	@echo "  -------------------------------------------------------"
-	@echo "  build-all    : Construye todas las imágenes de Docker"
-	@echo "  up           : Levanta el entorno en Docker (Background)"
-	@echo "  down         : Detiene y elimina contenedores Docker"
+	@echo "  up-db        : Levanta solo la base de datos (Postgres)"
+	@echo "  up-full      : Levanta todo el stack (DB + API + APP)"
+	@echo "  build-all    : Construye imágenes con perfil fullstack"
+	@echo "  down         : Detiene y elimina contenedores y redes"
 	@echo "  -------------------------------------------------------"
-	@echo "  💻 NATIVO (Sin Docker - en /api y /app)"
+	@echo "  💻 NATIVO (Sin Docker - requiere up-db corriendo)"
 	@echo "  -------------------------------------------------------"
 	@echo "  install      : Instala dependencias (Maven y NPM)"
-	@echo "  run-api      : Corre Spring Boot (mvn spring-boot:run)"
-	@echo "  run-app      : Corre Next.js (npm run dev)"
-	@echo "  run-all      : Lanza ambos en segundo plano"
-	@echo "  stop-all     : Detiene los procesos nativos de run-all"
+	@echo "  run-api      : Corre Spring Boot nativo"
+	@echo "  run-app      : Corre Next.js nativo"
 	@echo "  -------------------------------------------------------"
 	@echo "  🛠️  UTILIDADES"
 	@echo "  -------------------------------------------------------"
-	@echo "  logs         : Ver logs de Docker"
-	@echo "  clean-db     : Reset total de la base de datos en Docker"
+	@echo "  logs         : Ver logs de todo el stack"
+	@echo "  clean-db     : Borra contenedores y VOLÚMENES (Hard reset)"
 
 # ==========================================
 # 🐳 SECCIÓN DOCKER
 # ==========================================
 
 build-api:
-	@echo "Construyendo la imagen de la API (Spring Boot)..."
-	docker compose build api
+	@echo "Construyendo la imagen de la API..."
+	docker compose $(DOCKER_PROFILE) build api
 
 build-app:
-	@echo "Construyendo la imagen de la APP (Next.js)..."
-	docker compose build app
+	@echo "Construyendo la imagen de la APP..."
+	docker compose $(DOCKER_PROFILE) build app
 
 build-all:
-	@echo "Construyendo todas las imágenes..."
-	docker compose build
+	@echo "Construyendo todo el stack..."
+	docker compose $(DOCKER_PROFILE) build
 
-up:
-	@echo "Levantando el entorno local Docker..."
-	docker compose up -d
+up-db:
+	@echo "Levantando solo Postgres..."
+	docker compose up -d postgres
 
-up-build:
-	@echo "Forzando build y levantando Docker..."
-	docker compose up --build
+up-full:
+	@echo "Levantando Fullstack (Postgres, API, APP)..."
+	docker compose $(DOCKER_PROFILE) up -d
 
 down:
 	@echo "Deteniendo contenedores..."
-	docker compose down
+	docker compose $(DOCKER_PROFILE) down
 
 logs:
-	docker compose logs -f
+	docker compose $(DOCKER_PROFILE) logs -f
 
 logs-api:
 	docker compose logs -f api
@@ -72,40 +74,36 @@ logs-app:
 	docker compose logs -f app
 
 clean-db:
-	@echo "Reseteando base de datos Docker..."
-	docker compose down -v
+	@echo "⚠️  Reseteando base de datos y borrando volúmenes..."
+	docker compose $(DOCKER_PROFILE) down -v
 
 # ==========================================
-# 💻 SECCIÓN NATIVA (SIN DOCKER)
+# 💻 SECCIÓN NATIVA
 # ==========================================
 
-# Archivos temporales para PIDs
 PID_API := .api.pid
 PID_APP := .app.pid
 
 install:
-	@echo "📦 Instalando dependencias nativas..."
+	@echo "📦 Instalando dependencias..."
 	cd $(API_DIR) && if [ -f "./mvnw" ]; then ./mvnw clean install -DskipTests; else mvn clean install -DskipTests; fi
 	cd $(APP_DIR) && npm install
 
 run-api:
-	@echo "🚀 Iniciando API Spring Boot (Nativo)..."
+	@echo "🚀 Iniciando API (Nativo)..."
 	cd $(API_DIR) && if [ -f "./mvnw" ]; then ./mvnw spring-boot:run; else mvn spring-boot:run; fi
 
 run-app:
-	@echo "🚀 Iniciando APP Next.js (Nativo)..."
+	@echo "🚀 Iniciando APP (Nativo)..."
 	cd $(APP_DIR) && npm run dev
 
 run-all:
 	@echo "🚦 Iniciando servicios nativos en background..."
-	@# API
 	@cd $(API_DIR) && (if [ -f "./mvnw" ]; then ./mvnw spring-boot:run; else mvn spring-boot:run; fi) > /dev/null 2>&1 & echo $$! > $(PID_API)
-	@# APP
 	@cd $(APP_DIR) && npm run dev > /dev/null 2>&1 & echo $$! > $(PID_APP)
-	@echo "✅ API y APP corriendo. Usa 'make stop-all' para apagar."
+	@echo "✅ API y APP corriendo nativamente."
 
 stop-all:
 	@echo "🛑 Deteniendo procesos nativos..."
 	@if [ -f $(PID_API) ]; then kill $$(cat $(PID_API)) || true; rm $(PID_API); fi
 	@if [ -f $(PID_APP) ]; then kill $$(cat $(PID_APP)) || true; rm $(PID_APP); fi
-	@echo "✅ Procesos terminados."

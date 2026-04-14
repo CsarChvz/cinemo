@@ -49,8 +49,6 @@ export const Activa: Story = {
         'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=800',
       isActive: true,
     },
-    onDelete: (id) => console.log('Eliminar ID:', id),
-    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };
 
@@ -64,8 +62,6 @@ export const Inactiva: Story = {
         'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800',
       isActive: false,
     },
-    onDelete: (id) => console.log('Eliminar ID:', id),
-    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };
 
@@ -78,8 +74,6 @@ export const SinImagen: Story = {
       posterUrl: '',
       isActive: true,
     },
-    onDelete: (id) => console.log('Eliminar ID:', id),
-    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };
 
@@ -94,7 +88,5 @@ export const TituloLargo: Story = {
         'https://images.unsplash.com/photo-1506466010722-395aa2bef877?w=800',
       isActive: true,
     },
-    onDelete: (id) => console.log('Eliminar ID:', id),
-    onToggleStatus: (id) => console.log('Cambiar estado ID:', id),
   },
 };

@@ -78,8 +78,6 @@ export const AdminView: Story = {
   args: {
     movies: mockMovies,
     adminView: true,
-    handleDelete: (id) => console.log('Borrando película:', id),
-    handleToggleStatus: (id) => console.log('Cambiando estado:', id),
   },
 };
 
