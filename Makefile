@@ -237,15 +237,9 @@ sst-deploy: _ecr_url
 		echo "❌ No se encontró api_gateway_url. Corre 'make tf-apply' primero."; \
 		exit 1; \
 	fi
-	@if [ -z "$(AUTH_SECRET)" ]; then \
-		echo "❌ AUTH_SECRET no está definida. Agrégala al .env"; \
-		exit 1; \
-	fi
 	cd $(APP_DIR) && \
 		AWS_PROFILE=$(AWS_PROFILE) \
 		API_GATEWAY_URL=$(API_GW_URL) \
-		AUTH_SECRET=$(AUTH_SECRET) \
-		NEXTAUTH_URL=$(NEXTAUTH_URL) \
 		bunx sst deploy --stage production
 	@echo "✅ Next.js deployado."
 
