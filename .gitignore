@@ -34,3 +34,13 @@ app/pnpm-debug.log*
 .docker/
 # Si guardas los datos de la DB en una carpeta local
 postgres_data/
+
+# Terraform
+infra/.terraform/
+infra/terraform.tfvars
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform.lock.hcl
+
+# SST
+app/.sst/
